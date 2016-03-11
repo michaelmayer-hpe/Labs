@@ -67,25 +67,154 @@ Check that the correct version is installed and operational:
 ```
 git version 1.9.1
 ```
-`#` **`git `**
+`#` **`git`**
 
 [Display online help]
 
-Now that the software has been installed, we'll use it to create and manage software repositories.
+Now that the software has been installed, we'll use it to create and manage software repositories. For that, we'll connect now a simple user, as we don't need any priviledge anymore. Your user is group**X** and password ilovegit**X** where **X** has to be replaced by the group number given by your instructor. Please substitute **X** later in this document by your group number.
+
 # Using Git
 Estimated time: 15 minutes.
+
+## Git setup
+
+`userX:~$` **`git config --global user.name groupX`**
+
+`userX:~$` **`git config --global user.email gitlab_groupX@gmail.com`**
+ 
+`userX:~$` **`git config core.editor vim`**
+
+This will allow us to get correct information in the log and be able to track who does what, especially when reviewing history and also when using GitLab later. For edition uses either vim if your comfortable with vi type of editors or emacs, or do not use it to use a basic beginners friendly one. Check with:
+
+`userX:~$` **`git config -l`**
+```
+user.name=groupX
+user.email=gitlab_groupX@gmail.com
+[...]
+core.editor=vim
+```
+
+This is stored in your `~/.gitconfig` file.
+
 ## The first local repository
 In order to be able to manage a first repository, the easiest approach is to create a local one. For that issue:
 
-`userX$` **`git init`**
+`userX:~$` **`git init localrepo`**
 ```
+Initialized empty Git repository in /home/groupX/localrepo/.git/
+```
+`userX:~$` **`ls -al localrepo`**
+```
+total 12
+drwxrwxr-x 3 group3 group3 4096 Mar 11 19:07 .
+drwxr-xr-x 4 group3 group3 4096 Mar 11 19:13 ..
+drwxrwxr-x 7 group3 group3 4096 Mar 11 19:07 .git
 ```
 
-So we've got a success  ! Of course, we do not really go far, but what can you expect from an hello-world example ;-)
-However, we can already get some info on our modified docker environment:
+So we've got a success  ! Of course, we do not really go far, but you see that you now have a place to store Git metadata
+We can now start using it to manage some content. But before that, we want to configure our Git setup a little.
 
-### Adding content
-### ...
+## Managing content in your local repository
+
+We will add some content in our local directory, start making modifications, verify how Git react and try to check them in.
+
+`userX:~$` **`cp -a /etc/ssh localrepo/`**
+
+`userX:~$` **`cd localrepo/`**
+
+`userX:~/localrepo$` **`cd localrepo/`**
+
+`userX:~/localrepo$` **`ls ssh`**
+```
+moduli  ssh_config  sshd_config  ssh_host_dsa_key.pub  ssh_host_ecdsa_key.pub  ssh_host_ed25519_key.pub  ssh_host_rsa_key.pub
+```
+`userX:~/localrepo$` **`git status`**
+```
+On branch master
+
+Initial commit
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+        ssh/
+
+nothing added to commit but untracked files present (use "git add" to track)
+```
+
+Si Git suggest that we add the new created directory to track it and its content in the future, so we can manage its history as modifications are made to it. Let's do that.
+
+`userX:~/localrepo$` **`git add ssh`**
+
+`userX:~/localrepo$` **`git status`**
+```
+On branch master
+
+Initial commit
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+
+        new file:   ssh/moduli
+        new file:   ssh/ssh_config
+        new file:   ssh/ssh_host_dsa_key.pub
+        new file:   ssh/ssh_host_ecdsa_key.pub
+        new file:   ssh/ssh_host_ed25519_key.pub
+        new file:   ssh/ssh_host_rsa_key.pub
+        new file:   ssh/sshd_config
+
+```
+So Git is now aware that we want to keep track of all these files. We will now initiate our repository with this first content, enter in the editor to comment on the reasons we do that change and validate this.
+
+`userX:~/localrepo$` **`git commit`**
+
+**`Import of content into the repository`**
+
+**`- Adds ssh conf files`**
+```
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+#
+# Initial commit
+#
+# Changes to be committed:
+#       new file:   ssh/moduli
+#       new file:   ssh/ssh_config
+#       new file:   ssh/ssh_host_dsa_key.pub
+#       new file:   ssh/ssh_host_ecdsa_key.pub
+#       new file:   ssh/ssh_host_ed25519_key.pub
+#       new file:   ssh/ssh_host_rsa_key.pub
+#       new file:   ssh/sshd_config
+#
+```
+```
+[master (root-commit) da8a15f] Import of content into the repository
+ 7 files changed, 407 insertions(+)
+ create mode 100644 ssh/moduli
+ create mode 100644 ssh/ssh_config
+ create mode 100644 ssh/ssh_host_dsa_key.pub
+ create mode 100644 ssh/ssh_host_ecdsa_key.pub
+ create mode 100644 ssh/ssh_host_ed25519_key.pub
+ create mode 100644 ssh/ssh_host_rsa_key.pub
+ create mode 100644 ssh/sshd_config
+```
+`userX:~/localrepo$` **`git log`**
+```
+commit da8a15fdd80aa40c97b4501d1a342eba052639fd
+Author: groupX <gitlab_groupX@gmail.com>
+Date:   Fri Mar 11 19:33:54 2016 +0100
+
+    Import of content into the repository
+    
+    - Adds ssh conf files
+```
+
+As you can see, Git identifies our import by a unique commit ID, which will remain valid during the whole life of the project.
+
+Now that we have some content, let's start making modifications and see how Git deals with them ! Edit 2 files in the `ssh` directory, modify some content in it (we do not care of correctnees at that point) and validate these 2 set of modifications.
+
+And can thus gives us more useful details.
 
 ## The second remote repository
 In order to have a more interesting environment, we'll now look for 
