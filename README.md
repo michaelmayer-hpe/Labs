@@ -1,3 +1,3 @@
-# Lab-git
+# Labs
 
-This is Lab material for a git training
+This is a repository to host Lab materials for trainings
