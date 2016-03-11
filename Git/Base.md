@@ -212,9 +212,339 @@ Date:   Fri Mar 11 19:33:54 2016 +0100
 
 As you can see, Git identifies our import by a unique commit ID, which will remain valid during the whole life of the project.
 
-Now that we have some content, let's start making modifications and see how Git deals with them ! Edit 2 files in the `ssh` directory, modify some content in it (we do not care of correctnees at that point) and validate these 2 set of modifications.
+Now that we have some content, let's start making modifications and see how Git deals with them ! Edit 2 files in the `ssh` directory, modify some content in it (we do not care of correctness at that point) and validate these 2 sets of modifications. Review your modification (expressed as a patch format - lines starting with a '+' will be added and those starting with a '-' will be removed):
 
-And can thus gives us more useful details.
+`userX:~/localrepo$` **`git status`**
+```
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   ssh/ssh_config
+        modified:   ssh/sshd_config
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+`userX:~/localrepo$` **`git diff`**
+```
+diff --git a/ssh/ssh_config b/ssh/ssh_config
+index 3810e13..4bdd247 100644
+--- a/ssh/ssh_config
++++ b/ssh/ssh_config
+@@ -1,3 +1,6 @@
++#   RhostsRSAAuthentication no
++#   RSAAuthentication yes
++#   PasswordAuthentication yes
+ 
+ # This is the ssh client system-wide configuration file.  See
+ # ssh_config(5) for more information.  This file provides defaults for
+@@ -20,9 +23,6 @@ Host *
+ #   ForwardAgent no
+ #   ForwardX11 no
+ #   ForwardX11Trusted yes
+-#   RhostsRSAAuthentication no
+-#   RSAAuthentication yes
+-#   PasswordAuthentication yes
+ #   HostbasedAuthentication no
+ #   GSSAPIAuthentication no
+ #   GSSAPIDelegateCredentials no
+diff --git a/ssh/sshd_config b/ssh/sshd_config
+index fa6377d..38ef297 100644
+--- a/ssh/sshd_config
++++ b/ssh/sshd_config
+@@ -22,6 +22,7 @@ ServerKeyBits 1024
+ # Logging
+ SyslogFacility AUTH
+ LogLevel INFO
++#AuthorizedKeysFile    %h/.ssh/authorized_keys
+ 
+ # Authentication:
+ LoginGraceTime 120
+@@ -30,7 +31,6 @@ StrictModes yes
+ 
+ RSAAuthentication yes
+ PubkeyAuthentication yes
+-#AuthorizedKeysFile    %h/.ssh/authorized_keys
+ 
+ # Don't read the user's ~/.rhosts and ~/.shosts files
+ IgnoreRhosts yes
+@@ -61,12 +61,12 @@ ChallengeResponseAuthentication no
+ #GSSAPIAuthentication no
+ #GSSAPICleanupCredentials yes
+ 
++#UseLogin no
+ X11Forwarding yes
+ X11DisplayOffset 10
+ PrintMotd no
+ PrintLastLog yes
+ TCPKeepAlive yes
+-#UseLogin no
+ 
+ #MaxStartups 10:30:60
+ #Banner /etc/issue.net
+```
+These modifications are for now in your working directory. Nothing happened to your repository. You can easily cancel all these modifications if you want (Hint use `git reset`). Now, as previously, we'll use the `git add` command to place these changes in the staging area. From there, you'll be able to add them to your repository if you want. Git can help you commit only changes relevant to a coherent modification. For that use the following (do not choose all modifications):
+
+`userX:~/localrepo$` **`git add -p`**
+```
+diff --git a/ssh/ssh_config b/ssh/ssh_config
+index 3810e13..4bdd247 100644
+--- a/ssh/ssh_config
++++ b/ssh/ssh_config
+@@ -1,3 +1,6 @@
++#   RhostsRSAAuthentication no
++#   RSAAuthentication yes
++#   PasswordAuthentication yes
+ 
+ # This is the ssh client system-wide configuration file.  See
+ # ssh_config(5) for more information.  This file provides defaults for
+Stage this hunk [y,n,q,a,d,/,j,J,g,e,?]? y
+@@ -20,9 +23,6 @@ Host *
+ #   ForwardAgent no
+ #   ForwardX11 no
+ #   ForwardX11Trusted yes
+-#   RhostsRSAAuthentication no
+-#   RSAAuthentication yes
+-#   PasswordAuthentication yes
+ #   HostbasedAuthentication no
+ #   GSSAPIAuthentication no
+ #   GSSAPIDelegateCredentials no
+Stage this hunk [y,n,q,a,d,/,K,g,e,?]? y
+diff --git a/ssh/sshd_config b/ssh/sshd_config
+index fa6377d..38ef297 100644
+--- a/ssh/sshd_config
++++ b/ssh/sshd_config
+@@ -22,6 +22,7 @@ ServerKeyBits 1024
+ # Logging
+ SyslogFacility AUTH
+ LogLevel INFO
++#AuthorizedKeysFile    %h/.ssh/authorized_keys
+ 
+ # Authentication:
+ LoginGraceTime 120
+Stage this hunk [y,n,q,a,d,/,j,J,g,e,?]? n
+@@ -30,7 +31,6 @@ StrictModes yes
+ 
+ RSAAuthentication yes
+ PubkeyAuthentication yes
+-#AuthorizedKeysFile    %h/.ssh/authorized_keys
+ 
+ # Don't read the user's ~/.rhosts and ~/.shosts files
+ IgnoreRhosts yes
+Stage this hunk [y,n,q,a,d,/,K,j,J,g,e,?]? n
+@@ -61,12 +61,12 @@ ChallengeResponseAuthentication no
+ #GSSAPIAuthentication no
+ #GSSAPICleanupCredentials yes
+ 
++#UseLogin no
+ X11Forwarding yes
+ X11DisplayOffset 10
+ PrintMotd no
+ PrintLastLog yes
+ TCPKeepAlive yes
+-#UseLogin no
+ 
+ #MaxStartups 10:30:60
+ #Banner /etc/issue.net
+Stage this hunk [y,n,q,a,d,/,K,g,s,e,?]? y
+```
+
+In fact, as a best practice, you should systematically use that `-p` option in order to select precisely the modifications which are part of a commit you want to create that will be documented using the editor during the commit. Especially, contrary to what git says, avoid using `git commit -a` especially blindly when you have not touched your repository in the last 10 days e.g.
+
+`userX:~/localrepo$` **`git status`**
+```
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        modified:   ssh/ssh_config
+        modified:   ssh/sshd_config
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   ssh/sshd_config
+```
+
+`userX:~/localrepo$` **`git diff`**
+```
+diff --git a/ssh/sshd_config b/ssh/sshd_config
+index 4c294c6..38ef297 100644
+--- a/ssh/sshd_config
++++ b/ssh/sshd_config
+@@ -22,6 +22,7 @@ ServerKeyBits 1024
+ # Logging
+ SyslogFacility AUTH
+ LogLevel INFO
++#AuthorizedKeysFile    %h/.ssh/authorized_keys
+ 
+ # Authentication:
+ LoginGraceTime 120
+@@ -30,7 +31,6 @@ StrictModes yes
+ 
+ RSAAuthentication yes
+ PubkeyAuthentication yes
+-#AuthorizedKeysFile    %h/.ssh/authorized_keys
+ 
+ # Don't read the user's ~/.rhosts and ~/.shosts files
+ IgnoreRhosts yes
+```
+So one modification wasn't accepted and is shown with the diff command. The other modifications are now in the staging area, ready to be committed. However, as indicated by Git, you can still revert these modification, if you realize they were incorrect. But how can you review them before committing to be sure ?
+
+`userX:~/localrepo$` **`git diff --cached`**
+```
+diff --git a/ssh/ssh_config b/ssh/ssh_config
+index 3810e13..4bdd247 100644
+--- a/ssh/ssh_config
++++ b/ssh/ssh_config
+@@ -1,3 +1,6 @@
++#   RhostsRSAAuthentication no
++#   RSAAuthentication yes
++#   PasswordAuthentication yes
+ 
+ # This is the ssh client system-wide configuration file.  See
+ # ssh_config(5) for more information.  This file provides defaults for
+@@ -20,9 +23,6 @@ Host *
+ #   ForwardAgent no
+ #   ForwardX11 no
+ #   ForwardX11Trusted yes
+-#   RhostsRSAAuthentication no
+-#   RSAAuthentication yes
+-#   PasswordAuthentication yes
+ #   HostbasedAuthentication no
+ #   GSSAPIAuthentication no
+ #   GSSAPIDelegateCredentials no
+diff --git a/ssh/sshd_config b/ssh/sshd_config
+index fa6377d..38ef297 100644
+--- a/ssh/sshd_config
++++ b/ssh/sshd_config
+@@ -61,12 +61,12 @@ ChallengeResponseAuthentication no
+ #GSSAPIAuthentication no
+ #GSSAPICleanupCredentials yes
+ 
++#UseLogin no
+ X11Forwarding yes
+ X11DisplayOffset 10
+ PrintMotd no
+ PrintLastLog yes
+ TCPKeepAlive yes
+-#UseLogin no
+ 
+ #MaxStartups 10:30:60
+ #Banner /etc/issue.net
+```
+`userX:~/localrepo$` **`git commit`**
+**`Moves comments around`**
+
+**`- Improve comments for ssh configuration`**
+**`- another modification for sshd config`**
+```
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#       modified:   ssh/ssh_config
+#       modified:   ssh/sshd_config
+#
+# Changes not staged for commit:
+#       modified:   ssh/sshd_config
+#
+[master d63d43d] Moves comments around
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+```
+`userX:~/localrepo$` **`git log`**
+```
+commit d63d43d38e6cce80e8ad4240ecb03f033a84dbf7
+Author: group3 <gitlab_group3@gmail.com>
+Date:   Fri Mar 11 20:30:54 2016 +0100
+
+    Moves comments around
+    
+    - Improve comments for ssh configuration
+    - another modification for sshd config
+
+commit da8a15fdd80aa40c97b4501d1a342eba052639fd
+Author: group3 <gitlab_group3@gmail.com>
+Date:   Fri Mar 11 19:33:54 2016 +0100
+
+    Import of content into the repository
+    
+    - Adds ssh conf files
+```
+`userX:~/localrepo$` **`git status`**
+```
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   ssh/sshd_config
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+If you used -a then git would have also included your last modification which wasn't staged. This is not what we want, so just use `git commit`. Our last modification is still in our working directory waiting to be finalyzed and committed.
+
+As you can start to see, there is *always* a way to solve an issue with Git. But if you now look at the man pages of say the `git log`, you will see how rich each subcommand is, so very powerful, but also sometimes confusing, espeically for newcomers with regards to finding the right option to perform the action you look at.
+
+`userX:~/localrepo$` **`man git-log | wc -l`**
+```
+1449
+```
+`userX:~/localrepo$` **`man git-log | grep -E '^\s*-' | wc -l`**
+```
+167
+```
+Yes, 167 options to the single `git log` command. Suffice to say that lab will just cover the surface of Git, as we're all still learning (Linus excepted ;-) But let's explore some useful of them.
+
+`userX:~/localrepo$` **`git log --oneline`**
+```
+d63d43d Moves comments around
+da8a15f Import of content into the repository
+```
+`userX:~/localrepo$` **`git log --oneline --stat`**
+```
+d63d43d Moves comments around
+ ssh/ssh_config  | 6 +++---
+ ssh/sshd_config | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+da8a15f Import of content into the repository
+ ssh/moduli                   | 261 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ ssh/ssh_config               |  54 ++++++++++++++++++++++
+ ssh/ssh_host_dsa_key.pub     |   1 +
+ ssh/ssh_host_ecdsa_key.pub   |   1 +
+ ssh/ssh_host_ed25519_key.pub |   1 +
+ ssh/ssh_host_rsa_key.pub     |   1 +
+ ssh/sshd_config              |  88 +++++++++++++++++++++++++++++++++++
+ 7 files changed, 407 insertions(+)
+```
+`userX:~/localrepo$` **`git log --graph --decorate --oneline`**
+```
+* d63d43d (HEAD, master) Moves comments around
+* da8a15f Import of content into the repository
+```
+
+That last one will become more useful later one, once we have more content in our history.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## The second remote repository
 In order to have a more interesting environment, we'll now look for 
