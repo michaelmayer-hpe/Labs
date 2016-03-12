@@ -557,7 +557,74 @@ Answer the questions:
 
 Estimated time: 30 minutes.
 
-# Web based interaction with Git using GitLab
+# Code and project management with Git using GitLab
 
-## ...
-## ...
+Estimated time: 45 minutes.
+
+GitLab is a software and a company.
+GitLab, the software, is a web-based Git repository manager with code reviews, issue tracking, continuous integration, and wikis features.
+It can be compared to Github, with one major difference: it is an open-source project, that you can run on your own infrastructure.
+GitLab is very active, and released on a monthly basis.
+
+GitLab, the company, has 37 salaried employees and more than 700 open source contributors.
+
+## Access GitLab
+
+For this lab, we have installed a GitLab instance, accessible at *ip_adress:port*.
+
+With your favorite browser, access this address, and you will land on the homepage of our GitLab instance. 
+
+An account has already been created for you. The username is **groupXXX**, and the password is **ilovegitXXX**, where **XXX** is your group number.
+Enter them into the *Sign In* dialog, and you should enter the wonderful world of GitLab!
+
+## Discover GitLab with our Awesome Project
+
+The GitLab instance has been populated with a small project, that we will use to discover GitLab. 
+The **Awesome Project** (yes, this is the name of our project) is a revolutionary project that deals with fruits, vegetables, numbers, colors and other things.
+
+Take some time to discover the different panels of GitLab:
+
+- The **Dashboard** centralises the information *you* need for your work
+  - the **Groups** you are part of
+  - the **Milestones** of project you work on
+  - the **Issues** currently assigned to you, from any project
+  - the **Merge Request**\* currently assigned to you, from any project
+  - and on the right side, the **Projects** list you are part of
+
+* a *Merge Request* is a proposition of code for review, to start a discussion prior to get the code accepted and merged (or reworked if needed!). We will see that in details later.
+
+When you select a **project**, you will find some information about the *git project* itself, like the number of commits, or the size of the repository.
+
+- description of the project view
+
+## Loacally clone Awesome Project
+
+- ssh keys
+- git clone
+
+## Edit your first file
+
+As you will become an active contributor of the **Awesome Project**, your first task will be to add you to the list of contibutors.
+
+- edit README.md from the UI
+- master is protected, MR!
+
+## Enter your first issue
+
+Our project is not perfect; it is containing some bugs. Each group will have to discover one bug, create an issue and assign it to another group.
+
+- list of issue
+- list a assignee
+- details about commit ref
+
+## Fix your first issue with your first merge request
+
+- SSH keys
+- own branch
+- details about commit ref, issue ref, @group, etc.
+- (admin: after the MR is opened, ask for RN)
+
+## Look at the network graph
+
+## Compare commits, branches...
+
