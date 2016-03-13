@@ -757,15 +757,44 @@ d63d43d Moves comments around
 da8a15f Import of content into the repository
 ```
 
+So `master` has no knowledge of the feature branch, let's merge it into this branch.
 
+`userX:~/localrepo$` **`git merge --no-ff comment`**
+```
+Merge branch 'comment'
 
+- Adds more comments and activatr some features
+# Please enter a commit message to explain why this merge is necessary,
+# especially if it merges an updated upstream into a topic branch.
+#
+# Lines starting with '#' will be ignored, and an empty message aborts
+# the commit.
+Merge made by the 'recursive' strategy.
+ ssh/ssh_config  | 4 ++--
+ ssh/sshd_config | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+```
+`userX:~/localrepo$` **`git log --graph --decorate --oneline`**
+```
+*   a18fdd3 (HEAD, master) Merge branch 'comment'
+|\  
+| * 7965bf5 (comment) Adds limits
+| * df3e445 Activate banner + comments moved again
+| * 82f564d Change comments
+|/  
+* d5a50f4 Modify a key
+* 42b2008 Revert "Moves comments around"
+* d63d43d Moves comments around
+* da8a15f Import of content into the repository
+```
+`userX:~/localrepo$` **`git branch -d comment`**
+```
+Deleted branch comment (was 7965bf5).
+```
 
+Using the `--no-ff` option has allowed us to keep track of the origin of the path set (a feature branch) and integrate all the changes into our `master` branch which now contains everything we want. Of course, sometimes rebasing or merging doesn't succeed and you have to deal with merge conflicts, solving them, before being able to continue. Git guides you throughout the process so you can fix your conflicts. You should now have an understanding of all the basics to manipulate content with Git. It's then time to collaborate with others.
 
-
-
-
-
-## The second remote repository
+## Working with a remote repository
 In order to have a more interesting environment, we'll now look for 
 
 Answer the questions:
@@ -774,7 +803,9 @@ Answer the questions:
 
 # Best practices and collaborative development with Git
 
-Estimated time: 30 minutes.
+Estimated time: 10 minutes.
+
+You should read the blog article from Vincent Driessen available at http://nvie.com/posts/a-successful-git-branching-model/ to familiarize yourself with some best practices around collaborative development.
 
 # Web based interaction with Git using GitLab
 
