@@ -989,7 +989,7 @@ To ssh://group3@10.3.222.22/home/group3/localrepo
 
 Estimated time: 10 minutes.
 
-You should read the blog article from Vincent Driessen available at http://nvie.com/posts/a-successful-git-branching-model/ to familiarize yourself with some best practices around collaborative development.
+You should read the blog article from Vincent Driessen available at http://nvie.com/posts/a-successful-git-branching-model/ to familiarize yourself with some best practices around collaborative development. Also read as well https://www.atlassian.com/git/tutorials/comparing-workflows.
 
 # Web based interaction with Git using GitLab
 
