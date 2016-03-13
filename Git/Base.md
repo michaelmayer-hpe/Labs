@@ -591,7 +591,7 @@ Take some time to discover the different panels of GitLab:
   - the **Merge Request**\* currently assigned to you, from any project
   - and on the right side, the **Projects** list you are part of
 
-* a *Merge Request* is a proposition of code for review, to start a discussion prior to get the code accepted and merged (or reworked if needed!). We will see that in details later.
+* a *Merge Request* is a proposition of code for review. It is used to start a discussion prior to get the code accepted and merged (or reworked if needed!). We will see that in details shortly.
 
 When you select a **project**, you will find some information about the *git project* itself, like the number of commits, or the size of the repository.
 
