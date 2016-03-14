@@ -594,7 +594,7 @@ Take some time to discover the different panels of GitLab:
   - **Merge Request**\* currently assigned to you, from any project
   - **Snippets** are the digital equivalent of post-it notes
 
-* a *Merge Request* is a proposition of code to be reviewed. It is used to start a discussion prior to get the code accepted and merged (or reworked if needed!). We will see that in details shortly.
+\* a *Merge Request* is a proposition of code to be reviewed. It is used to start a discussion prior to get the code accepted and merged (or reworked if needed!). We will see that in details shortly.
 
 When you select a **project**, you will find some information about the *git project* itself, like the number of commits, or the size of the repository. Under those numbers, you will find a description of the project; we will see later how to edit this description.
 
@@ -628,18 +628,23 @@ As you will become an active contributor of the **Awesome Project**, your first 
 
 You have seen this list in the description of the project. This description is actually stored into a file that is part of the project, like any other one. From the **Files** panel you will find it at the root of the project, name **README.md**. Navigate to it, and click the **edit** button.
 Within this editor, edit the line corresponding to your group number and write your names. You can review your changes with the **Preview changes** button. 
-**Markdown** is used everywhere across GitLab, in order to format any text, like issue descriptions or wiki pages. Please take some time to discover [TODO: link] the GitLab **Markdown** guide.    
+**Markdown** is used everywhere across GitLab, in order to format any text, like issue descriptions or wiki pages. Please take some time to discover the [GitLab Markdown guide](http://10.3.222.22:5454/help/markdown/markdown.md).
 
 Now it gets interesting. As your are **developer** of the project, not **master** or **owner**, you don't have write permission to the `master` branch. In order to have your contribution included into the `master` branch, you have to create and submit a **merge request**. 
 
-// TODO :
-Click the **Use a merge request** button, enter a concise description of the change your are proposing, assign it to a repository master, and submit the merge request. This will create a new branch with one commit containing your change. This branch will be merged into `master` branch by GitLab, when the assignee will accept your merge request.
+Verify that **Start a new merge request with these changes** is checked. Enter a concise description of the change your are proposing in **Commit message**, and choose a relevant branch name. Upon submission, a commit will be created on this new branch, and the **Merge Request** dialog will open.
+Fill the required fields (description, milestone, label(s)), and **assign** the merge request to one of the project maintainers. The commits inclued in this merge request are listed under the form. You have one last opportunity to review them before submitting the merge request.
+You branch will be automatically merged into `master` when the assignee will accept your merge request, making your changes available for everybody.
+
+Once your merge request is accepted, you can check your are now listed as contributors in the project description.
 
 ## Enter your first issue
 
+*In this section, less details are given. This is done on purpose, so you can try by your own to find the best solution to achieve given tasks.*
+
 Our project is not perfect; it is containing some bugs. Each group will have to discover one bug, and follow it up until it gets fixed.
 
-Here is the bugs we are aware of, each of them assigned to a group:
+Here are bugs that lovely users reported to us; each of them is assigned to a group:
 
 1. Group 1: something is wrong with the **vegetables list**
 2. Group 2: the **ascending numbers feature** looks to be broken
@@ -652,15 +657,31 @@ Here is the bugs we are aware of, each of them assigned to a group:
 9. Group 9: the **colors** feature behaves strangely
 10. Group 10: something is wrong with the **drinks list**
 
+Now you have to gather additional information in order to open an issue containing as much details as possible.
+Follow this typical workflow in order to report an issue:
 
-- details about commit ref
+- investigate the bug assigned to your group
+  - find the **file** containing the bug (each of those simple bugs are contained into a single file)
+  - in that file, find the guilty **line**
+  - using GitLab features, discover the **commit** that introduced this line, and its **author**
+- report the issue
+  - write a precise **description** of the problem, containing all information you gathered (file, line, commit, author...) \*
+  - fill additional fields like **tag** and **milestone**
+  - assign it to the **next group**. (Group1 assigns to Group2, Group2 to Group3 ... Group10 to Group1)
+
+\* [Special GitLab references](http://10.3.222.22:5454/help/markdown/markdown.md#special-gitlab-references) are **very** usefull to report an issue.
 
 ## Fix your first issue with your first merge request
 
-- SSH keys
-- own branch
-- details about commit ref, issue ref, @group, etc.
-- (admin: after the MR is opened, ask for RN)
+An issue is now assigned to you. It contains all information you need to start working on it and fix this nasty bug.
+
+Editing files from GitLab interface is usefull for small changeset, but it is not as usable as a real text editor.
+
+Within your local repository you have cloned at the beginning of this section, edit the relevant file to fix the bug.
+Don't be afraid, it should be as easy as modifying or removing a single line!
+
+Once you are happy with your modification, create a **new branch**, and **commit** your change. Then **push** it to the remote repository.
+Back to GitLab dashboard, GitLab will tell you that you have pushed a new branch; it will propose you to create a **merge request** based on this branch. Create a **merge request**; this is very similar to reporting an issue.
 
 ## Look at the network graph
 
