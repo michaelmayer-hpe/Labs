@@ -669,19 +669,20 @@ Follow this typical workflow in order to report an issue:
   - fill additional fields like **tag** and **milestone**
   - assign it to the **next group**. (Group1 assigns to Group2, Group2 to Group3 ... Group10 to Group1)
 
-\* [Special GitLab references](http://10.3.222.22:5454/help/markdown/markdown.md#special-gitlab-references) are **very** usefull to report an issue.
+\* [Special GitLab references](http://10.3.222.22:5454/help/markdown/markdown.md#special-gitlab-references) are **very** useful to report an issue.
 
 ## Fix your first issue with your first merge request
 
 An issue is now assigned to you. It contains all information you need to start working on it and fix this nasty bug.
 
-Editing files from GitLab interface is usefull for small changeset, but it is not as usable as a real text editor.
+Editing files from GitLab interface is useful for small changeset, but it is not as usable as a real text editor.
 
 Within your local repository you have cloned at the beginning of this section, edit the relevant file to fix the bug.
 Don't be afraid, it should be as easy as modifying or removing a single line!
 
 Once you are happy with your modification, create a **new branch**, and **commit** your change. Then **push** it to the remote repository.
-Back to GitLab dashboard, GitLab will tell you that you have pushed a new branch; it will propose you to create a **merge request** based on this branch. Create a **merge request**; this is very similar to reporting an issue.
+Back to GitLab dashboard, GitLab will tell you that you have pushed a new branch; it will propose you to create a **merge request** based on this branch. 
+Add any relevant information to your **merge request**. In particular, make sure the description contains **Fixes #xxx** where "xxx" is the issue number you were assigned. By doing this, you will allow GitLab to **automatically close** this issue once your merge request is accepted.
 
 ## Look at the network graph
 
