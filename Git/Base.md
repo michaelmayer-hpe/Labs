@@ -83,7 +83,7 @@ Estimated time: 25 minutes.
 
 `userX:~$` **`git config --global user.name groupX`**
 
-`userX:~$` **`git config --global user.email gitlab_groupX@gmail.com`**
+`userX:~$` **`git config --global user.email gitlab_groupX@hpe.com`**
  
 `userX:~$` **`git config core.editor vim`**
 
@@ -92,7 +92,7 @@ This will allow us to get correct information in the log and be able to track wh
 `userX:~$` **`git config -l`**
 ```
 user.name=groupX
-user.email=gitlab_groupX@gmail.com
+user.email=gitlab_groupX@hpe.com
 [...]
 core.editor=vim
 ```
