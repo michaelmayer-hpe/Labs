@@ -594,7 +594,7 @@ Take some time to discover the different panels of GitLab:
   - **Merge Request**\* currently assigned to you, from any project
   - **Snippets** are the digital equivalent of post-it notes
 
-* a *Merge Request* is a proposition of code for review. It is used to start a discussion prior to get the code accepted and merged (or reworked if needed!). We will see that in details shortly.
+* a *Merge Request* is a proposition of code to be reviewed. It is used to start a discussion prior to get the code accepted and merged (or reworked if needed!). We will see that in details shortly.
 
 When you select a **project**, you will find some information about the *git project* itself, like the number of commits, or the size of the repository. Under those numbers, you will find a description of the project; we will see later how to edit this description.
 
@@ -627,18 +627,32 @@ On the **awesome-project** homepage, you will find the URL to be used to clone t
 As you will become an active contributor of the **Awesome Project**, your first task will be to add your names to the contributors list.
 
 You have seen this list in the description of the project. This description is actually stored into a file that is part of the project, like any other one. From the **Files** panel you will find it at the root of the project, name **README.md**. Navigate to it, and click the **edit** button.
-From this editor, edit the line corresponding to your group number to write your names. You can review your changes with the **Preview changes** button.
+Within this editor, edit the line corresponding to your group number and write your names. You can review your changes with the **Preview changes** button. 
+**Markdown** is used everywhere across GitLab, in order to format any text, like issue descriptions or wiki pages. Please take some time to discover [TODO: link] the GitLab **Markdown** guide.    
 
-Now it gets interesting. As your are **developer** of the project, not **master** or **owner**, you don't have write permission to the `master` branch. In order to have your contribution included into the `master` branch, you have to create and submit a **merge request**.  
+Now it gets interesting. As your are **developer** of the project, not **master** or **owner**, you don't have write permission to the `master` branch. In order to have your contribution included into the `master` branch, you have to create and submit a **merge request**. 
 
-- master is protected, MR!
+// TODO :
+Click the **Use a merge request** button, enter a concise description of the change your are proposing, assign it to a repository master, and submit the merge request. This will create a new branch with one commit containing your change. This branch will be merged into `master` branch by GitLab, when the assignee will accept your merge request.
 
 ## Enter your first issue
 
-Our project is not perfect; it is containing some bugs. Each group will have to discover one bug, create an issue and assign it to another group.
+Our project is not perfect; it is containing some bugs. Each group will have to discover one bug, and follow it up until it gets fixed.
 
-- list of issue
-- list a assignee
+Here is the bugs we are aware of, each of them assigned to a group:
+
+1. Group 1: something is wrong with the **vegetables list**
+2. Group 2: the **ascending numbers feature** looks to be broken
+3. Group 3: the **black and white** feature behaves strangely
+4. Group 4: **odd numbers** are sometimes not really odd numbers
+5. Group 5: **France flag colors** are blue, white and red, nothing more
+6. Group 6: the **descending numbers feature** looks to be broken
+7. Group 7: something is wrong with the **fruits list**
+8. Group 8: **even numbers** are sometimes not really even numbers
+9. Group 9: the **colors** feature behaves strangely
+10. Group 10: something is wrong with the **drinks list**
+
+
 - details about commit ref
 
 ## Fix your first issue with your first merge request
