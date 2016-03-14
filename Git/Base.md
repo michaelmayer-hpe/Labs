@@ -584,7 +584,7 @@ The **Awesome Project** (yes, this is the name of our project) is a revolutionar
 
 Take some time to discover the different panels of GitLab:
 
-- The **Dashboard** centralises the information *you* need for your work:
+- The **Dashboard** centralizes the information *you* need for your work:
   - **Projects** you have access to
   - **Todos** are similar to notifications, listing what is new and what you need to pay attention to
   - **Activity** lists all actions taken by everybody working on same projects than you
@@ -600,13 +600,13 @@ When you select a **project**, you will find some information about the *git pro
 
 The left-hand side menu now displays project-related entries. Take some time to discover all of them, and navigate in the project. In particular, but not exclusively, give a look to the **Files** of the project, the **Commits** list (from there, don't miss the **Network** graph!), and then **Issues** and **Merge Requests**.
 
-## Loacally clone Awesome Project
+## Locally clone Awesome Project
 
 In order to get access to git repositories managed by GitLab, you need to configure an SSH key in your account.
 
 To achieve that, access your Profile configuration page. From the **Dashboard**, you have a direct access to your **Profile settings** on the left-hand side menu. Once you are there, you will find an entry called **SSH Keys** menu. Click there, and follow the instructions.
 
-During git operations, GitLab indentifies the user based on the email address configured in git. Knowing that, it is very important that your user name and email address are correctly configured. You can verify that by running:
+During git operations, GitLab identifies the user based on the email address configured in git. Knowing that, it is very important that your user name and email address are correctly configured. You can verify that by running:
 
 ```
 git config --global user.name
@@ -620,13 +620,17 @@ git config --global user.name "Group XXX"
 git config --global user.email "gitlab_groupXXX@hpe.com"
 ```
 
-On the **awesome-project** homepage, you will find the URL to be used to clone the project. Use it to clone the project on your machine, as you have learn previously.
+On the **awesome-project** homepage, you will find the URL to be used to clone the project. Clone the project on your machine, as you have learned previously. Congratulation, you are ready to go!
 
-## Edit your first file
+## Edit your first file from GitLab
 
-As you will become an active contributor of the **Awesome Project**, your first task will be to add you to the list of contibutors.
+As you will become an active contributor of the **Awesome Project**, your first task will be to add your names to the contributors list.
 
-- edit README.md from the UI
+You have seen this list in the description of the project. This description is actually stored into a file that is part of the project, like any other one. From the **Files** panel you will find it at the root of the project, name **README.md**. Navigate to it, and click the **edit** button.
+From this editor, edit the line corresponding to your group number to write your names. You can review your changes with the **Preview changes** button.
+
+Now it gets interesting. As your are **developer** of the project, not **master** or **owner**, you don't have write permission to the `master` branch. In order to have your contribution included into the `master` branch, you have to create and submit a **merge request**.  
+
 - master is protected, MR!
 
 ## Enter your first issue
