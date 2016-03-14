@@ -584,23 +584,43 @@ The **Awesome Project** (yes, this is the name of our project) is a revolutionar
 
 Take some time to discover the different panels of GitLab:
 
-- The **Dashboard** centralises the information *you* need for your work
-  - the **Groups** you are part of
-  - the **Milestones** of project you work on
-  - the **Issues** currently assigned to you, from any project
-  - the **Merge Request**\* currently assigned to you, from any project
-  - and on the right side, the **Projects** list you are part of
+- The **Dashboard** centralises the information *you* need for your work:
+  - **Projects** you have access to
+  - **Todos** are similar to notifications, listing what is new and what you need to pay attention to
+  - **Activity** lists all actions taken by everybody working on same projects than you
+  - **Groups** you are part of
+  - **Milestones** of any project you work on
+  - **Issues** currently assigned to you, from any project
+  - **Merge Request**\* currently assigned to you, from any project
+  - **Snippets** are the digital equivalent of post-it notes
 
 * a *Merge Request* is a proposition of code for review. It is used to start a discussion prior to get the code accepted and merged (or reworked if needed!). We will see that in details shortly.
 
-When you select a **project**, you will find some information about the *git project* itself, like the number of commits, or the size of the repository.
+When you select a **project**, you will find some information about the *git project* itself, like the number of commits, or the size of the repository. Under those numbers, you will find a description of the project; we will see later how to edit this description.
 
-- description of the project view
+The left-hand side menu now displays project-related entries. Take some time to discover all of them, and navigate in the project. In particular, but not exclusively, give a look to the **Files** of the project, the **Commits** list (from there, don't miss the **Network** graph!), and then **Issues** and **Merge Requests**.
 
 ## Loacally clone Awesome Project
 
-- ssh keys
-- git clone
+In order to get access to git repositories managed by GitLab, you need to configure an SSH key in your account.
+
+To achieve that, access your Profile configuration page. From the **Dashboard**, you have a direct access to your **Profile settings** on the left-hand side menu. Once you are there, you will find an entry called **SSH Keys** menu. Click there, and follow the instructions.
+
+During git operations, GitLab indentifies the user based on the email address configured in git. Knowing that, it is very important that your user name and email address are correctly configured. You can verify that by running:
+
+```
+git config --global user.name
+git config --global user.email
+```
+
+Your user name should be **Group XXX** and your email address **gitlab_groupXXX@hpe.com**, where **XXX** is your group number. If not, you can fix it by running:
+
+```
+git config --global user.name "Group XXX"
+git config --global user.email "gitlab_groupXXX@hpe.com"
+```
+
+On the **awesome-project** homepage, you will find the URL to be used to clone the project. Use it to clone the project on your machine, as you have learn previously.
 
 ## Edit your first file
 
