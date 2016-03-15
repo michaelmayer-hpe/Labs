@@ -441,6 +441,7 @@ index fa6377d..38ef297 100644
  
  #MaxStartups 10:30:60
  #Banner /etc/issue.net
+```
 
 `userX:~/localrepo$` **`git commit`**
 ```
