@@ -1118,6 +1118,15 @@ Once you are happy with your modification, create a **new branch**, and **commit
 Back to GitLab dashboard, GitLab will tell you that you have pushed a new branch; it will propose you to create a **merge request** based on this branch. 
 Add any relevant information to your **merge request**. In particular, make sure the description contains **Fixes #xxx** where "xxx" is the issue number you were assigned. By doing this, you will allow GitLab to **automatically close** this issue once your merge request is accepted.
 
-## Look at the network graph
+Assign it to the **previous group** (Group1 assigns to Group10, Group2 to Group1 ...)
 
-## Compare commits, branches...
+## Accept your first merge request
+
+A merge request is now assigned to you. Take some time to read it, understand what issue it addresses and how it resolves it.
+
+Now you have two choices:
+- if you are satisfied with the merge request, write a little comment saying so, and accept the merge request.
+- if you are **not** satisfied, add a comment explaining why. The assignee will be notified, and can argue or commit more things to improve the merge request.
+
+As a reviewer, the responsability of this code is now shared between you and the author. This is a very important step in a collaborating workflow.
+
