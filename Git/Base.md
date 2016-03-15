@@ -1014,7 +1014,7 @@ For this lab, we have installed a GitLab instance, accessible at *http://10.3.22
 
 With your favorite browser, access this address, and you will land on the homepage of our GitLab instance. 
 
-An account has already been created for you. The username is **groupXXX**, and the password is **ilovegitXXX**, where **XXX** is your group number.
+An account has already been created for you. The username is **groupX**, and the password is **ilovegitX**, where **X** is your group number.
 Enter them into the *Sign In* dialog, and you should enter the wonderful world of GitLab!
 
 ## Discover GitLab with our Awesome Project
@@ -1053,11 +1053,11 @@ git config --global user.name
 git config --global user.email
 ```
 
-Your user name should be **Group XXX** and your email address **gitlab_groupXXX@hpe.com**, where **XXX** is your group number. If not, you can fix it by running:
+Your user name should be **Group X** and your email address **gitlab_groupX@hpe.com**, where **X** is your group number. If not, you can fix it by running:
 
 ```
-git config --global user.name "Group XXX"
-git config --global user.email "gitlab_groupXXX@hpe.com"
+git config --global user.name "Group X"
+git config --global user.email "gitlab_groupX@hpe.com"
 ```
 
 On the **awesome-project** homepage, you will find the URL to be used to clone the project. Clone the project on your machine, as you have learned previously. Congratulation, you are ready to go!
