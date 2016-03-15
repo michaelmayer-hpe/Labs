@@ -24,7 +24,9 @@ This lab would not have been possible without work done by people at Atlassian a
 Estimated time for the lab is placed in front of each part.
 
 # Environment setup
-Estimated time: 15 minutes (including remote access to the platform described elsewhere)
+
+Estimated time: 10 minutes (including remote access to the platform described elsewhere)
+
 ## Git installation
 Git is available externaly from https://git-scm.com/downloads or using your distribution packages.
 Version 2.7.3 is the current stable release. The version used in this Lab will be the default version of Ubuntu LTS 14.04 1.9.1.
@@ -73,14 +75,15 @@ git version 1.9.1
 
 Now that the software has been installed, we'll use it to create and manage software repositories. For that, we'll connect now a simple user, as we don't need any priviledge anymore. Your user is group**X** and password ilovegit**X** where **X** has to be replaced by the group number given by your instructor. Please substitute **X** later in this document by your group number.
 
-# Using Git
-Estimated time: 15 minutes.
+# Using Git locally
+
+Estimated time: 25 minutes.
 
 ## Git setup
 
 `userX:~$` **`git config --global user.name groupX`**
 
-`userX:~$` **`git config --global user.email gitlab_groupX@gmail.com`**
+`userX:~$` **`git config --global user.email gitlab_groupX@hpe.com`**
  
 `userX:~$` **`git config core.editor vim`**
 
@@ -89,7 +92,7 @@ This will allow us to get correct information in the log and be able to track wh
 `userX:~$` **`git config -l`**
 ```
 user.name=groupX
-user.email=gitlab_groupX@gmail.com
+user.email=gitlab_groupX@hpe.com
 [...]
 core.editor=vim
 ```
@@ -111,10 +114,12 @@ drwxr-xr-x 4 group3 group3 4096 Mar 11 19:13 ..
 drwxrwxr-x 7 group3 group3 4096 Mar 11 19:07 .git
 ```
 
-So we've got a success  ! Of course, we do not really go far, but you see that you now have a place to store Git metadata
+So we've got a success  ! Of course, we do not really go far, but you see that you now have a place to store Git metadata.
 We can now start using it to manage some content. But before that, we want to configure our Git setup a little.
 
 ## Managing content in your local repository
+
+### Populating the repository
 
 We will add some content in our local directory, start making modifications, verify how Git react and try to check them in.
 
@@ -142,7 +147,7 @@ Untracked files:
 nothing added to commit but untracked files present (use "git add" to track)
 ```
 
-Si Git suggest that we add the new created directory to track it and its content in the future, so we can manage its history as modifications are made to it. Let's do that.
+Here Git suggest that we add the newly created directory to track it and its content in the future, so we can manage its history as modifications are made to it. Let's do that.
 
 `userX:~/localrepo$` **`git add ssh`**
 
@@ -211,6 +216,8 @@ Date:   Fri Mar 11 19:33:54 2016 +0100
 ```
 
 As you can see, Git identifies our import by a unique commit ID, which will remain valid during the whole life of the project.
+
+### Modifying content
 
 Now that we have some content, let's start making modifications and see how Git deals with them ! Edit 2 files in the `ssh` directory, modify some content in it (we do not care of correctness at that point) and validate these 2 sets of modifications. Review your modification (expressed as a patch format - lines starting with a '+' will be added and those starting with a '-' will be removed):
 
@@ -487,6 +494,8 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 If you used -a then git would have also included your last modification which wasn't staged. This is not what we want, so just use `git commit`. Our last modification is still in our working directory waiting to be finalyzed and committed.
 
+You may want to have a look at https://www.atlassian.com/git/tutorials/saving-changes for more discussions around these aspects.
+
 As you can start to see, there is *always* a way to solve an issue with Git. But if you now look at the man pages of say the `git log`, you will see how rich each subcommand is, so very powerful, but also sometimes confusing, espeically for newcomers with regards to finding the right option to perform the action you look at.
 
 `userX:~/localrepo$` **`man git-log | wc -l`**
@@ -497,7 +506,7 @@ As you can start to see, there is *always* a way to solve an issue with Git. But
 ```
 167
 ```
-Yes, 167 options to the single `git log` command. Suffice to say that lab will just cover the surface of Git, as we're all still learning (Linus excepted ;-) But let's explore some useful of them.
+Yes, 167 options to the single `git log` command. Suffice to say that lab will just cover the surface of Git, as we're all still learning (Linus excepted ;-) But let's explore some useful among them.
 
 `userX:~/localrepo$` **`git log --oneline`**
 ```
@@ -526,36 +535,461 @@ da8a15f Import of content into the repository
 * da8a15f Import of content into the repository
 ```
 
-That last one will become more useful later one, once we have more content in our history.
+That last one will become more useful later one, once we have more content in our history. But these commands may also help us reverting changes. You may again want to look at this page https://www.atlassian.com/git/tutorials/inspecting-a-repository for more insights
 
+### Reverting modifications
 
+Of course, you may make mistakes and revert your modifications sometimes. For example, you currently have a unvalidated modification in your working directory. Revert it with `git checkout`
 
+`userX:~/localrepo$` **`git status`**
+```
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
 
+        modified:   ssh/sshd_config
 
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
 
+        modified:   ssh/sshd_config
+```
+`userX:~/localrepo$` **`git checkout -- ssh/sshd_config`**
 
+`userX:~/localrepo$` **`git status`**
+```
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
 
+        modified:   ssh/sshd_config
 
+```
+So you lost the local modifications made which were not added yet. Now what about the one committed if you also don't want it either ?
 
+`userX:~/localrepo$` **`git reset HEAD ssh/sshd_config`**
+```
+Unstaged changes after reset:
+M       ssh/sshd_config
+```
+`userX:~/localrepo$` **`git status`**
+```
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
 
+        modified:   ssh/sshd_config
 
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+`userX:~/localrepo$` **`git diff`**
+```
+diff --git a/ssh/sshd_config b/ssh/sshd_config
+index 4c294c6..7449d4d 100644
+--- a/ssh/sshd_config
++++ b/ssh/sshd_config
+@@ -4,8 +4,8 @@
+ # What ports, IPs and protocols we listen for
+ Port 22
+ # Use these options to restrict which interfaces/protocols sshd will bind to
+-#ListenAddress ::
+ #ListenAddress 0.0.0.0
++#ListenAddress ::
+ Protocol 2
+ # HostKeys for protocol version 2
+ HostKey /etc/ssh/ssh_host_rsa_key
+```
+`userX:~/localrepo$` **`git checkout -- ssh/sshd_config`**
 
+`userX:~/localrepo$` **`git status`**
+```
+On branch master
+nothing to commit, working directory clean
+```
 
+Finally you may want to revert a modification already pushed to your repository. The best practice with this is to create a new commit that will revert the action of the old one instead of going back to history to avoid messing it up and those who may depend on it.
 
+`userX:~/localrepo$` **`git log --oneline`**
+```
+d63d43d Moves comments around
+da8a15f Import of content into the repository
+```
+Let's imagine we want to come back to our initial state on our repository (commit da8a15f) and revert the modification made in commit d63d43d.
+`userX:~/localrepo$` **`git revert d63d43d`**
+```
+Revert "Moves comments around"
 
+This reverts commit d63d43d38e6cce80e8ad4240ecb03f033a84dbf7.
 
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#       modified:   ssh/ssh_config
+#       modified:   ssh/sshd_config
+#
+[master 42b2008] Revert "Moves comments around"
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+```
+`userX:~/localrepo$` **`git log --oneline`**
+```
+42b2008 Revert "Moves comments around"
+d63d43d Moves comments around
+da8a15f Import of content into the repository
+```
 
+For a more detailed explanation on this topic, and looking at more options to manage going back and forth in your history you may refer to https://www.atlassian.com/git/tutorials/viewing-old-commits and https://www.atlassian.com/git/tutorials/undoing-changes
 
-## The second remote repository
-In order to have a more interesting environment, we'll now look for 
+It's now time to organize a bit better our development approach.
 
-Answer the questions:
-1. xxx
-2. yyy
+### Managing branches
+
+Branches are at the heart of the development method with Git. Each time you want to make modifciations to an existing code base, it is advised to create a branch to develop that feature. It will ease greatly management of features integration, errors, share with upstream, ... Also look at https://www.atlassian.com/git/tutorials/using-branches/git-branch.
+
+`userX:~/localrepo$` **`git branch`**
+```
+* master
+```
+`userX:~/localrepo$` **`git branch comment`**
+
+`userX:~/localrepo$` **`git branch`**
+```
+  comment
+* master
+```
+`userX:~/localrepo$` **`git checkout comment`**
+```
+Switched to branch 'comment'
+```
+
+So you've now created the `comment` branch and have moved to it. All what you do from now on will be on this branch which originates from `master`.
+
+`userX:~/localrepo$` **`git log --oneline`**
+```
+42b2008 Revert "Moves comments around"
+d63d43d Moves comments around
+da8a15f Import of content into the repository
+```
+
+Redo multiple local modifications as earlier and commit them into your banch (use `git add -p` and `git commit` each time). Your history should then look like this in that branch, but doesn't affect `master`:
+
+`userX:~/localrepo$` **`git log --oneline`**
+```
+695521e Activate banner + comments moved again
+4ad763e Change comments
+42b2008 Revert "Moves comments around"
+d63d43d Moves comments around
+da8a15f Import of content into the repository
+```
+`userX:~/localrepo$` **`git checkout master`**
+```
+Switched to branch 'master'
+```
+`userX:~/localrepo$` **`git log --oneline`**
+```
+42b2008 Revert "Moves comments around"
+d63d43d Moves comments around
+da8a15f Import of content into the repository
+```
+If you are in a multi-user environment, working with a remote repository, that branch may even have progressed during the time you developed you feature in your `comment` branch. Commit a change in your `master` branch to simulate this in a separate file from the one you touched during your feature addition.
+
+`userX:~/localrepo$` **`git log --oneline`**
+```
+d5a50f4 Modify a key
+42b2008 Revert "Moves comments around"
+d63d43d Moves comments around
+da8a15f Import of content into the repository
+```
+
+Now what happens when you go bak into your feature branch ? Let's test !
+
+`userX:~/localrepo$` **`git checkout comment`**
+```
+Switched to branch 'comment'
+```
+`userX:~/localrepo$` **`git log --oneline`**
+```
+695521e Activate banner + comments moved again
+4ad763e Change comments
+42b2008 Revert "Moves comments around"
+d63d43d Moves comments around
+da8a15f Import of content into the repository
+```
+
+So we just see the modifications done in that branch, not the one done in `master`. But we would like to get that modification made in `master` so we can propose our feature to `master` later on, including it instead of creating a conflict. So it's time to rebase !
+
+`userX:~/localrepo$` **`git rebase master`**
+```
+First, rewinding head to replay your work on top of it...
+Applying: Change comments
+Applying: Activate banner + comments moved again
+```
+`userX:~/localrepo$` **`git log --oneline`**
+```
+df3e445 Activate banner + comments moved again
+82f564d Change comments
+d5a50f4 Modify a key
+42b2008 Revert "Moves comments around"
+d63d43d Moves comments around
+da8a15f Import of content into the repository
+```
+
+So the magic happened ! Git took the `master` branch and re-applied our 2 patches on top of that tree so our `comment` branch is now uptodate. Do you have the same commit IDs as before after the end of the rebase operation ? Why ? Now Add a final modification, commit it and it's now time to declare our feature complete and ready for integration into master.
+
+`userX:~/localrepo$` **`git log --oneline`**
+```
+7965bf5 Adds limits
+df3e445 Activate banner + comments moved again
+82f564d Change comments
+d5a50f4 Modify a key
+42b2008 Revert "Moves comments around"
+d63d43d Moves comments around
+da8a15f Import of content into the repository
+```
+`userX:~/localrepo$` **`git checkout master`**
+```
+Switched to branch 'master'
+```
+`userX:~/localrepo$` **`git log --oneline`**
+```
+d5a50f4 Modify a key
+42b2008 Revert "Moves comments around"
+d63d43d Moves comments around
+da8a15f Import of content into the repository
+```
+
+So `master` has no knowledge of the feature branch, let's merge it into this branch.
+
+`userX:~/localrepo$` **`git merge --no-ff comment`**
+```
+Merge branch 'comment'
+
+- Adds more comments and activatr some features
+# Please enter a commit message to explain why this merge is necessary,
+# especially if it merges an updated upstream into a topic branch.
+#
+# Lines starting with '#' will be ignored, and an empty message aborts
+# the commit.
+Merge made by the 'recursive' strategy.
+ ssh/ssh_config  | 4 ++--
+ ssh/sshd_config | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+```
+`userX:~/localrepo$` **`git log --graph --decorate --oneline`**
+```
+*   a18fdd3 (HEAD, master) Merge branch 'comment'
+|\  
+| * 7965bf5 (comment) Adds limits
+| * df3e445 Activate banner + comments moved again
+| * 82f564d Change comments
+|/  
+* d5a50f4 Modify a key
+* 42b2008 Revert "Moves comments around"
+* d63d43d Moves comments around
+* da8a15f Import of content into the repository
+```
+`userX:~/localrepo$` **`git branch -d comment`**
+```
+Deleted branch comment (was 7965bf5).
+```
+
+Using the `--no-ff` option has allowed us to keep track of the origin of the path set (a feature branch) and integrate all the changes into our `master` branch which now contains everything we want. Of course, sometimes rebasing or merging doesn't succeed and you have to deal with merge conflicts, solving them, before being able to continue. Git guides you throughout the process so you can fix your conflicts. Depending on time you may want to experiment with a conflicting change to familiarize yourself with this situation.However, you should now have an understanding of all the basics to manipulate content with Git. It's then time to collaborate with others.
+
+# Using Git collaboratively
+
+Estimated time: 15 minutes.
+
+In order to have a more interesting environment, we'll now look to work with another group, so each of you can deal with a remote repository. If you're even group number (2p) deal with the previous odd one (2p-1), and if you're an odd group number (2p-1) deal the for even after you (2p). You're now a single team working on the same project, using the repository of the odd group as the reference one.
+
+`userX:~/localrepo$` **`git remote add origin ssh://groupX@10.3.222.22/home/groupX/localrepo`**
+
+`userX:~/localrepo$` **`git remote update`**
+```
+Fetching origin
+The authenticity of host '10.3.222.22 (10.3.222.22)' can't be established.
+RSA key fingerprint is 49:46:58:dc:ac:cd:d2:07:7d:d7:14:45:b9:18:1a:2c.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.3.222.22' (RSA) to the list of known hosts.
+group3@10.3.222.22's password:
+```
+`userX:~/localrepo$` **`git remote -v`**
+```
+origin  ssh://group3@10.3.222.22/home/group3/localrepo (fetch)
+origin  ssh://group3@10.3.222.22/home/group3/localrepo (push)
+```
+
+Now that you're referencing your upstream repository, push your modifications into it.
+
+`userX:~/localrepo$` **`git config --global push.default matching`**
+
+`userX:~/localrepo$` **`git push origin master`**
+```
+group3@10.3.222.22's password: 
+Counting objects: 61, done.
+Delta compression using up to 6 threads.
+Compressing objects: 100% (48/48), done.
+Writing objects: 100% (61/61), 16.32 KiB | 0 bytes/s, done.
+Total 61 (delta 23), reused 0 (delta 0)
+To ssh://group3@10.3.222.22/home/group3/localrepo
+ * [new branch]      master -> master
+```
+
+Once each group has been able to push its changes into its own remote repository, it's time to exchange ! The goal will be to take their modifications of a new feature as the current status of the development and push that to your upstram repository, assuming you're in charge of the integration work. The other group is called Y after.
+
+`userX:~/localrepo$` **`git remote add partner ssh://groupY@10.3.222.22/home/groupY/localrepo`**
+
+`userX:~/localrepo$` **`git remote update`**
+```
+Fetching origin
+group3@10.3.222.22's password: 
+Fetching partner
+group4@10.3.222.22's password: 
+warning: no common commits
+remote: Counting objects: 10, done.
+remote: Compressing objects: 100% (9/9), done.
+remote: Total 10 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (10/10), done.
+From ssh://10.3.222.22/home/group4/localrepo
+ * [new branch]      master     -> partner/master
+```
+`userX:~/localrepo$` **`git remote -v`**
+```
+origin  ssh://group3@10.3.222.22/home/group3/localrepo (fetch)
+origin  ssh://group3@10.3.222.22/home/group3/localrepo (push)
+partner ssh://group4@10.3.222.22/home/group4/localrepo (fetch)
+partner ssh://group4@10.3.222.22/home/group4/localrepo (push)
+```
+
+Now that you're referencing the other group's repository, merge their modifications into your `master` branch and push the modifications upstream.
+
+`userX:~/localrepo$` **`git merge partner/master`**
+```
+Auto-merging ssh/sshd_config
+CONFLICT (add/add): Merge conflict in ssh/sshd_config
+Auto-merging ssh/ssh_host_dsa_key.pub
+CONFLICT (add/add): Merge conflict in ssh/ssh_host_dsa_key.pub
+Auto-merging ssh/ssh_config
+CONFLICT (add/add): Merge conflict in ssh/ssh_config
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+Well, of course that doesn't work as you did changes at same places without coordination, so the merge can not be done automatically. You'll have to fix it manually. Make your mind with regards to which one are the right one.
+
+`userX:~/localrepo$` **`git diff`**
+```
+diff --cc ssh/ssh_config
+index bc10a1e,3810e13..0000000
+--- a/ssh/ssh_config
++++ b/ssh/ssh_config
+@@@ -17,11 -17,11 +17,19 @@@
+  # ssh_config(5) man page.
+  
+  Host *
+++<<<<<<< HEAD
+ +#   RhostsRSAAuthentication no
+ +#   RSAAuthentication yes
+ +#   ForwardAgent no
+ +#   ForwardX11 no
+ +#   ForwardX11Trusted yes
+++=======
++ #   ForwardAgent no
++ #   ForwardX11 no
++ #   ForwardX11Trusted yes
++ #   RhostsRSAAuthentication no
++ #   RSAAuthentication yes
+++>>>>>>> Initialize content
+  #   PasswordAuthentication yes
+  #   HostbasedAuthentication no
+  #   GSSAPIAuthentication no
+[...]
+```
+`userX:~/localrepo$` **`vi ssh/ssh_config ssh/sshd_config [...]`**
+```
+[Solve conflicts]
+```
+`userX:~/localrepo$` **`git add ssh/ssh_config ssh/sshd_config [...]`**
+
+`userX:~/localrepo$` **`git status`**
+```
+On branch test
+All conflicts fixed but you are still merging.
+  (use "git commit" to conclude merge)
+
+Changes to be committed:
+
+        modified:   ssh/ssh_config
+        modified:   ssh/ssh_host_dsa_key.pub
+        modified:   ssh/sshd_config
+
+```
+`userX:~/localrepo$` **`git commit`**
+```
+Merge remote-tracking branch 'partner/master' into HEAD
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch test
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#       modified:   ssh/ssh_config
+#       modified:   ssh/ssh_host_dsa_key.pub
+#       modified:   ssh/sshd_config
+#
+
+[test ebb1e45] Merge remote-tracking branch 'partner/master' into HEAD
+```
+`userX:~/localrepo$` **`git log --graph --oneline --decorate`**
+```
+*   97c375f (HEAD) Merge remote-tracking branch 'partner/master' into HEAD
+|\  
+| * 0516e10 (partner/master) Initial commit
+*   e8a5727 (origin/master) Merge branch 'test'
+|\  
+| *   a18fdd3 Merge branch 'comment'
+| |\  
+| | * 7965bf5 Adds limits
+| | * df3e445 Activate banner + comments moved again
+| | * 82f564d Change comments
+| |/  
+| * d5a50f4 Modify a key
+| * 42b2008 Revert "Moves comments around"
+| * d63d43d Moves comments around
+| * da8a15f Import of content into the repository
+* 7fa61ab Adds limits
+* eb09283 Activate banner + comments moved again
+* e83a2f0 Change comments
+* 571e395 Revert "Moves comments around"
+* 70484ae Moves comments around
+* 66d9ede Import of content into the repository
+* e662067 Initialize content
+```
+
+You're now ready to update the upstream repository with your updated content.
+
+`userX:~/localrepo$` **`git branch --set-upstream-to=origin/master master`**
+```
+Branch master set up to track remote branch master from origin.
+```
+`userX:~/localrepo$` **`git push`**
+```
+group3@10.3.222.22's password: 
+Counting objects: 57, done.
+Delta compression using up to 6 threads.
+Compressing objects: 100% (37/37), done.
+Writing objects: 100% (47/47), 4.30 KiB | 0 bytes/s, done.
+Total 47 (delta 23), reused 0 (delta 0)
+To ssh://group3@10.3.222.22/home/group3/localrepo
+   e8a5727..2693204  master -> master
+```
 
 # Best practices and collaborative development with Git
 
-Estimated time: 30 minutes.
+Estimated time: 10 minutes.
+
+You should read the blog article from Vincent Driessen available at http://nvie.com/posts/a-successful-git-branching-model/ to familiarize yourself with some best practices around collaborative development. Also read as well https://www.atlassian.com/git/tutorials/comparing-workflows.
 
 # Code and project management with Git using GitLab
 
@@ -687,4 +1121,3 @@ Add any relevant information to your **merge request**. In particular, make sure
 ## Look at the network graph
 
 ## Compare commits, branches...
-
