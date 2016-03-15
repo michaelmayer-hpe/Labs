@@ -991,7 +991,153 @@ Estimated time: 10 minutes.
 
 You should read the blog article from Vincent Driessen available at http://nvie.com/posts/a-successful-git-branching-model/ to familiarize yourself with some best practices around collaborative development. Also read as well https://www.atlassian.com/git/tutorials/comparing-workflows.
 
-# Web based interaction with Git using GitLab
+# Code and project management with Git using GitLab
 
-Estimated time: 50 minutes.
+Estimated time: 45 minutes.
+
+GitLab is a software and a company.
+GitLab, the software, is a web-based Git repository manager with code reviews, issue tracking, continuous integration, and wikis features.
+It can be compared to Github, with one major difference: it is an open-source project, that you can run on your own infrastructure.
+GitLab is very active, and released on a monthly basis.
+
+GitLab, the company, has 37 salaried employees and more than 700 open source contributors.
+
+## Access GitLab
+
+For this lab, we have installed a GitLab instance, accessible at *ip_adress:port*.
+
+With your favorite browser, access this address, and you will land on the homepage of our GitLab instance. 
+
+An account has already been created for you. The username is **groupXXX**, and the password is **ilovegitXXX**, where **XXX** is your group number.
+Enter them into the *Sign In* dialog, and you should enter the wonderful world of GitLab!
+
+## Discover GitLab with our Awesome Project
+
+The GitLab instance has been populated with a small project, that we will use to discover GitLab. 
+The **Awesome Project** (yes, this is the name of our project) is a revolutionary project that deals with fruits, vegetables, numbers, colors and other things.
+
+Take some time to discover the different panels of GitLab:
+
+- The **Dashboard** centralizes the information *you* need for your work:
+  - **Projects** you have access to
+  - **Todos** are similar to notifications, listing what is new and what you need to pay attention to
+  - **Activity** lists all actions taken by everybody working on same projects than you
+  - **Groups** you are part of
+  - **Milestones** of any project you work on
+  - **Issues** currently assigned to you, from any project
+  - **Merge Request**\* currently assigned to you, from any project
+  - **Snippets** are the digital equivalent of post-it notes
+
+\* a *Merge Request* is a proposition of code to be reviewed. It is used to start a discussion prior to get the code accepted and merged (or reworked if needed!). We will see that in details shortly.
+
+When you select a **project**, you will find some information about the *git project* itself, like the number of commits, or the size of the repository. Under those numbers, you will find a description of the project; we will see later how to edit this description.
+
+The left-hand side menu now displays project-related entries. Take some time to discover all of them, and navigate in the project. In particular, but not exclusively, give a look to the **Files** of the project, the **Commits** list (from there, don't miss the **Network** graph!), and then **Issues** and **Merge Requests**.
+
+## Locally clone Awesome Project
+
+In order to get access to git repositories managed by GitLab, you need to configure an SSH key in your account.
+
+To achieve that, access your Profile configuration page. From the **Dashboard**, you have a direct access to your **Profile settings** on the left-hand side menu. Once you are there, you will find an entry called **SSH Keys** menu. Click there, and follow the instructions.
+
+During git operations, GitLab identifies the user based on the email address configured in git. Knowing that, it is very important that your user name and email address are correctly configured. You can verify that by running:
+
+```
+git config --global user.name
+git config --global user.email
+```
+
+Your user name should be **Group XXX** and your email address **gitlab_groupXXX@hpe.com**, where **XXX** is your group number. If not, you can fix it by running:
+
+```
+git config --global user.name "Group XXX"
+git config --global user.email "gitlab_groupXXX@hpe.com"
+```
+
+On the **awesome-project** homepage, you will find the URL to be used to clone the project. Clone the project on your machine, as you have learned previously. Congratulation, you are ready to go!
+
+## Edit your first file from GitLab
+
+As you will become an active contributor of the **Awesome Project**, your first task will be to add your names to the contributors list.
+
+You have seen this list in the description of the project. This description is actually stored into a file that is part of the project, like any other one. From the **Files** panel you will find it at the root of the project, name **README.md**. Navigate to it, and click the **edit** button.
+Within this editor, edit the line corresponding to your group number and write your names. You can review your changes with the **Preview changes** button. 
+**Markdown** is used everywhere across GitLab, in order to format any text, like issue descriptions or wiki pages. Please take some time to discover the [GitLab Markdown guide](http://10.3.222.22:5454/help/markdown/markdown.md).
+
+Now it gets interesting. As your are **developer** of the project, not **master** or **owner**, you don't have write permission to the `master` branch. In order to have your contribution included into the `master` branch, you have to create and submit a **merge request**. 
+
+Verify that **Start a new merge request with these changes** is checked. Enter a concise description of the change your are proposing in **Commit message**, and choose a relevant branch name. Upon submission, a commit will be created on this new branch, and the **Merge Request** dialog will open.
+Fill the required fields (description, milestone, label(s)), and **assign** the merge request to one of the project maintainers. The commits inclued in this merge request are listed under the form. You have one last opportunity to review them before submitting the merge request.
+You branch will be automatically merged into `master` when the assignee will accept your merge request, making your changes available for everybody.
+
+Once your merge request is accepted, you can check your are now listed as contributors in the project description.
+
+## Enter your first issue
+
+*In this section, less details are given. This is done on purpose, so you can try by your own to find the best solution to achieve given tasks.*
+
+Our project is not perfect; it is containing some bugs. Each group will have to discover one bug, and follow it up until it gets fixed.
+
+Here are bugs that lovely users reported to us; each of them is assigned to a group:
+
+1. Group 1: something is wrong with the **vegetables list**
+2. Group 2: the **ascending numbers feature** looks to be broken
+3. Group 3: the **black and white** feature behaves strangely
+4. Group 4: **odd numbers** are sometimes not really odd numbers
+5. Group 5: **France flag colors** are blue, white and red, nothing more
+6. Group 6: the **descending numbers feature** looks to be broken
+7. Group 7: something is wrong with the **fruits list**
+8. Group 8: **even numbers** are sometimes not really even numbers
+9. Group 9: the **colors** feature behaves strangely
+10. Group 10: something is wrong with the **drinks list**
+
+Now you have to gather additional information in order to open an issue containing as much details as possible.
+Follow this typical workflow in order to report an issue:
+
+- investigate the bug assigned to your group
+  - find the **file** containing the bug (each of those simple bugs are contained into a single file)
+  - in that file, find the guilty **line**
+  - using GitLab features, discover the **commit** that introduced this line, and its **author**
+- report the issue
+  - write a precise **description** of the problem, containing all information you gathered (file, line, commit, author...) \*
+  - fill additional fields like **tag** and **milestone**
+  - assign it to the **next group**. (Group1 assigns to Group2, Group2 to Group3 ... Group10 to Group1)
+
+\* [Special GitLab references](http://10.3.222.22:5454/help/markdown/markdown.md#special-gitlab-references) are **very** useful to report an issue.
+
+## Fix your first issue with your first merge request
+
+An issue is now assigned to you. It contains all information you need to start working on it and fix this nasty bug.
+
+Editing files from GitLab interface is useful for small changeset, but it is not as usable as a real text editor.
+
+Within your local repository you have cloned at the beginning of this section, edit the relevant file to fix the bug.
+Don't be afraid, it should be as easy as modifying or removing a single line!
+
+Once you are happy with your modification, create a **new branch**, and **commit** your change. Then **push** it to the remote repository.
+Back to GitLab dashboard, GitLab will tell you that you have pushed a new branch; it will propose you to create a **merge request** based on this branch. 
+Add any relevant information to your **merge request**. In particular, make sure the description contains **Fixes #xxx** where "xxx" is the issue number you were assigned. By doing this, you will allow GitLab to **automatically close** this issue once your merge request is accepted.
+
+Assign it to the **previous group** (Group1 assigns to Group10, Group2 to Group1 ...)
+
+## Accept your first merge request
+
+A merge request is now assigned to you. Take some time to read it, understand what issue it addresses and how it resolves it.
+
+Now you have two choices:
+- if you are satisfied with the merge request, write a little comment saying so, and accept the merge request.
+- if you are **not** satisfied, add a comment explaining why. The assignee will be notified, and can argue or commit more things to improve the merge request.
+
+As a reviewer, the responsibility of this code is now shared between you and the author. This is a very important step in a collaborating workflow.
+
+## Conclusion
+
+In this section, all the participants of this lab have worked together on the **awesome-project**, using GitLab as a project management tool.
+
+To conclude this lab, please look again at the **network graph** to see all the branches that we created converging into master.
+You can also look at the **activity** page, and the **issue**, **merge request** and **milestone** lists, to review what has been done and what is still to be done.
+
+When all issues assigned to a milestone are closed, it is time to release our product, and start working on the next milestone!
+
+## Thanks!
 
