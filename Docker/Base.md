@@ -25,7 +25,7 @@ Docker is available externaly from http://docs.docker.com/linux/step_one/ or usi
 Version 1.7 is  the current stable release.
 As we'll work on an Ubuntu environment for the Lab, you may want to use apt to do the installation of Docker with all its dependencies. As Ubuntu provides an old version of docker, we will use a ppa providing a more up to date version:
 
-`#` **`apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 –-recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9`**
+`#` **`apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9`**
 
 `#` **`echo deb https://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list`**
 
