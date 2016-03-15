@@ -443,6 +443,8 @@ index fa6377d..38ef297 100644
  #Banner /etc/issue.net
 ```
 
+You'll now be able to commit your changes. The following lines in bold are an example of comment you can put, while you'll see lines commented (with a # as first char) which gives you information on what will be done by Git.
+
 `userX:~/localrepo$` **`git commit`**
 
 **`Moves comments around`**
