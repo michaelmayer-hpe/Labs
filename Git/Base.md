@@ -85,7 +85,7 @@ Estimated time: 25 minutes.
 
 `userX:~$` **`git config --global user.email gitlab_groupX@hpe.com`**
  
-`userX:~$` **`git config core.editor vim`**
+`userX:~$` **`git config --global core.editor vim`**
 
 This will allow us to get correct information in the log and be able to track who does what, especially when reviewing history and also when using GitLab later. For edition uses either vim if your comfortable with vi type of editors or emacs, or do not use it to use a basic beginners friendly one. Check with:
 
