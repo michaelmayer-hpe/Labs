@@ -1010,7 +1010,7 @@ GitLab, the company, has 37 salaried employees and more than 700 open source con
 
 ## Access GitLab
 
-For this lab, we have installed a GitLab instance, accessible at *10.3.222.22:5454*.
+For this lab, we have installed a GitLab instance, accessible at *10.3.222.22:5454*. (Check that Javascript is enbaled as GitLab used it)
 
 With your favorite browser, access this address, and you will land on the homepage of our GitLab instance. 
 
