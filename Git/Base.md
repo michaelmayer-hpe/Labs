@@ -1042,9 +1042,13 @@ The left-hand side menu now displays project-related entries. Take some time to 
 
 ## Locally clone Awesome Project
 
-In order to get access to git repositories managed by GitLab, you need to configure an SSH key in your account.
+In order to get access to git repositories managed by GitLab, you need to configure an SSH key in your account. On your system, issue first:
 
-To achieve that, access your Profile configuration page. From the **Dashboard**, you have a direct access to your **Profile settings** on the left-hand side menu. Once you are there, you will find an entry called **SSH Keys** menu. Click there, and follow the instructions.
+`userX:~/localrepo$` **`ssh-keygen < /dev/null`**
+
+`userX:~/localrepo$` **`cat .ssh/id_rsa.pub`**
+
+To achieve that, access your Profile configuration page. From the **Dashboard**, you have a direct access to your **Profile settings** on the left-hand side menu. Once you are there, you will find an entry called **SSH Keys** menu. Click there, and copy the content of the public key previously displayed.
 
 During git operations, GitLab identifies the user based on the email address configured in git. Knowing that, it is very important that your user name and email address are correctly configured. You can verify that by running:
 
