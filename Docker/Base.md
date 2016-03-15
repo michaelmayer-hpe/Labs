@@ -496,7 +496,7 @@ By default, ports of the containers are not exposed outside of the container. So
 EXPOSE 80
 EOF
 ```
-`#` **`perl -pi -e 's|D httpd|D /usr/sbin/apachectl -DFOREGROUND -k start|' \ Dockerfile`**
+`#` **`perl -pi -e 's|D httpd|D /usr/sbin/apachectl -DFOREGROUND -k start|' Dockerfile`**
 
 `#` **`docker build .`**
 ```
@@ -519,8 +519,8 @@ Modify again the Docker file to add owncloud to our image:
 `#` **`cat >> Dockerfile << EOF`**
 ```
 RUN yum install -y tar bzip2
-ADD https://download.owncloud.org/community/owncloud-7.0.6.tar.bz2 \ /var/www/html/
-RUN cd /var/www/html/ && tar xvfj owncloud-7.0.6.tar.bz2 && rm -f \ owncloud-7.0.6.tar.bz2
+ADD https://download.owncloud.org/community/owncloud-7.0.6.tar.bz2 /var/www/html/
+RUN cd /var/www/html/ && tar xvfj owncloud-7.0.6.tar.bz2 && rm -f owncloud-7.0.6.tar.bz2
 EOF
 ```
 We can directly point to a URL, docker will download the content and extract it in place.
