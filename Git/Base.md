@@ -444,10 +444,13 @@ index fa6377d..38ef297 100644
 ```
 
 `userX:~/localrepo$` **`git commit`**
-```
+
 **`Moves comments around`**
+
 **`- Improve comments for ssh configuration`**
+
 **`- another modification for sshd config`**
+
 ```
 # Please enter the commit message for your changes. Lines starting
 # with '#' will be ignored, and an empty message aborts the commit.
