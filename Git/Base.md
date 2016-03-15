@@ -1128,5 +1128,16 @@ Now you have two choices:
 - if you are satisfied with the merge request, write a little comment saying so, and accept the merge request.
 - if you are **not** satisfied, add a comment explaining why. The assignee will be notified, and can argue or commit more things to improve the merge request.
 
-As a reviewer, the responsability of this code is now shared between you and the author. This is a very important step in a collaborating workflow.
+As a reviewer, the responsibility of this code is now shared between you and the author. This is a very important step in a collaborating workflow.
+
+## Conclusion
+
+In this section, all the participants of this lab have worked together on the **awesome-project**, using GitLab as a project management tool.
+
+To conclude this lab, please look again at the **network graph** to see all the branches that we created converging into master.
+You can also look at the **activity** page, and the **issue**, **merge request** and **milestone** lists, to review what has been done and what is still to be done.
+
+When all issues assigned to a milestone are closed, it is time to release our product, and start working on the next milestone!
+
+## Thanks!
 
