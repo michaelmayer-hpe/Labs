@@ -114,8 +114,8 @@ drwxr-xr-x 4 group3 group3 4096 Mar 11 19:13 ..
 drwxrwxr-x 7 group3 group3 4096 Mar 11 19:07 .git
 ```
 
-So we've got a success  ! Of course, we do not really go far, but you see that you now have a place to store Git metadata.
-We can now start using it to manage some content. But before that, we want to configure our Git setup a little.
+Now, git has created its metadata directory. It doesn't contain much at the moment, because we haven't added any files to the repository.
+We can now start using git to manage some content. But before that, we want to configure our Git setup a little.
 
 ## Managing content in your local repository
 
@@ -147,7 +147,7 @@ Untracked files:
 nothing added to commit but untracked files present (use "git add" to track)
 ```
 
-Here Git suggest that we add the newly created directory to track it and its content in the future, so we can manage its history as modifications are made to it. Let's do that.
+Here Git suggests that we add the newly created directory to track it and its content in the future, so we can manage its history as modifications are made to it. Let's do that.
 
 `userX:~/localrepo$` **`git add ssh`**
 
@@ -169,7 +169,7 @@ Changes to be committed:
         new file:   ssh/sshd_config
 
 ```
-So Git is now aware that we want to keep track of all these files. We will now initiate our repository with this first content, enter in the editor to comment on the reasons we do that change and validate this.
+So Git is now aware that we want to keep track of all these files. We will now initiate our repository with this first content, use the editor to explain why we've made the changes and validate this.
 
 `userX:~/localrepo$` **`git commit`**
 
@@ -219,7 +219,7 @@ As you can see, Git identifies our import by a unique commit ID, which will rema
 
 ### Modifying content
 
-Now that we have some content, let's start making modifications and see how Git deals with them ! Edit 2 files in the `ssh` directory, modify some content in it (we do not care of correctness at that point) and validate these 2 sets of modifications. Review your modification (expressed as a patch format - lines starting with a '+' will be added and those starting with a '-' will be removed):
+Now that we have some content, let's start making modifications and see how Git deals with them ! Edit 2 files in the `ssh` directory, modify some content in it (we do not care about correctness at that point) and validate these 2 sets of modifications. Review your modification (expressed as a patch format - lines starting with a '+' will be added and those starting with a '-' will be removed):
 
 `userX:~/localrepo$` **`git status`**
 ```
@@ -357,7 +357,7 @@ Stage this hunk [y,n,q,a,d,/,K,j,J,g,e,?]? n
 Stage this hunk [y,n,q,a,d,/,K,g,s,e,?]? y
 ```
 
-In fact, as a best practice, you should systematically use that `-p` option in order to select precisely the modifications which are part of a commit you want to create that will be documented using the editor during the commit. Especially, contrary to what git says, avoid using `git commit -a` especially blindly when you have not touched your repository in the last 10 days e.g.
+In fact, as a best practice, you should systematically use that `-p` option in order to select precisely the modifications which are part of a single commit you want to create that will be documented as a single change. Contrary to what git says, to avoid committing many separate changes together, avoid using `git commit -a` blindly when you have not touched your repository in the last 10 days e.g.
 
 `userX:~/localrepo$` **`git status`**
 ```
