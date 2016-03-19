@@ -1067,7 +1067,7 @@ git config --global user.email "gitlab_groupX@hpe.com"
 On the **awesome-project** homepage, you will find the URL to be used to clone the project. Clone the project on your machine, as you have learned previously. Congratulation, you are ready to go!
 Hint:
 
-`userX:~/localrepo$` **`git clone http://10.3.222.22:5454/tes_lab/awesome-project`**
+`userX:~/localrepo$` **`git clone http://10.3.222.22:5454/tes_lab/awesome-project.git`**
 
 
 
