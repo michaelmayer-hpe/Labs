@@ -113,8 +113,7 @@ drwxrwxr-x 3 group3 group3 4096 Mar 11 19:07 .
 drwxr-xr-x 4 group3 group3 4096 Mar 11 19:13 ..
 drwxrwxr-x 7 group3 group3 4096 Mar 11 19:07 .git
 ```
-
-Now, git has created its metadata directory. It doesn't contain much at the moment, because we haven't added any files to the repository.
+So we've got a success ! Of course, we do not really have much at the moment, because we haven't added any files to the repository.
 We can now start using git to manage some content. But before that, we want to configure our Git setup a little.
 
 ## Managing content in your local repository
