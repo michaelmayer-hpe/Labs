@@ -585,6 +585,8 @@ CONTAINER ID        IMAGE               COMMAND                CREATED          
 
 Now relaunch your browser to reconfigure again owncloud, but this time configure the data folder as in the following screen shot:
 
+![Owncloud Setup](/owncloud.png)
+
 If you encounter issues you need to adapt your Dockerfile so that the apache user is allowed to write on to the /data directory. Your current Dockerfile should look like this at that point:
 
 `#` **`cat Dockerfile`**
