@@ -90,7 +90,7 @@ Open the Firefox browser (if not already done). If you don’t see the following
 
 From Firefox, open a session toward the iLO of your server at http://10.3.222.10X
 
-If needed, click on Advanced and then on Add Exception… then Confirm Security Exception:
+If needed, click on Advanced and then on Add Exception... then Confirm Security Exception:
 
 ![Insecure App](img/insecure-app.png)
 
@@ -110,15 +110,15 @@ Click on the upper left locker/warning icon and then on the > sign and click on 
 
 Click again on the .NET link. Push the RUN button of Security Warning popups if any. The console window should now be appear.
 
-Of course, you don't need to do that on Linux ;-)
+Of course, you don't need to do that on Linux as you'll use the Java plugin and its own security framework ;-)
 
 ## REST and Redfish introduction
 
 ## REST definition
 
-Wikipedia says: “Representational State Transfer (REST) is a software architecture style consisting of guidelines […] for creating scalable web services […] REST [is] a simpler alternative to SOAP and WSDL-based web services.
+Wikipedia says: “Representational State Transfer (REST) is a software architecture style consisting of guidelines [...] for creating scalable web services [...] REST [is] a simpler alternative to SOAP and WSDL-based web services.
 
-RESTful systems typically, but not always communicate over the Hypertext Transfer Protocol with the same verbs (GET, POST, PUT, DELETE…) used by web browsers…”
+RESTful systems typically, but not always communicate over the Hypertext Transfer Protocol with the same verbs (GET, POST, PUT, DELETE...) used by web browsers...”
 
 ## Redfish definition
 
@@ -130,14 +130,14 @@ This hands on lab focuses on the Redfish implementation but mentions how you can
 
 ## Web browser and REST client
 
-Although REST is primarily used via Application Programming Interfaces (APIs), it is possible to test and debug RESTful systems with a web browser and an associated extension. The extension is used to build the correct https packets (headers, payload…) and to display nicely (or not) returned answers in different formats (JSON, XML, raw...). 
+Although REST is primarily used via Application Programming Interfaces (APIs), it is possible to test and debug RESTful systems with a web browser and an associated extension. The extension is used to build the correct https packets (headers, payload...) and to display nicely (or not) returned answers in different formats (JSON, XML, raw...). 
 
 If you need to use a browser different from Firefox or Chrome, make sure its associated extension supports the PATCH verb/method, in addition to GET and POST. The PATCH method is a proposed standard (RFC 5789) and is required by the redfish specifications.
 
 Now that your setup and some introduction has been done, let's start experimenting with Redfish.
 
 # Using Redfish
-Estimated time: 60 minutes.
+Estimated time: 80 minutes.
 
 ## Get properties from the server
 
@@ -264,7 +264,7 @@ Open a PuTTY session to the server (10.3.222.8X) with root / password for creden
 
 `#` **`yum install -y hprest`**
 
-We have to install the lsb package which is used by add_repo to determine which distribution we running on. For the moment, RHEL 7.2 is not yet supported so we point to the 7.1 repository which contains the latest packages.
+We have to install the `lsb` package which is used by `add_repo.sh` to determine which distribution we running on. For the moment, RHEL 7.2 is not yet supported so we point to the 7.1 repository which contains the latest packages.
 <!--
 Host# cd /usr/kits
 Host# rpm -ivh hprest.rpm
@@ -281,9 +281,9 @@ The complete list of types and associated properties are detailed in the [HPE RE
 
 This mode lets you send interactive RESTful commands to get or set resources and property values:
 
-  1. Launch the hprest tool. 
-  1. From the hprest > prompt, log into the iLO4 of your server for an out-of-band session. 
-  1. Issue the help command:
+  1. Launch the `hprest` tool. 
+  1. From the `hprest >` prompt, log into the iLO4 of your server for an out-of-band session. 
+  1. Issue the `help` command:
 
 `Host#` **`hprest`**
 
@@ -294,14 +294,14 @@ WARNING: Cache is activated session keys are stored in plaintext
 ```
 `hprest >` **`help`**
 
-In addition to the “atomic” commands (get set…), hprest provides tools performing several set commands at once. Review the Tool list at the bottom of the help message:
+In addition to the "atomic" commands (get set...), hprest provides tools performing several set of commands at once. Review the Tool list at the bottom of the help message:
 
 ![hprest Help](img/hprest-help.png)
 
 Next, we'll change the way the server is booting:
 
-  1. Use the bootorder BIOS COMMAND to force the system to stop at UEFI Shell during next reboot. 
-  1. Send the status command to view the two parameters changed by the bootorder tool. 
+  1. Use the `bootorder` BIOS COMMAND to force the system to stop at UEFI Shell during next reboot. 
+  1. Send the `status` command to view the two parameters changed by the `bootorder` tool. 
   1. Commit the changes:
 
 `hprest >` **`bootorder --onetimeboot=UefiShell`**
@@ -315,7 +315,7 @@ ComputerSystem.1.0.0 (Currently selected)
 ```
 `hprest >` **`commit`**
 
-The commit commands logs you out. Login again using the in-band manner, and list all the Types (classes of objects) available:
+The `commit` commands logs you out. Login again using the in-band manner, and list all the Types (classes of objects) available:
 
 `hprest >` **`login`**
 ```
@@ -324,7 +324,7 @@ WARNING: Cache is activated session keys are stored in plaintext
 ```
 `hprest >` **`types`**
 
-From there, select ComputerSytem.1.0.0 using the tab command completion key and list all the properties:
+From there, select `ComputerSytem.1.0.0` using the tab command completion key and list all the properties:
 
 `hprest >` **`select comp<tab>`**
 
@@ -334,11 +334,11 @@ From there, select ComputerSytem.1.0.0 using the tab command completion key and 
 
 `hprest >` **`ls`**
 
-Modify now the AdminName property, part of type HpBios.1.2.0, with a string containing a white space, all of this in one single command (note the required comas around the property name and its value):
+Modify now the `AdminName` property, part of type `HpBios.1.2.0`, with a string containing a white space, all of this in one single command (note the required comas around the property name and its value):
 
 `hprest >` **`set "AdminName=Foo Bar" --selector HpBios.1.2.0`**
 
-Issue the select command and note that the selected type is now HpBios.1.2.0:
+Issue the select command and note that the selected type is now `HpBios.1.2.0`:
 
 `hprest >` **`select`**
 ```
@@ -353,7 +353,7 @@ HpBios.1.2.0 (Currently selected)
 ```
 `hprest >` **`commit`**
 ```
-Committing changes…
+Committing changes...
 One or more properties were changed and will not take effect until system is reset.
 Logging session out.
 ```
@@ -365,11 +365,11 @@ By for Now
 
 ### Script based mode
 
-This mode allows multiple hprest directives bundled in a single shell script. Change directory to /tmp and launch again an in-band session:
+This mode allows multiple hprest directives bundled in a single shell script. Change directory to `/tmp` and launch again an in-band session:
 
 `Host#` **`hprest login`**
 
-List all the Types, select the HpBios.1.2.0 type and save its properties in a file:
+List all the Types, select the `HpBios.1.2.0` type and save its properties in a file:
 
 `Host#` **`hprest types`**
 
@@ -379,11 +379,11 @@ List all the Types, select the HpBios.1.2.0 type and save its properties in a fi
 
 ### File based mode
 
-This last mode allows the load of an entire configuration file into hprest, which will send it to the managed server. 
+This last mode allows the load of an entire configuration file into `hprest`, which will send it to the managed server. 
 
-In this exercise, we'll modify the UEFI BIOS settings in order to execute automatically a networked based startup.nsh file during the startup of the UEFI Shell (remember, we previously set the next boot to UefiShell). 
+In this exercise, we'll modify the UEFI BIOS settings in order to execute automatically a networked based `startup.nsh` file during the startup of the UEFI Shell (remember, we previously set the next boot to UefiShell). 
 
-Using the nano or vi text editor, open /tmp/bios.json saved in the previous exercise and perform the following modifications: 
+Using the `nano` or `vi` text editor, open `/tmp/bios.json` saved in the previous exercise and perform the following modifications: 
   1. Assign a static IPv4 configuration to the NIC of the server (the first one found and connected) 
   1. Assign a network location for the automatic startup script:. 
 
@@ -404,7 +404,7 @@ Using the nano or vi text editor, open /tmp/bios.json saved in the previous exer
 ```
 Save and exit the text editor (:wq for vi).
 
-NOTE: the script name "**startup.nsh**" is a reserved keyword part the UEFI Shell specification. In other words, only a script called startup.nsh will be launched automatically by the Shell, whether it is located on the Internet or locally on an EFI file system (i.e. FS0: or FS1:). Think of Autoexec.bat as a reserved script name in the MS-DOS days...
+NOTE: the script name "**`startup.nsh`**" is a reserved keyword part the UEFI Shell specification. In other words, only a script called `startup.nsh` will be launched automatically by the Shell, whether it is located on the Internet or locally on an EFI file system (i.e. FS0: or FS1:). Think of `Autoexec.bat` as a reserved script name in the MS-DOS days...
 
 Your hprest session should be still active. Hence, you can load the modified bios.json file:
 
@@ -428,11 +428,11 @@ Upon restart, the server detects the modifications performed via the iLO RESTful
 
 ![Server Reboot](img/server-reboot.png)
 
-After the reboot, the UEFI Shell is launched, it fetches the startup.nsh file from the network and executes it: 
+After the reboot, the UEFI Shell is launched, it fetches the `startup.nsh` file from the network and executes it: 
 
 ![startup.nsh](img/startup-nsh.png)
 
-Using a browser, you should be able to view the content of this startup.nsh file and understand why it generates errors; this file is used in another lab and does not find what it is looking for...
+Using a browser, you should be able to view the content of this `startup.nsh` file and understand why it generates errors; this file is used in another lab and does not find what it is looking for...
 
 Exit from the shell and boot Linux:
 
@@ -440,21 +440,21 @@ Exit from the shell and boot Linux:
 
 ## Scripting with wget or curl
 
-Wget and curl are non-interactive CLI network downloaders available on Linux and Windows. They can be used to send https requests and perform actions via the iLO RESTful API. Sometimes, it is quicker, easier and more convenient to use them compared to a web-browser extension or the hprest tool. 
+`wget` and `curl` are non-interactive CLI network downloaders available on Linux and Windows. They can be used to send https requests and perform actions via the iLO RESTful API. Sometimes, it is quicker, easier and more convenient to use them compared to a web-browser extension or the `hprest` tool. 
 
 Reuse PuTTY again to log on your server. As an example, we'll use the following command to send a Reset signal to your iLO. Watch your iLO session after launching the command. 
 
 `Host#` **`wget --header='OData-Version:4.0' --header='Content-Type:application/json' --no-check-certificate --auth-no-challenge --http-user=demopaq --http-password=password --post-data='{"Action":"Reset"}' https://10.3.222.10X/redfish/v1/Managers/1/`**
 
-The above command uses a basic authentication (--auth-no-challenge) and does not require any certificate from the iLO (--no-check-certificate) and uses the usual X you need to change.
+The above command uses a basic authentication (`--auth-no-challenge`) and does not require any certificate from the iLO (`--no-check-certificate`) and uses the usual `X` you need to change.
 
 ![iLO Reset](img/ilo-reboot.png)
 
-A second example shows how you can send a power off signal to multiple systems, in parallel using pdsh(1) and wget. 
+A second example shows how you can send a power off signal to multiple systems, in parallel using `pdsh` and `wget`. 
 
-When the iLO is back again, login as demopaq / password. From your PuTTY session, issue the following command where [X] represents a list of a single number: yours. To really specify a list of multiple targets, you could use: [1-9] or [1,2-4,9]. But **DON’T DO THAT today**. Otherwise you will kill your neighbor’s server!
+When the iLO is back again, login as demopaq / password. From your PuTTY session, issue the following command where [X] represents a list of a single number: yours. To really specify a list of multiple targets, you could use: `[1-9]` or `[1,2-4,9]`. But **DON’T DO THAT today**. Otherwise you will kill your neighbor’s server!
 
-Note that in the following %h is a “placeholder” that will be replaced automatically by pdsh with each numbers in the list:
+Note that in the following `%h` is a “placeholder” that will be replaced automatically by `pdsh` with each numbers in the list:
 
 `Host#` **`pdsh -R exec -w 10.3.222.10[X] wget --header='OData-Version:4.0' --header='Content-Type:application/json' --no-check-certificate --auth-no-challenge --http-user=demopaq --http-password=password --post-data='{"Action":"Reset","ResetType":"ForceOff"}' https://%h/redfish/v1/Systems/1/`**
 
@@ -476,7 +476,7 @@ Although the modification is made instantly, the above command returns a message
 
 ![Reset required](img/reset-required.png)
 
-Sign-out  from the iLO GUI (Top-Right) and refresh the page. You should see the new iLO name:
+Sign-out from the iLO GUI (Top-Right) and refresh the page. You should see the new iLO name:
 
 ![New iLO name](img/ilo-name.png)
 
@@ -489,9 +489,9 @@ The following python script is for didactic purposes only, and HPE does not supp
 
 This python script contains several examples. We will explain how to run the first one and, if you have time, you will be able to run others. 
 
-A version of this script is present in your environment, but, later you can download the latest version of this file from: https://github.com/HewlettPackard/python-proliant-sdk
+A version of this script is present in your environment, but later you can download the latest version of this file from: https://github.com/HewlettPackard/python-proliant-sdk
 
-Once your Gen9 server is up and running, ssh/PuTTY to it as root (password) and cd /usr/kits. Using nano or the vi editor, edit the script:
+Once your Gen9 server is up and running, ssh/PuTTY to it as root (password) and cd /usr/kits. Using `nano` or the `vi` editor, edit the script:
 
 `Host#` **`cd /usr/kits`**
 
@@ -504,7 +504,7 @@ Supply your iLO info around line 1889:
   1. `iLO_loginname = ‘demopaq’`
   1. `iLO_password = ‘password’`
 
-Comment out the sys.exit command around line 1902:
+Comment out the `sys.exit` call around line 1902:
 ```
 # sys.exit (-1)
 ```
@@ -517,13 +517,13 @@ if False:
 [...]
 ```
 Save the file and exit.
-Execute the script. It will modify the AdminName UEFI Bios parameter:
+Execute the script. It will modify the `AdminName` UEFI Bios parameter:
 
 `Host#` **`python HpRestfulApiExamplesExperimental.py`**
 
 ![Python script execution](img/python-run.png)
 
-Using the REST client Browser, verify that your modification is not yet in the BIOS, but still in the pending area of the BIOS. In BIOS, you should still read “AdminName”: “Foo Bar”:
+Using the REST client Browser, verify that your modification is not yet in the BIOS, but still in the pending area of the BIOS. In BIOS, you should still read `"AdminName": "Foo Bar"`:
 
 ![Python script result1](img/python-result.png)
 
@@ -589,17 +589,18 @@ From the web GUI of the iLO, verify that the UID is ON:
 
 Feel free to test other examples.
 
-## Using python-redfish library.
+# Using python-redfish library.
 
-python-redfish library, a reference implementation to enable Python developers to communicate with the [Redfish API](http://www.dmtf.org/standards/redfish).
+Estimated time: 15 minutes
+
+The python-redfish library is a reference implementation to enable Python developers to communicate with the [Redfish API](http://www.dmtf.org/standards/redfish).
 The project is in it's infancy but already allows to retrieve information and perform few actions.
 
 The project also comes with a client in order to interact with Redfish and is mainly used to validate the library.
 
-This is a full 100% Free and Open Source Software, under the Apache v2 license and contributions are welcome ! :)
+This is a full 100% Free and Open Source Software, under the Apache v2 license and contributions are welcome at https://github.com/bcornec/python-redfish ! :)
 
-
-### Install the required repository
+## Install the required repository
 
 Install the python-redfish repository.
 
@@ -623,7 +624,7 @@ gpgkey=ftp://mondo.hpintelco.org/centos/7/x86_64/python-redfish.pubkey
 EOF
 ```
 
-Install EPEL repository.
+Install the EPEL repository.
 
 `#` **`rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm`**
 
@@ -631,11 +632,11 @@ Fix some dependencies not provided by current rpm.
 
 `#` **`yum install -y python-future python-pbr  # This is to fix some dep issues`**
 
-Finally, install python-redfish.
+Finally, install `python-redfish`.
 
 `#` **`yum install -y python-redfish --nogpg`**
 
-### Using the redfish-client
+## Using the redfish-client
 
 Launch the binary, it should provide the usage:
 
@@ -758,13 +759,13 @@ Lots of debugging info !
 [...]
 ```
 
-### Using the python-redfish library directly
+## Using the python-redfish library directly
 
 Use the client to register a redfish manager as default entry.
 
 `#` **`redfish-client redfish-client config add default https://10.3.222.10X/redfish/v1 demopaq password`**
 
-The library comes with a simple example called 'simple-proliant.py' to use the library itself.
+The library comes with a simple example called '`simple-proliant.py`' to use the library itself.
 
 `#` **`cd /usr/share/doc/python-redfish-0.420160520014518`**
 
@@ -796,10 +797,12 @@ Uncommenting the following line should reboot the system:
 # mySystem.reset_system()
 ```
 
-## Debuging rest calls with httpfox
+# Debuging rest calls with httpfox
+
+Estimated time: 5 minutes
 
 httpfox is a firefox extension that could be used to catch the http/https requests done by the browser.
-This is really useful to debug rest calls. Another usage is also to know the calls done by an existing application (reverse engineering).As an example, this FF extension helps the author to know and better understand the calls sent by oneview application to the oneview API to build dynamic profile automation.
+This is really useful to debug REST calls. Another usage is also to know the calls done by an existing application (reverse engineering). As an example, this Firefox extension helps the author to know and better understand the calls sent by HPE OneView application to the HPE OneView API to build dynamic profile automation.
 
   1. Prepare http fox open it.
   2. Prepare http requester.
@@ -813,7 +816,6 @@ You can now inpect the query within httpfox.
 
 In the example below, you can see that an authentication query was posted and the token provided by the redfish API to authenticate next calls.
 ![Httpfox inspect](img/httpfox-inspect.png)
-
 
 
 ## Conclusion
