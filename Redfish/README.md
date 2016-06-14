@@ -595,6 +595,7 @@ Estimated time: 15 minutes
 
 The python-redfish library is a reference implementation to enable Python developers to communicate with the [Redfish API](http://www.dmtf.org/standards/redfish).
 The project is in it's infancy but already allows to retrieve information and perform few actions.
+The goal of this project compared to HP SDK is to stick to the Redfish standard to allow compatibility between HW providers. So not to manage the oem proprietary part provided by HW company such as HPE (or only for exceptions).
 
 The project also comes with a client in order to interact with Redfish and is mainly used to validate the library.
 
