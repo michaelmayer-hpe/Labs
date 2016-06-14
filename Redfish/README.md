@@ -560,3 +560,219 @@ Feel free to test other examples.
 
 The iLO RESTful API provides a rich set of means to display and modify HPE ProLiant servers. Just choose the one suiting best your needs: browser extension, hprest, wget/curl or python. For Windows users, PowerShell is an alternative as well.
 
+## Using python-redfish library.
+
+python-redfish library, a reference implementation to enable Python developers to communicate with the Redfish API (http://www.dmtf.org/standards/redfish).
+The project is in it's infancy but already allow to retrieve information and perform few actions.
+
+The project also comes with a client in order to interact with redfish and mainly used to validate the library.
+
+This is full 100% free software, and contributions are welcomed ! :)
+
+
+  1. Install the required repository
+
+
+Install the python-redfish repository.
+```
+cd /etc/yum.repos.d
+
+cat >python-redfish.repo <<EOF
+[python-redfish]
+name=centos 7 x86_64 - python-redfish Vanilla Packages
+baseurl=ftp://mondo.hpintelco.org/centos/7/x86_64
+enabled=1
+gpgcheck=1
+gpgkey=ftp://mondo.hpintelco.org/centos/7/x86_64/python-redfish.pubkey
+
+[python-redfish-test]
+name=centos 7 x86_64 - python-redfish Vanilla Packages
+baseurl=ftp://mondo.hpintelco.org/test/centos/7/x86_64
+enabled=1
+gpgcheck=1
+gpgkey=ftp://mondo.hpintelco.org/centos/7/x86_64/python-redfish.pubkey
+EOF
+```
+Install EPEL repository.
+```
+rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+```
+Fix some dependencies not provided by current rpm.
+```
+yum install python-future   # This is to fix some dep issues
+yum install python-pbr
+```
+Install python-redfish.
+```
+yum install python-redfish --nogpg
+```
+
+  2. Using the redfish-client
+
+Launch the binary, it should provide the usage.
+```
+[root@lab10-2 ~]# redfish-client
+Usage:
+   redfish-client [options] config add <manager_name> <manager_url> [<login>] [<password>]
+   redfish-client [options] config del <manager_name>
+   redfish-client [options] config modify <manager_name> (manager_name | url | login | password) <changed_value>
+   redfish-client [options] config show
+   redfish-client [options] config showall
+   redfish-client [options] manager getinfo [<manager_name>]
+   redfish-client [options] chassis getinfo [<manager_name>]
+   redfish-client [options] system getinfo [<manager_name>]
+   redfish-client (-h | --help)
+   redfish-client --version
+```
+
+Use the client to register a redfish manager.
+Manager is the wording used to define a management interface Ilo for instance.
+
+```
+redfish-client config add iloX https://10.3.222.10X/redfish/v1 demopaq password
+```
+
+```
+[root@lab10-2 ~]# redfish-client config showall
+Managers configured :
+iloX
+	Url : https://10.3.222.10X/redfish/v1
+	Login : demopaq
+	Password : password
+```
+
+Retrieve manager data :
+```
+[root@lab10-2 ~]# redfish-client manager getinfo iloX
+Gathering data from manager, please wait...
+
+Connection error : [Errno 1] _ssl.c:504: error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed
+1- Check if the url is the correct one
+2- Check if your device is answering on the network
+3- Check if your device has a valid trusted certificat
+   You can use openssl to validate it using the command :
+   openssl s_client -showcerts -connect <server>:443
+4- Use option "--insecure" to connect without checking   certificate
+
+```
+
+It fails, because there is no certificates installed on the Ilo.
+```
+[root@lab10-2 ~]# redfish-client manager getinfo iloX --insecure
+Gathering data from manager, please wait...
+
+Redfish API version :  1.00
+HP RESTful Root Service
+
+Managers information :
+======================
+
+Manager id 1:
+UUID : f240d59d-f156-56b7-9638-28a08615aa2f
+Type : BMC
+Firmware version : iLO 4 v2.40
+Status : State :  / Health :
+Ethernet Interface :
+    Ethernet Interface id 1 :
+    Manager Dedicated Network Interface
+    FQDN : ilo-lab1.labossi.hpintelco.org
+    Mac address : FC:15:B4:93:12:4C
+    Address ipv4 : 10.3.222.101
+    Address ipv6 : FE80::FE15:B4FF:FE93:124C
+Managed Chassis :
+	1
+Managed System :
+	1
+----------------------------
+
+```
+Retrieve system data:
+```
+[root@lab10-2 ~]# redfish-client system getinfo ilo1 --insecure
+Gathering data from manager, please wait...
+
+Redfish API version :  1.00
+HP RESTful Root Service
+
+Systems information :
+=====================
+
+System id 1:
+UUID : 30373237-3632-5A43-3235-303231315947
+Type : Physical
+Manufacturer : HPE
+Model : ProLiant BL460c Gen9
+SKU : 727026-B21
+Serial : CZ250211YG
+Hostname : lab1
+Bios version : I36 v2.00 (12/15/2015)
+CPU number : 1
+CPU model : Intel(R) Xeon(R) CPU E5-2609 v3 @ 1.90GHz
+Available memory : 16 GB
+Status : State : OK / Health : OK
+Power : On
+Description : Computer System View
+Chassis : 1
+Managers : 1
+IndicatorLED : Off
+
+Ethernet Interface :
+    This system has no ethernet interface
+
+Simple Storage :
+    This system has no simple storage
+--------------------------------------------------------------------------------
+
+```
+Enable debugging information:
+
+```
+[root@lab10-2 ~]# redfish-client system getinfo iloX --insecure --debug=3
+
+```
+  3. Using the redfish-client
+
+Use the client to register a redfish manager as default entry.
+```
+redfish-client config add default https://10.3.222.10X/redfish/v1 demopaq password
+```
+
+The library comes with a simple example called 'simple-proliant.py' to use the library itself.
+
+```
+cd /usr/share/doc/python-redfish-0.420160520014518
+
+ls simple-proliant.py
+```
+
+For the moment, please comments all the lines containing 'set_parameters'
+
+Then you can run:
+
+```
+python simple-proliant.py
+```
+
+Now you can look at the python code to get data and perform some actions.
+
+The library documentation is available at: http://pythonhosted.org/python-redfish
+
+The classes are defined here: http://pythonhosted.org/python-redfish/python-redfish_lib.html
+
+Retrieve manager bios version:
+```
+print(remote_mgmt.Systems.systems_dict["1"].get_bios_version())
+```
+Retrieve chassis manufacturer:
+```
+print(remote_mgmt.Chassis.chassis_dict["1"].get_manufacturer())
+```
+Print chassis type:
+```
+print(remote_mgmt.Chassis.chassis_dict["1"].get_type())
+```
+
+Uncommenting the following line should reboot the system:
+```
+# mySystem.reset_system()
+```
