@@ -579,6 +579,7 @@ EXPOSE 80
 EOF
 ```
 `#` **`perl -pi -e 's|D httpd|D /usr/sbin/apachectl -DFOREGROUND -k start|' Dockerfile`**
+(This magic command replaces the launch of the httpd command by the apachectl one with the right options)
 
 `#` **`docker build .`**
 ```
