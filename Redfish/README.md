@@ -64,7 +64,7 @@ Estimated time: 20 minutes
 This Lab supposes that your client machine will run a Windows OS. If you're lucky to have a Linux one, don't worry as the instructions also apply to it as well.
 
 Before starting the lab exercises, your client station must be installed with the following:
-  1. The [Firefox](http://www.mozilla.org/firefox) browser with the [HttpRequester extension](https://addons.mozilla.org/en-US/firefox/addon/httprequester/). NOTE: Google Chrome with the Postman extension can be used as well. However, screen snapshots in this Lab have been performed with HttpRequester as this extension is easier to install in non-connected environments.
+  1. The [Firefox](http://www.mozilla.org/firefox) browser with the [HttpRequester extension](https://addons.mozilla.org/en-US/firefox/addon/httprequester/) and [HttpFox](https://addons.mozilla.org/en-US/firefox/addon/httpfox). Add them to your Firefox if it's not already installed. NOTE: Google Chrome with the Postman extension can be used as well. However, screen snapshots in this Lab have been performed with HttpRequester as this extension is easier to install in non-connected environments.
   2. An SSH client ([PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html) on Windows clients is OK)
 
 For the rest of this Lab, each team has received a lab number (**X**) from the instructor, and we'll refer to your server as **labX**. It has the following characteristics:
@@ -102,10 +102,11 @@ Log into the iLO. Your server should be in the OFF state. If not, warn the instr
 By default, modern browsers block Insecure Contents and packets coming from the iLO via the Remote Console are considered as such. 
 In the main central pane, click on the .Net link:
 
-![Insecure Content](/Redfish/server-off.png)
-
+![Insecure Content](/Redfish/dotnet-console.png)
 
 Click on the upper left locker/warning icon and then on the > sign and click on Disable protection for now:
+
+![Insecure Content](/Redfish/disable-protect.png)
 
 Click again on the .NET link. Push the RUN button of Security Warning popups if any. The console window should now be appear.
 
@@ -123,7 +124,7 @@ RESTful systems typically, but not always communicate over the Hypertext Transfe
 
 “Redfish is an open industry standard specification and schema that specifies a RESTful interface and utilizes JSON and OData to help customers integrate solutions within their existing tool chains.”
 
-Hewlett Packard Enterprise started to implement its own iLO RESTful API before the Redfish 1.0 specification is published. Today iLO 4 based ProLiant servers host both the legacy iLO RESTful API and a Redfish 1.0 compliant implementation.
+Hewlett Packard Enterprise started to implement its own iLO RESTful API before the Redfish 1.0 specification was published. Today iLO 4 based ProLiant servers host both the legacy iLO RESTful API and a Redfish 1.0 compliant implementation.
 
 This hands on lab focuses on the Redfish implementation but mentions how you can switch back to the legacy iLO RESTful API.
 
@@ -133,7 +134,7 @@ Although REST is primarily used via Application Programming Interfaces (APIs), i
 
 If you need to use a browser different from Firefox or Chrome, make sure its associated extension supports the PATCH verb/method, in addition to GET and POST. The PATCH method is a proposed standard (RFC 5789) and is required by the redfish specifications.
 
-Now that your setup and some introduction has been done, let's start experimenting with Redfish
+Now that your setup and some introduction has been done, let's start experimenting with Redfish.
 
 # Using Redfish
 Estimated time: 60 minutes.
