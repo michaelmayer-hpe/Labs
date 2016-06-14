@@ -536,59 +536,77 @@ Feel free to try other exercises and investigate how they have been implemented 
 
 ## Scripting with PowerShell and the HPREST Cmdlets
 
-HPE provides a suite of PowerShell Cmdlets in the PowerShell Gallery. The y can be used with PS Version 5.0 coming with the Microsoft Windows Management Framework 5.0 (WMF 5) or natively with Windows10 or Windows server 2016. 
+HPE provides a suite of PowerShell Cmdlets in the PowerShell Gallery. They can be used with PS Version 5.0 coming with the Microsoft Windows Management Framework 5.0 (WMF 5) or natively with Windows10 or Windows server 2016. 
+
 Then, a SDK containing numerous examples is present in the cmdlet package or can be downloaded separately from github.com. 
+
 In this exercise, we will install the HPRESTCmdlets and launch one the examples of the SDK example file.
-Your station is already equipped with the WMF 5.0 and the HPRESTCmdlets are have been downloaded (but not installed) under the Redfish-RESTful-lab folder on your Desktop. 
+
+Your station is already equipped with the [WMF 5.0](https://www.microsoft.com/en-us/download/details.aspx?id=50395) and the [HPRESTCmdlets](https://www.powershellgallery.com/packages/HPRESTCmdlets) are have been downloaded (but not installed) under the Redfish-RESTful-lab folder on your Desktop. 
+
 Click on the Start tiles icon in the bottom left of the station screen, and search for PowerShell.exe. Right click on it and select Run as administrator:
 
+![Run as Admin](img/run-asadmin.png)
 
 Issue the following install command and, if needed, type A to accept the installation from this untrusted repository:
 
+![Powershell install](img/powershell-install.png)
 
 Exit from this PowerShell session.
 From the Desktop, navigate toward in the Redfish-RESTful-lab folder present on your Desktop and then to HPRESTCmdlets\1.0.0.4
 Right click on the HPRESTExamples.ps1 file and choose Edit:
 
+![Powershell edit](img/powershell-edit.png)
+
 Read the green comments explaining the license terms and providing the exhaustive list of cmdlets contained in the SDK.
 NOTE: This version of the HPRESTCmdlets is not fully compliant with Redfish 1.0. However, a future version will be.
 Around line 46, supply your iLO IP address (Replace X by your group number):
 
+![Powershell Line 46](img/powershell-l46.png)
+
 The first example in this file is a function that can set a parameter in the BIOS of the server. Review the code of the Set-BIOSExamples1 function. 
+
 You can browse the other examples or go directly to example 13 around line 850. This example offers the possibility of changing the state of the UID (Indicator LED). 
 Review the code of this function, uncomment the line calling this function (around line 899) and change the last parameter to Lit (Note the uppercase L) instead of Off if not already done:
 
+![Powershell Lit](img/powershell-lit.png)
 
 Hit CTRL-S to save your modification and click on the green triangle icon in the top icon bar: 
+![Green Triangle](img/green-triangle.png)
+
 Enter the demopaq / password credentials:
 
+![Credentials](img/powershell-creds.png)
 
 Click on the Agree button of the license terms
 You should get a successful output like the following:
 
+![Powershell Run](img/powershell-run.png)
 
 From the web GUI of the iLO, verify that the UID is ON: 
+
+![UID on](img/uid-on.png)
 
 Feel free to test other examples.
 
 ## Using python-redfish library.
 
-python-redfish library, a reference implementation to enable Python developers to communicate with the Redfish API (http://www.dmtf.org/standards/redfish).
-The project is in it's infancy but already allow to retrieve information and perform few actions.
+python-redfish library, a reference implementation to enable Python developers to communicate with the [Redfish API](http://www.dmtf.org/standards/redfish).
+The project is in it's infancy but already allows to retrieve information and perform few actions.
 
-The project also comes with a client in order to interact with redfish and mainly used to validate the library.
+The project also comes with a client in order to interact with Redfish and is mainly used to validate the library.
 
-This is full 100% free software, and contributions are welcomed ! :)
+This is a full 100% Free and Open Source Software, under the Apache v2 license and contributions are welcome ! :)
 
 
-  1. Install the required repository
-
+### Install the required repository
 
 Install the python-redfish repository.
-```
-cd /etc/yum.repos.d
 
-cat >python-redfish.repo <<EOF
+`#` **`cd /etc/yum.repos.d`**
+
+`#` **`cat > python-redfish.repo << EOF`**
+```
 [python-redfish]
 name=centos 7 x86_64 - python-redfish Vanilla Packages
 baseurl=ftp://mondo.hpintelco.org/centos/7/x86_64
@@ -604,25 +622,25 @@ gpgcheck=1
 gpgkey=ftp://mondo.hpintelco.org/centos/7/x86_64/python-redfish.pubkey
 EOF
 ```
+
 Install EPEL repository.
-```
-rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-```
+
+`#` **`rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm`**
+
 Fix some dependencies not provided by current rpm.
-```
-yum install python-future   # This is to fix some dep issues
-yum install python-pbr
-```
-Install python-redfish.
-```
-yum install python-redfish --nogpg
-```
 
-  2. Using the redfish-client
+`#` **`yum install -y python-future python-pbr  # This is to fix some dep issues`**
 
-Launch the binary, it should provide the usage.
+Finally, install python-redfish.
+
+`#` **`yum install -y python-redfish --nogpg`**
+
+### Using the redfish-client
+
+Launch the binary, it should provide the usage:
+
+`#` **`redfish-client`**
 ```
-[root@lab10-2 ~]# redfish-client
 Usage:
    redfish-client [options] config add <manager_name> <manager_url> [<login>] [<password>]
    redfish-client [options] config del <manager_name>
@@ -635,16 +653,13 @@ Usage:
    redfish-client (-h | --help)
    redfish-client --version
 ```
-
 Use the client to register a redfish manager.
-Manager is the wording used to define a management interface Ilo for instance.
+Manager is the wording used to define a management interface such as an iLO for instance.
 
-```
-redfish-client config add iloX https://10.3.222.10X/redfish/v1 demopaq password
-```
+`#` **`redfish-client config add iloX https://10.3.222.10X/redfish/v1 demopaq password`**
 
+`#` **`redfish-client config showall`**
 ```
-[root@lab10-2 ~]# redfish-client config showall
 Managers configured :
 iloX
 	Url : https://10.3.222.10X/redfish/v1
@@ -652,9 +667,10 @@ iloX
 	Password : password
 ```
 
-Retrieve manager data :
+Then retrieve manager data:
+
+`#` **`redfish-client manager getinfo iloX`**
 ```
-[root@lab10-2 ~]# redfish-client manager getinfo iloX
 Gathering data from manager, please wait...
 
 Connection error : [Errno 1] _ssl.c:504: error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed
@@ -664,12 +680,11 @@ Connection error : [Errno 1] _ssl.c:504: error:14090086:SSL routines:SSL3_GET_SE
    You can use openssl to validate it using the command :
    openssl s_client -showcerts -connect <server>:443
 4- Use option "--insecure" to connect without checking   certificate
-
 ```
+It fails, because there is no certificate installed on the Ilo.
 
-It fails, because there is no certificates installed on the Ilo.
+`#` **`redfish-client manager getinfo iloX --insecure`**
 ```
-[root@lab10-2 ~]# redfish-client manager getinfo iloX --insecure
 Gathering data from manager, please wait...
 
 Redfish API version :  1.00
@@ -695,11 +710,11 @@ Managed Chassis :
 Managed System :
 	1
 ----------------------------
+```
+Now retrieve system data:
 
+`#` **`redfish-client system getinfo iloX --insecure`**
 ```
-Retrieve system data:
-```
-[root@lab10-2 ~]# redfish-client system getinfo ilo1 --insecure
 Gathering data from manager, please wait...
 
 Redfish API version :  1.00
@@ -733,44 +748,35 @@ Ethernet Interface :
 Simple Storage :
     This system has no simple storage
 --------------------------------------------------------------------------------
-
 ```
 Enable debugging information:
 
+`#` **`redfish-client system getinfo iloX --insecure --debug=3`**
 ```
-[root@lab10-2 ~]# redfish-client system getinfo iloX --insecure --debug=3
+[...]
+Lots of debugging info !
+[...]
+```
 
-```
-  3. Using the python-redfish library directly
+### Using the python-redfish library directly
 
 Use the client to register a redfish manager as default entry.
-```
-redfish-client config add default https://10.3.222.10X/redfish/v1 demopaq password
-```
+
+`#` **`redfish-client redfish-client config add default https://10.3.222.10X/redfish/v1 demopaq password`**
 
 The library comes with a simple example called 'simple-proliant.py' to use the library itself.
 
-```
-cd /usr/share/doc/python-redfish-0.420160520014518
+`#` **`cd /usr/share/doc/python-redfish-0.420160520014518`**
 
-ls simple-proliant.py
-```
+`#` **`more simple-proliant.py`**
 
-For the moment, please comments all the lines containing 'set_parameters'
+For the moment, please comment all the lines containing '`set_parameters`'. Then you can run:
 
-Then you can run:
+`#` **`python simple-proliant.py`**
 
-```
-python simple-proliant.py
-```
+Now you can look at the python code to get data and perform some actions. The library documentation is available at: http://pythonhosted.org/python-redfish. The classes are defined here: http://pythonhosted.org/python-redfish/python-redfish_lib.html.
 
-Now you can look at the python code to get data and perform some actions.
-
-The library documentation is available at: http://pythonhosted.org/python-redfish
-
-The classes are defined here: http://pythonhosted.org/python-redfish/python-redfish_lib.html
-
-You can then comment/uncomment and modify the code to experiment. e.g. below
+You can then comment/uncomment and modify the code to experiment. e.g. below:
 
 Retrieve manager bios version:
 ```
@@ -813,5 +819,3 @@ In the example below, you can see that an authentication query was posted and th
 ## Conclusion
 
 The iLO RESTful API provides a rich set of means to display and modify HPE ProLiant servers. Just choose the one suiting best your needs: browser extension, hprest, wget/curl or python. For Windows users, PowerShell is an alternative as well.
-
-
