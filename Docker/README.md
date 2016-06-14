@@ -2,7 +2,8 @@
 This lab purpose is to install and use Docker to become familiar with Linux based containers and handle some of the common use cases around it.
 
 ## Lab Writer and Trainer
-Bruno.Cornec@hpe.com
+  - Bruno.Cornec@hpe.com
+  - Rene.Ribaud@hpe.com
 
 <!--- [comment]: # Table of Content to be added --->
 
@@ -23,7 +24,13 @@ Estimated time: 15 minutes
 ## Docker installation
 Docker is available externaly from http://docs.docker.com/linux/step_one/ or using your distribution packages, or from github at https://github.com/docker/docker
 Version 1.7 is  the current stable release.
-As we'll work on an Ubuntu environment for the Lab, you may want to use apt to do the installation of Docker with all its dependencies. As Ubuntu provides an old version of docker, we will use a ppa providing a more up to date version:
+
+Ask to your instructor which Linux distribution will be used for the Lab (Ubuntu or RHEL). The refer to the corresponding instructions below.
+
+Other distributions should be as easy to deal with by providing the same packages out of the box (Case of most non-commercial distributions such as Debian, Fedora, Mageia, OpenSuSE, …)
+
+### Ubuntu installation
+If you work on an Ubuntu environment for the Lab, you may want to use apt to do the installation of Docker with all its dependencies. As Ubuntu provides an old version of docker, we will use a ppa providing a more up to date version:
 
 `#` **`apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9`**
 
@@ -62,31 +69,106 @@ Adding group docker' (GID 111) ...
 Done.
 [...]
 ```
-Other distributions should be as easy to deal with by providing the same packages out of the box (Case of most non-commercial distributions such as Debian, Fedora, Mageia, OpenSuSE, …)
+### RHEL installation
+
+If you work on a RHEL 7 environment for the Lab, you may want to use yum to do the installation of Docker with all its dependencies. Add the repo provided by the Docker project (which is requiring 7.2 at least):
+
+`#` **`cat > /etc/yum.repos.d/docker.repo << EOF`**
+```none
+[dockerrepo]
+name=Docker Repository
+baseurl=https://yum.dockerproject.org/repo/main/centos/7
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.dockerproject.org/gpg
+EOF
+```
+
+`#` **`yum install docker-engine`**
+```none
+Loaded plugins: product-id, search-disabled-repos, subscription-manager
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+Resolving Dependencies
+--> Running transaction check
+---> Package docker-engine.x86_64 0:1.11.2-1.el7.centos will be installed
+--> Processing Dependency: docker-engine-selinux >= 1.11.2-1.el7.centos for package: docker-engine-1.11.2-1.el7.centos.x86_64
+--> Processing Dependency: libcgroup for package: docker-engine-1.11.2-1.el7.centos.x86_64
+--> Processing Dependency: libltdl.so.7()(64bit) for package: docker-engine-1.11.2-1.el7.centos.x86_64
+[...]
+
+============================================================================================================
+ Package                        Arch                Version                   Repository               Size
+============================================================================================================
+Installing:
+ docker-engine                  x86_64              1.11.2-1.el7.centos       dockerrepo               13 M
+Installing for dependencies:
+ audit-libs-python              x86_64              2.4.1-5.el7               base                     69 k
+ checkpolicy                    x86_64              2.1.12-6.el7              base                    247 k
+ docker-engine-selinux          noarch              1.11.2-1.el7.centos       dockerrepo               28 k
+ libcgroup                      x86_64              0.41-8.el7                base                     64 k
+ libsemanage-python             x86_64              2.1.10-18.el7             base                     94 k
+ libtool-ltdl                   x86_64              2.4.2-20.el7              base                     49 k
+ policycoreutils-python         x86_64              2.2.5-20.el7              base                    435 k
+ python-IPy                     noarch              0.75-6.el7                base                     32 k
+ setools-libs                   x86_64              3.3.7-46.el7              base                    485 k
+
+Transaction Summary
+============================================================================================================
+Install  1 Package (+9 Dependent packages)
+
+Total download size: 15 M
+Installed size: 59 M
+Is this ok [y/d/N]: y
+Downloading packages:.
+[...]
+```
+
+`#` **`systemctl start docker`**
+
+### Check installation
+
 Check that the correct version is installed and operational:
 
 `#` **`docker --version`**
 ```
-Docker version 1.7.0, build 0baf609
+Docker version 1.11.2, build b9f10c9
 ```
 `#` **`docker info`**
 ```
 Containers: 0
+ Running: 0
+ Paused: 0
+ Stopped: 0
 Images: 0
-Storage Driver: aufs
- Root Dir: /var/lib/docker/aufs
- Backing Filesystem: extfs
- Dirs: 0
- Dirperm1 Supported: true
-Execution Driver: native-0.2
-Logging Driver: json-file
-Kernel Version: 3.16.0-41-generic
-Operating System: Ubuntu 14.04.2 LTS
+Server Version: 1.11.2
+Storage Driver: devicemapper
+ Pool Name: docker-253:2-130978-pool
+ Pool Blocksize: 65.54 kB
+ Base Device Size: 10.74 GB
+ Backing Filesystem: xfs
+ Data file: /dev/loop0
+ Metadata file: /dev/loop1
+ Data Space Used: 11.8 MB
+ Data Space Total: 107.4 GB
+[...]
+Cgroup Driver: cgroupfs
+Plugins: 
+ Volume: local
+ Network: null host bridge
+Kernel Version: 3.10.0-327.el7.x86_64
+Operating System: Red Hat Enterprise Linux Server 7.2 (Maipo)
+OSType: linux
+Architecture: x86_64
 CPUs: 6
-Total Memory: 15.55 GiB
-Name: lab6
-ID: JQD5:3JVU:YF7H:RZFK:Y36O:PTQ3:QZQ2:C3HF:I3HB:NDKM:5PLF:75J5
-WARNING: No swap limit support
+Total Memory: 15.39 GiB
+Name: lab3.labossi.hpintelco.org
+ID: JFU6:LTUL:UOB2:4NEE:IZFC:FZK7:INUC:7ABM:JRVG:NQOS:VSXH:4XMG
+Docker Root Dir: /var/lib/docker
+Debug mode (client): false
+Debug mode (server): false
+Registry: https://index.docker.io/v1/
+WARNING: bridge-nf-call-iptables is disabled
+WARNING: bridge-nf-call-ip6tables is disabled
 ```
 `#` **`docker `**
 
