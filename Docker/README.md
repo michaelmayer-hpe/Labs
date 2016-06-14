@@ -196,7 +196,7 @@ To generate this message, Docker took the following steps:
  1. The Docker client contacted the Docker daemon.
  2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
     (Assuming it was not already locally available.)
-3. The Docker daemon created a new container from that image which runs
+ 3. The Docker daemon created a new container from that image which runs
     the executable that produces the output you are currently reading.
  4. The Docker daemon streamed that output to the Docker client, which sent it to your terminal.
 
@@ -350,8 +350,8 @@ So your container is seen as stopped and you have to use the -a option to see it
 Re-create a new container based on the same image, connect to it and look at the packages installed. Check what docker sees. Use the previous commands to perform these tasks.
 
 Answer the questions:
-1. Can you download a web page with wget in your container ? Why ? Which steps are needed now ? Why ?
-2. Can you connect back to your first container ? (Hint: use docker start to re-enable your dead container and docker attach to re-enter in it)
+  1. Can you download a web page with wget in your container ? Why ? Which steps are needed now ? Why ?
+  2. Can you connect back to your first container ? (Hint: use docker start to re-enable your dead container and docker attach to re-enter in it)
 
 # Configuring owncloud in a container
 
@@ -361,10 +361,10 @@ Based on the work done in the Docker Dojo during a Grenoble Docker Meetup (Cf: h
 
 Owncloud is a web based application providing services such as calendering data or file sharing e.g.
 When we want to contain an application such as owncloud, there are a certain number of aspects to take in account and solve:
-1. installing the application and its dependencies in the container
-2. allow IP configuration for remote access to the application
-3. allow data persistence at each invocation of the container
-4. allow configuration data persistence at each invocation of the container
+  1. installing the application and its dependencies in the container
+  2. allow IP configuration for remote access to the application
+  3. allow data persistence at each invocation of the container
+  4. allow configuration data persistence at each invocation of the container
 One possibility would be to run the container from an image and launch the various commands in the container (as we've done previously). We could put that in a script and launch it systematically when we instantiate a container from an image, or rebuild a prepared image to be instantiated later. But there is a better way to achieve what we want to do, and this is by using the automation process by docker with the dockerfile.
 
 The dockerfile is a way to describe all the operations required to create an image from an initial empty one and stacking all the operations to build at the end the final image ready to be instantiated and consumed and thrown away
