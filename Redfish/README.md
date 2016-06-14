@@ -444,45 +444,42 @@ Wget and curl are non-interactive CLI network downloaders available on Linux and
 
 Reuse PuTTY again to log on your server. As an example, we'll use the following command to send a Reset signal to your iLO. Watch your iLO session after launching the command. 
 
-`Host#` **` wget --header='OData-Version:4.0' --header='Content-Type:application/json' --no-check-certificate --auth-no-challenge --http-user=demopaq --http-password=password --post-data='{"Action":"Reset"}' https://10.3.222.10X/redfish/v1/Managers/1/**
+`Host#` **`wget --header='OData-Version:4.0' --header='Content-Type:application/json' --no-check-certificate --auth-no-challenge --http-user=demopaq --http-password=password --post-data='{"Action":"Reset"}' https://10.3.222.10X/redfish/v1/Managers/1/`**
 
 The above command uses a basic authentication (--auth-no-challenge) and does not require any certificate from the iLO (--no-check-certificate) and uses the usual X you need to change.
 
-A second example shows how you can send a power Off signal to multiple systems, in parallel using pdsh(1) and wget. 
+![iLO Reset](/Redfish/ilo-reboot.png)
 
-When the iLO is back again, login as demopaq / password.
+A second example shows how you can send a power off signal to multiple systems, in parallel using pdsh(1) and wget. 
 
-From your PuTTY session, issue the following command where [X] represents a list of a single number: yours. To really specify a list of multiple targets, you could use: [1-9] or [1,2-4,9]. BUT DON’T DO THAT today. Otherwise you will kill your neighbor’s server!
- %h is a “placeholder” that will be replaced automatically by pdsh with each numbers in the list:
-Host# pdsh -R exec -w 10.3.222.10[X] wget --header='OData-Version:4.0'\
-      --header='Content-Type:application/json'       \
-      --no-check-certificate \
-      --auth-no-challenge \
-      --http-user=demopaq --http-password=password  \
-      --post-data='{"Action":"Reset","ResetType":"ForceOff"}' \
-      https://%h/redfish/v1/Systems/1/
-Of course, you are disconnected from PuTTY. From the iLO4 GUI, power On the server. 
+When the iLO is back again, login as demopaq / password. From your PuTTY session, issue the following command where [X] represents a list of a single number: yours. To really specify a list of multiple targets, you could use: [1-9] or [1,2-4,9]. But **DON’T DO THAT today**. Otherwise you will kill your neighbor’s server!
+
+Note that in the following %h is a “placeholder” that will be replaced automatically by pdsh with each numbers in the list:
+
+`Host#` **`pdsh -R exec -w 10.3.222.10[X] wget --header='OData-Version:4.0' --header='Content-Type:application/json' --no-check-certificate --auth-no-challenge --http-user=demopaq --http-password=password --post-data='{"Action":"Reset","ResetType":"ForceOff"}' https://%h/redfish/v1/Systems/1/`**
+
+Of course, you are disconnected from PuTTY. From the iLO4 GUI, power on the server. 
+
+![Power on Server](/Redfish/ilo-power.png)
 
 Once the server is rebooted, close the iLO Integrated Remote Console (IRC) to stop the UID from blinking:
 
-Open again a PuTTY session toward the Linux server.
-The following example uses curl(1) to change the hostname of the iLO.
-Host# curl --dump-header - --insecure -u demopaq:password   \
-     --request PATCH                                        \
-     -H "OData-Version: 4.0 "                    \
-     -H "Accept: application/json "                                \
-     -H "Content-Type: application/json "                          \
-     --data '{"Oem": {
-                     "Hp": {
-                             "HostName": "ilo-foobar"
-                            }
-                     }
-             }'                                            \
-     https://10.3.222.10X/redfish/v1/Managers/1/EthernetInterfaces/1/
+![Server on](/Redfish/server-on.png)
+
+Open again open a PuTTY session toward the Linux server.
+
+The following example uses `curl` to change the hostname of the iLO.
+
+`Host#` **`curl --dump-header - --insecure -u demopaq:password --request PATCH -H "OData-Version: 4.0 " -H "Accept: application/json " -H "Content-Type: application/json " --data '{"Oem": { "Hp": { "HostName": "ilo-foobar" } } }' https://10.3.222.10X/redfish/v1/Managers/1/EthernetInterfaces/1/`**
+
 Although the modification is made instantly, the above command returns a message asking for a reset of the iLO to be effective. 
 
+![Reset required](/Redfish/reset-required.png)
 
 Sign-out  from the iLO GUI (Top-Right) and refresh the page. You should see the new iLO name:
+
+![New iLO name](/Redfish/ilo-name.png)
+
 
 ## Python SDK
 
