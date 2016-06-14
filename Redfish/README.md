@@ -46,7 +46,7 @@ Of course, in case you're less familiar with these technologies, the Lab is stil
 
 This lab intends to be a **complement** (not a substitute) to the following public documents:
   - [Managing HPE Servers Using the HPE RESTful API](http://h20564.www2.hpe.com/hpsc/doc/public/display?docId=c04423967)
-  - [HPE RESTful API Data model Reference for iLO4](http://h20564.www2.hpe.com/hpsc/doc/public/display?docId=c04423960&lang=en-us&cc=us)
+  - [HPE RESTful API Data Model Reference for iLO4](http://h20564.www2.hpe.com/hpsc/doc/public/display?docId=c04423960&lang=en-us&cc=us)
   - [UEFI Shell specifications](http://www.uefi.org/sites/default/files/resources/UEFI_Shell_Spec_2_0.pdf) (Useful for writing shell scripts)
   - [HPE RESTful Interface Tool](http://www8.hp.com/us/en/products/server-software/product-detail.html?oid=7630408)
   - Youtube: [HPE RESTful API overview](https://www.youtube.com/watch?v=0OjD2lHNWUU)
@@ -237,102 +237,182 @@ You can then kill the HttpRequester application.
 ## The HPE RESTful Interface tool
 
 Using a Web browser to get and set properties in a server is very useful for learning or troubleshooting. However, browsing the data model becomes quickly complex. Again, RESTful APIs are intended to be used by programs and you may not have the skills or the time to develop your own RESTful executable suitable for managing your systems.
-As an intermediate solution between a browser extension and a dedicated RESTful program, HPE proposes a free RESTful Interface tool. This tool hides the complexity of the underlying data model and provides a simple and easy to use mean for managing servers.
-This tool can be downloaded for free from hp.com/go/resttool . Installable packages for both Windows (.msi) and Linux (.rpm) are available. However, you don’t need to download it from the Internet. It is already present on your server.
+
+As an intermediate solution between a browser extension and a dedicated RESTful program, HPE proposes an Open Source RESTful Interface tool. This tool hides the complexity of the underlying data model and provides a simple and easy to use mean for managing servers.
+
+This tool can be downloaded for free from http://www.hpe.com/servers/resttool. Installable packages for both Windows (.msi) and Linux (.rpm) are available. For Linux it is even easier to use the HPE SDR at http://downloads.linux.hpe.com/SDR
+
 NOTE: All servers (including Gen8) featuring an ilO4 firmware equal or greater than 2.0 can be managed with this tool. However, Gen8 servers have only a limited set modifiable properties. 
+
 The HPE RESTful Interface tool is the perfect replacement for the following five STK separate tools: reboot, conrep, setbootorder, hponcfg and rbsureset.
+
 The following exercises briefly explains the specific terminology as well as the operational modes of the tool: Interactive, scriptable and file-based.
-Tool installation
-Although we could use hprest from your Windows station to manage the server in an out-of-band manner, we will use it from the server itself, because we want to test both out-of-band and in-band management. Moreover, the pdsh part of this exercise is not possible on Windows.
-An hprest.rpm package is present on your server.
-Open a PuTTY session to the server (10.3.222.8X) with root / password for credentials and install the hprest.rpm package:
+
+### Tool installation
+
+Although we could use hprest from your Windows station to manage the server in an out-of-band manner, we will use it from the Linux server itself, because we want to test both out-of-band and in-band management and the SDR. Moreover, the pdsh part of this exercise is not possible on Windows.
+
+Open a PuTTY session to the server (10.3.222.8X) with root / password for credentials and install the hprest package:
+
+`#` **`yum install -y lsb`**
+
+`#` **`wget http://downloads.linux.hpe.com/SDR/add_repo.sh`**
+
+`#` **`chmod 755 ./add_repo.sh`**
+
+`#` **`./add_repo.sh -r 7.1 hprest`**
+
+`#` **`yum install -y hprest`**
+
+We have to install the lsb package which is used by add_repo to determine which distribution we running on. For the moment, RHEL 7.2 is not yet supported so we point to the 7.1 repository which contains the latest packages.
+<!--
 Host# cd /usr/kits
 Host# rpm -ivh hprest.rpm
+-->
 From a general point of view, server resources and their properties belong to a specific “class” or Type. Type names are referenced by a string followed by a version number like in ComputerSystem.1.0.0. 
+
 To view or alter a property in a specific Type using hprest, you must:
-Log into the iLO4 of the server
-Select the Type containing the property to display or alter.
-The complete list of types and associated properties are detailed in the RESTful API Data Model Reference for iLO4 manual located in the HPE Information Library.
-Interactive mode
-This mode lets you send interactive RESTful commands to get or set resources and property values.
-Launch the hprest tool. From the hprest > prompt, log into the iLO4 of your server for an out-of-band session. Issue the help command:
-Host# hprest
-hprest > login 10.3.222.10X –u demopaq –p password
+  1. Log into the iLO4 of the server
+  1. Select the Type containing the property to display or alter.
+
+The complete list of types and associated properties are detailed in the [HPE RESTful API Data Model Reference for iLO4](http://h20564.www2.hpe.com/hpsc/doc/public/display?docId=c04423960&lang=en-us&cc=us).
+
+### Interactive mode
+
+This mode lets you send interactive RESTful commands to get or set resources and property values:
+
+  1. Launch the hprest tool. 
+  1. From the hprest > prompt, log into the iLO4 of your server for an out-of-band session. 
+  1. Issue the help command:
+
+`Host#` **`hprest`**
+
+`hprest >` **`login 10.3.222.10X –u demopaq –p password`**
+```
 Discovering...Done
 WARNING: Cache is activated session keys are stored in plaintext
-hprest >help
+```
+`hprest >` **`help`**
+
 In addition to the “atomic” commands (get set…), hprest provides tools performing several set commands at once. Review the Tool list at the bottom of the help message:
 
+![hprest Help](/Redfish/hprest-help.png)
 
+Next, we'll change the way the server is booting:
 
-Use the bootorder BIOS COMMAND to force the system to stop at UEFI Shell during next reboot. Send the status command to view the two parameters changed by the bootorder tool. Then commit the changes:
-hprest > bootorder --onetimeboot=UefiShell 
-hprest > status
+  1. Use the bootorder BIOS COMMAND to force the system to stop at UEFI Shell during next reboot. 
+  1. Send the status command to view the two parameters changed by the bootorder tool. 
+  1. Commit the changes:
+
+`hprest >` **`bootorder --onetimeboot=UefiShell`**
+
+`hprest >` **`status`**
+```
 Current changes found:
 ComputerSystem.1.0.0 (Currently selected)
         Boot/BootSourceOverrideTarget=UefiShell
         Boot/BootSourceOverrideEnabled=Once
-hprest > commit
+```
+`hprest >` **`commit`**
+
 The commit commands logs you out. Login again using the in-band manner, and list all the Types (classes of objects) available:
-hprest > login
+
+`hprest >` **`login`**
+```
 Discovering...Done
 WARNING: Cache is activated session keys are stored in plaintext
-hprest > types
-…
-From there, select ComputerSytem.1.0.0 using the tab command completion key and list all the properties
-hprest > select comp<tab>
-hperst > select ComputerSystem.<tab>
-hprest > select ComputerSystem.1.0.0
-hprest > ls
-…
+```
+`hprest >` **`types`**
+
+From there, select ComputerSytem.1.0.0 using the tab command completion key and list all the properties:
+
+`hprest >` **`select comp<tab>`**
+
+`hprest >` **`select ComputerSystem.<tab>`**
+
+`hprest >` **`select ComputerSystem.1.0.0`**
+
+`hprest >` **`ls`**
+
 Modify now the AdminName property, part of type HpBios.1.2.0, with a string containing a white space, all of this in one single command (note the required comas around the property name and its value):
-hprest > set "AdminName=Foo Bar" --selector HpBios.1.2.0
+
+`hprest >` **`set "AdminName=Foo Bar" --selector HpBios.1.2.0`**
+
 Issue the select command and note that the selected type is now HpBios.1.2.0:
-hprest > select
+
+`hprest >` **`select`**
+```
 Current selection: 'HpBios.1.2.0'
 Nothing has yet been changed in the server. Display the status of the changes located in a server cache and commit them to the server.
-hprest > status 
+```
+`hprest >` **`status`**
+```
 Current changes found:
 HpBios.1.2.0 (Currently selected)
         AdminName=Foo Bar
-hprest > commit
+```
+`hprest >` **`commit`**
+```
 Committing changes…
 One or more properties were changed and will not take effect until system is reset.
 Logging session out.
-hprest > exit
+```
+`hprest >` **`exit`**
+```
 By for Now
-Host# 
-Script based mode
+```
+`Host#`
+
+### Script based mode
+
 This mode allows multiple hprest directives bundled in a single shell script. Change directory to /tmp and launch again an in-band session:
-Host# cd /tmp
-Host# hprest login
+
+`Host#` **`hprest login`**
+
 List all the Types, select the HpBios.1.2.0 type and save its properties in a file:
-Host# hprest types
-Host# hprest select HpBios.1.2.0
-Host# hprest save --filename /tmp/bios.json
-File based mode
+
+`Host#` **`hprest types`**
+
+`Host#` **`hprest select HpBios.1.2.0`**
+
+`Host#` **`hprest save --filename /tmp/bios.json`**
+
+### File based mode
+
 This last mode allows the load of an entire configuration file into hprest, which will send it to the managed server. 
-In this exercise, we modify the UEFI BIOS settings in order to execute automatically a networked based startup.nsh file during the startup of the UEFI Shell (remember, we previously set the next boot to UefiShell). 
-Using the nano or vi text editor, open /tmp/bios.json saved in the previous exercise and perform the following modifications: Assign an IPv4 static configuration to server’s NIC (the first one found and connected) and a network location for the automatic startup script:. 
-Host# vi /tmp/bios.json
-…
+
+In this exercise, we'll modify the UEFI BIOS settings in order to execute automatically a networked based startup.nsh file during the startup of the UEFI Shell (remember, we previously set the next boot to UefiShell). 
+
+Using the nano or vi text editor, open /tmp/bios.json saved in the previous exercise and perform the following modifications: 
+  1. Assign a static IPv4 configuration to the NIC of the server (the first one found and connected) 
+  1. Assign a network location for the automatic startup script:. 
+
+`Host#` **`vi /tmp/bios.json`**
+```
+[...]
 "Dhcpv4": "Disabled",
-…
+[...]
 "Ipv4Address": "10.3.222.8X"
 "IPv4Gateway": "0.0.0.0"
-…
+[...]
 "Ipv4SubnetMask": "255.255.255.0",
-…j
+[...]
 "UefiShellStartup": "Enabled",
-…
+[...]
 "UefiShellStartupUrl": "http://10.3.222.22/MediaKits/etc/startup.nsh",
-…
-Save and exit the text editor.
-NOTE: the script name startup.nsh is a reserved keyword part the UEFI Shell specification. In other words, only a script called startup.nsh will be launched automatically by the Shell, whether it is located on the Internet or locally in a GPT (i.e. FS0: or FS1:). Think of Autoexec.bat as a reserved script name in the MS-DOS days…
-Your hprest session should be still active. Hence, you can load the modified bios.json file:
-Host# hprest load --filename /tmp/bios.json 
-To validate these modifications, we need to reset the system. Log into the ilO (demopaq / password) GUI, if needed:
+[...]
+```
+Save and exit the text editor (:wq for vi).
 
+NOTE: the script name "**startup.nsh**" is a reserved keyword part the UEFI Shell specification. In other words, only a script called startup.nsh will be launched automatically by the Shell, whether it is located on the Internet or locally on an EFI file system (i.e. FS0: or FS1:). Think of Autoexec.bat as a reserved script name in the MS-DOS days...
+
+Your hprest session should be still active. Hence, you can load the modified bios.json file:
+
+`Host#` **`hprest load --filename /tmp/bios.json`**
+
+To validate these modifications, we need to reset the system. Log into the ilO (demopaq / password) GUI and from the central pane, click on .NET to launch the Integrated Remote Console (if not already started): 
+
+![Launch iLO](/Redfish/ilo-launch.png)
 
 From the central pane, click on .NET to launch the Integrated Remote Console (if not already started): 
 
