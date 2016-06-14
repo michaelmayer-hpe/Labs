@@ -92,21 +92,21 @@ From Firefox, open a session toward the iLO of your server at http://10.3.222.10
 
 If needed, click on Advanced and then on Add Exception… then Confirm Security Exception:
 
-![HttpRequester Setup](/Redfish/insecure-app.png)
+![Insecure App](/Redfish/insecure-app.png)
 
 Log into the iLO. Your server should be in the OFF state. If not, warn the instructor.
 
-![HttpRequester Setup](/Redfish/server-off.png)
+![Server Off](/Redfish/server-off.png)
 
 
 By default, modern browsers block Insecure Contents and packets coming from the iLO via the Remote Console are considered as such. 
 In the main central pane, click on the .Net link:
 
-![Insecure Content](/Redfish/dotnet-console.png)
+![.Net console](/Redfish/dotnet-console.png)
 
 Click on the upper left locker/warning icon and then on the > sign and click on Disable protection for now:
 
-![Insecure Content](/Redfish/disable-protect.png)
+![Disable Protection](/Redfish/disable-protect.png)
 
 Click again on the .NET link. Push the RUN button of Security Warning popups if any. The console window should now be appear.
 
@@ -142,62 +142,97 @@ Estimated time: 60 minutes.
 ## Get properties from the server
 
 The goal of this exercise is to understand the different dialogs and syntaxes used between the client (browser) and the RESTful server.
+
 Open the HttpRequester client:
 
-Redfish and the iLO RESTful API implementation requires the authentication of clients (via SSL) before using GET, POST or PATCH methods.
-In these exercises, we use only the Basic Authentication mechanism primarily designed for single requests. Full session states are also supported by the iLO REST Interface, and explained in the Managing HPE Servers Using the RESTful API for iLO document present on your Desktop. 
-Supply secured URL https://10.3.222.10X/rest/v1/Systems where X is your group number. 
-An URL starting with /rest/v1 will communicate with the legacy iLO RESTful API. 
-Click on Authentication… and supply the privileged username (demopaq) and password (password): 
+![HttpRequester Open](/Redfish/httprequester-open.png)
 
-Submit this GET request.
+Redfish and the iLO RESTful API implementation requires the authentication of clients (via SSL) before using GET, POST or PATCH methods.
+
+In these exercises, we use only the **Basic Authentication** mechanism primarily designed for single requests. Full session states are also supported by the iLO REST Interface, and explained in [Managing HPE Servers Using the HPE RESTful API](http://h20564.www2.hpe.com/hpsc/doc/public/display?docId=c04423967).
+
+![HttpRequester Request](/Redfish/httprequester-request.png)
+
+  1. Supply as URL **https://10.3.222.10X/rest/v1/Systems** where X is your group number. 
+(An URL starting with /rest/v1 will communicate with the legacy iLO RESTful API, not the new Redfish standard based one)
+
+  1. Then click on **Authentication** and supply the privileged username (demopaq) and password (password)
+
+  1. **Submit** this GET request.
+
 In return, you get a response with status 200 OK. If not, tell your instructor. Make sure that the Pretty format box is ticked:
 
+![HttpRequester Answer](/Redfish/httprequester-answer.png)
 
 In this case (traditional rack or blade server), the Total number of “Systems” contained in this box is 1. A Moonshot server with multiple cartridges, would typically return a higher number.
+
 The Type (Collection.1.0.0) represents the most important concept in Redfish and the iLO RESTful API. To simplify, we can consider it is the class of an object instance. We will talk again about Types later in this lab.
-The link: /rest/v1/Systems/1 can be interpreted a logical view of server 1 contained in the box. It is the entry point for CPU, memory, expansion slots, power management and BIOS version properties.
-To view the properties related to item 1 of this System, Submit the following link: https://10.3.222.10X/rest/v1/Systems/1
+
+The link: /rest/v1/Systems/1 can be interpreted as a logical view of the first server contained in the box. It is the entry point for CPU, memory, expansion slots, power management and BIOS version properties.
+
+To view the properties related to item 1 of this System, change the URL to the following: **https://10.3.222.10X/rest/v1/Systems/1**
+
 The exhaustive list of properties is returned, including possible actions like the different Reset possibilities (ResetType):
 
+![HttpRequester Reset](/Redfish/httprequester-power.png)
 
-Further down, you can see Power state:
+Further down, you can see Power state.
 
+Change the URL to **/redfish/v1/Systems/1** and compare the output with the /rest/v1/Systems/1 using the bottom History pane. 
 
-Change the URL to /redfish/v1/Systems/1 and compare the output with the /rest/v1/Systems/1 using the bottom History pane. You should notice that the output are identical:
+![HttpRequester History](/Redfish/httprequester-history.png)
+
+You should notice that the output are nearly identical (paths are adapted).
 
 To trigger a Redfish compliant request and get the corresponding output, you need to specify an Open Data header.
-Click on the Headers tab of your HttpRequester and fill up the Name: and Value: fields as shown below and click on the Add button:
 
+![HttpRequester Open Data](/Redfish/httprequester-odata.png)
 
+  1. Click on the Headers tab of your HttpRequester
+  1. Fill up the Name and Value fields as shown upper 
+  1. Click on the Add button
+  1. Click on the Submit button
 
-Submit the request. You should notice that the output is different from previous request. For example, the Bios Version appears earlier:
+You should notice that the output is different from previous requests. For example, the Bios Version appears earlier:
 
+![HttpRequester BIOS](/Redfish/httprequester-bios.png)
 
-Note: In addition to the Systems link, the data model proposes others like Chassis and Managers. The description of their content is explained in the Managing HPE Servers Using the iLO RESTful API document.
+Note: In addition to the Systems link, the data model proposes others entry points like Chassis and Managers. The description of their content is explained in the [Managing HPE Servers Using the HPE RESTful API](http://h20564.www2.hpe.com/hpsc/doc/public/display?docId=c04423967)
+
 A partial view of the data model is:
 
+![Redfish Data Model](/Redfish/redfish-classes.png)
+
 Using the browser extension, navigate through the Chassis link by sending the following URIs. Make sure that the OData-Version header is still present:
-https://10.3.222.10X/redfish/v1/Chassis
-https://10.3.222.10X/redfish/v1/Chassis/1
-https://10.3.222.10X/redfish/v1/Chassis/1/Power
+
+  1. https://10.3.222.10X/redfish/v1/Chassis
+  1. https://10.3.222.10X/redfish/v1/Chassis/1
+  1. https://10.3.222.10X/redfish/v1/Chassis/1/Power
+
 You should notice that the Chassis link contains physical properties of the server(s).
+
 Perform a similar navigation in the Managers location. What is the type of content under Managers? Confirm your findings with the data model picture just above.
-Send an action
-This exercise sends the Power-On action to start the server. This action is possible via the Systems/1 link. Select the POST button and click on the Headers tab. You need to specify the type of payload you will send (application/json). The type of answers you Accept from the iLO is optional here, but it is good practice to specify: application/JSON as well.
 
+## Send an action
 
-Select the Content to send tab and enter the JSON payload of this POST action in the editor. Hit the Submit button. You should be able to cut&paste the following text:
-{"Action":"Reset","ResetType":"On"}
+This exercise sends the Power-On action to start the server. This action is possible via the Systems/1 link. 
 
+![HttpRequester Action](/Redfish/httprequester-action.png)
 
-You should get a successful answer: 
+  1. Select the POST button
+  1. click on the "Headers" tab. You need to specify the type of payload you will send (application/json). The type of answers you Accept from the iLO is optional here, but it is good practice to specify: application/JSON as well.
+  1. Select the "Content to send" tab and enter the JSON payload of this POST action in the editor. You should be able to cut&paste the following text:
+     {"Action":"Reset","ResetType":"On"}
 
+![HttpRequester Content to Send](/Redfish/httprequester-contenttosend.png)
+
+Hit the Submit button. You should get a successful answer: 
+
+![HttpRequester Success](/Redfish/httprequester-successfulanswer.png)
 
 Verify in the IRC that the server is booting.
 
-You can kill the HttpRequester application. 
-
+You can then kill the HttpRequester application. 
 
 ## The HPE RESTful Interface tool
 
