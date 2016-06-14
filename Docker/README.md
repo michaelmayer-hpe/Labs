@@ -23,7 +23,7 @@ Estimated time for the lab is placed in front of each part.
 Estimated time: 15 minutes
 ## Docker installation
 Docker is available externaly from http://docs.docker.com/linux/step_one/ or using your distribution packages, or from github at https://github.com/docker/docker
-Version 1.7 is  the current stable release.
+Version 1.11 is  the current stable release.
 
 Ask to your instructor which Linux distribution will be used for the Lab (Ubuntu or RHEL). The refer to the corresponding instructions below.
 
