@@ -14,16 +14,16 @@ At the end of the Lab students should be able to navigate through the various Re
 This Lab is intended to be trial and error so that during the session students should understand really what is behind the environment, instead of blindly following instructions, which never teach people anything IMHO. You've been warned ;-)
 
 This Lab presents five means for retrieving and setting parameters from and to an HPE ProLiant server via the HPE RESTful API. You can work with:
-1. A web browser with the associated extension
-2. The free to use HPE hprest tool
-3. wget / curl tools
-4. PowerShell commands
-5. A python script
+  1. A web browser with the associated extension
+  2. The free to use HPE hprest tool
+  3. wget / curl tools
+  4. PowerShell commands
+  5. A python script
 
 The following exercises are proposed for each method:
 
-1. Get Properties
-2. Set a property and/or perform an action
+  1. Get Properties
+  2. Set a property and/or perform an action
 
 Expected duration : 120 minutes
 
@@ -64,8 +64,8 @@ Estimated time: 20 minutes
 This Lab supposes that your client machine will run a Windows OS. If you're lucky to have a Linux one, don't worry as the instructions also apply to it as well.
 
 Before starting the lab exercises, your client station must be installed with the following:
-1. The [Firefox](http://www.mozilla.org/firefox) browser with the [HttpRequester extension](https://addons.mozilla.org/en-US/firefox/addon/httprequester/). NOTE: Google Chrome with the Postman extension can be used as well. However, screen snapshots in this Lab have been performed with HttpRequester as this extension is easier to install in non-connected environments.
-2. An SSH client ([PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html) on Windows clients is OK)
+  1. The [Firefox](http://www.mozilla.org/firefox) browser with the [HttpRequester extension](https://addons.mozilla.org/en-US/firefox/addon/httprequester/). NOTE: Google Chrome with the Postman extension can be used as well. However, screen snapshots in this Lab have been performed with HttpRequester as this extension is easier to install in non-connected environments.
+  2. An SSH client ([PuTTY](http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html) on Windows clients is OK)
 
 For the rest of this Lab, each team has received a lab number (**X**) from the instructor, and we'll refer to your server as **labX**. It has the following characteristics:
   - iLO IP: 10.3.222.100+X (login: demopaq - password: password)
@@ -101,6 +101,9 @@ Log into the iLO. Your server should be in the OFF state. If not, warn the instr
 
 By default, modern browsers block Insecure Contents and packets coming from the iLO via the Remote Console are considered as such. 
 In the main central pane, click on the .Net link:
+
+![Insecure Content](/Redfish/server-off.png)
+
 
 Click on the upper left locker/warning icon and then on the > sign and click on Disable protection for now:
 
