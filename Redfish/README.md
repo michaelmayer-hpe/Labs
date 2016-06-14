@@ -86,27 +86,27 @@ If the login is successful, exit from the system:
 Finally test and set your browser:
 Open the Firefox browser (if not already done). If you don’t see the following double arrow icon in the top right corner, notify the instructor.
 
-![HttpRequester Setup]/Redfish/img/httprequester-icon.png)
+![HttpRequester Setup](/Redfish/img/httprequester-icon.png)
 
 From Firefox, open a session toward the iLO of your server at http://10.3.222.10X
 
 If needed, click on Advanced and then on Add Exception… then Confirm Security Exception:
 
-![Insecure App]/Redfish/img/insecure-app.png)
+![Insecure App](/Redfish/img/insecure-app.png)
 
 Log into the iLO. Your server should be in the OFF state. If not, warn the instructor.
 
-![Server Off]/Redfish/img/server-off.png)
+![Server Off](/Redfish/img/server-off.png)
 
 
 By default, modern browsers block Insecure Contents and packets coming from the iLO via the Remote Console are considered as such. 
 In the main central pane, click on the .Net link:
 
-![.Net console]/Redfish/img/dotnet-console.png)
+![.Net console](/Redfish/img/dotnet-console.png)
 
 Click on the upper left locker/warning icon and then on the > sign and click on Disable protection for now:
 
-![Disable Protection]/Redfish/img/disable-protect.png)
+![Disable Protection](/Redfish/img/disable-protect.png)
 
 Click again on the .NET link. Push the RUN button of Security Warning popups if any. The console window should now be appear.
 
@@ -145,13 +145,13 @@ The goal of this exercise is to understand the different dialogs and syntaxes us
 
 Open the HttpRequester client:
 
-![HttpRequester Open]/Redfish/img/httprequester-open.png)
+![HttpRequester Open](/Redfish/img/httprequester-open.png)
 
 Redfish and the iLO RESTful API implementation requires the authentication of clients (via SSL) before using GET, POST or PATCH methods.
 
 In these exercises, we use only the **Basic Authentication** mechanism primarily designed for single requests. Full session states are also supported by the iLO REST Interface, and explained in [Managing HPE Servers Using the HPE RESTful API](http://h20564.www2.hpe.com/hpsc/doc/public/display?docId=c04423967).
 
-![HttpRequester Request]/Redfish/img/httprequester-request.png)
+![HttpRequester Request](/Redfish/img/httprequester-request.png)
 
   1. Supply as URL **https://10.3.222.10X/rest/v1/Systems** where X is your group number. 
 (An URL starting with /rest/v1 will communicate with the legacy iLO RESTful API, not the new Redfish standard based one)
@@ -162,7 +162,7 @@ In these exercises, we use only the **Basic Authentication** mechanism primarily
 
 In return, you get a response with status 200 OK. If not, tell your instructor. Make sure that the Pretty format box is ticked:
 
-![HttpRequester Answer]/Redfish/img/httprequester-answer.png)
+![HttpRequester Answer](/Redfish/img/httprequester-answer.png)
 
 In this case (traditional rack or blade server), the Total number of “Systems” contained in this box is 1. A Moonshot server with multiple cartridges, would typically return a higher number.
 
@@ -174,19 +174,19 @@ To view the properties related to item 1 of this System, change the URL to the f
 
 The exhaustive list of properties is returned, including possible actions like the different Reset possibilities (ResetType):
 
-![HttpRequester Reset]/Redfish/img/httprequester-power.png)
+![HttpRequester Reset](/Redfish/img/httprequester-power.png)
 
 Further down, you can see Power state.
 
 Change the URL to **/redfish/v1/Systems/1** and compare the output with the /rest/v1/Systems/1 using the bottom History pane. 
 
-![HttpRequester History]/Redfish/img/httprequester-history.png)
+![HttpRequester History](/Redfish/img/httprequester-history.png)
 
 You should notice that the output are nearly identical (paths are adapted).
 
 To trigger a Redfish compliant request and get the corresponding output, you need to specify an Open Data header.
 
-![HttpRequester Open Data]/Redfish/img/httprequester-odata.png)
+![HttpRequester Open Data](/Redfish/img/httprequester-odata.png)
 
   1. Click on the Headers tab of your HttpRequester
   1. Fill up the Name and Value fields as shown upper 
@@ -195,13 +195,13 @@ To trigger a Redfish compliant request and get the corresponding output, you nee
 
 You should notice that the output is different from previous requests. For example, the Bios Version appears earlier:
 
-![HttpRequester BIOS]/Redfish/img/httprequester-bios.png)
+![HttpRequester BIOS](/Redfish/img/httprequester-bios.png)
 
 Note: In addition to the Systems link, the data model proposes others entry points like Chassis and Managers. The description of their content is explained in the [Managing HPE Servers Using the HPE RESTful API](http://h20564.www2.hpe.com/hpsc/doc/public/display?docId=c04423967)
 
 A partial view of the data model is:
 
-![Redfish Data Model]/Redfish/img/redfish-classes.png)
+![Redfish Data Model](/Redfish/img/redfish-classes.png)
 
 Using the browser extension, navigate through the Chassis link by sending the following URIs. Make sure that the OData-Version header is still present:
 
@@ -217,18 +217,18 @@ Perform a similar navigation in the Managers location. What is the type of conte
 
 This exercise sends the Power-On action to start the server. This action is possible via the Systems/1 link. 
 
-![HttpRequester Action]/Redfish/img/httprequester-action.png)
+![HttpRequester Action](/Redfish/img/httprequester-action.png)
 
   1. Select the POST button
   1. click on the "Headers" tab. You need to specify the type of payload you will send (application/json). The type of answers you Accept from the iLO is optional here, but it is good practice to specify: application/JSON as well.
   1. Select the "Content to send" tab and enter the JSON payload of this POST action in the editor. You should be able to cut&paste the following text:
      {"Action":"Reset","ResetType":"On"}
 
-![HttpRequester Content to Send]/Redfish/img/httprequester-contenttosend.png)
+![HttpRequester Content to Send](/Redfish/img/httprequester-contenttosend.png)
 
 Hit the Submit button. You should get a successful answer: 
 
-![HttpRequester Success]/Redfish/img/httprequester-successfulanswer.png)
+![HttpRequester Success](/Redfish/img/httprequester-successfulanswer.png)
 
 Verify in the IRC that the server is booting.
 
@@ -296,7 +296,7 @@ WARNING: Cache is activated session keys are stored in plaintext
 
 In addition to the “atomic” commands (get set…), hprest provides tools performing several set commands at once. Review the Tool list at the bottom of the help message:
 
-![hprest Help]/Redfish/img/hprest-help.png)
+![hprest Help](/Redfish/img/hprest-help.png)
 
 Next, we'll change the way the server is booting:
 
@@ -412,31 +412,31 @@ Your hprest session should be still active. Hence, you can load the modified bio
 
 To validate these modifications, we need to reset the system. Log into the ilO (demopaq / password) GUI and from the central pane, click on .NET to launch the Integrated Remote Console (if not already started): 
 
-![Launch iLO]/Redfish/img/ilo-launch.png)
+![Launch iLO](/Redfish/img/ilo-launch.png)
 
 You may need, again, to allow Firefox to load unsecure content:
 
-![Firefox Insecure]/Redfish/img/firefox-insecure.png)
+![Firefox Insecure](/Redfish/img/firefox-insecure.png)
 
 Note: On the latest Chrome, the same action has to be performed, but on the right side of the URL!
 
 From the Console, Reset the server and don’t touch anything. Just watch:
 
-![iLO Reset]/Redfish/img/ilo-reset.png)
+![iLO Reset](/Redfish/img/ilo-reset.png)
 
 Upon restart, the server detects the modifications performed via the iLO RESTful API and notifies the user it will reboot. Don’t touch anything. Just watch. Remember, we modified the Next Boot order to UefiShell, so the system will stop there: 
 
-![Server Reboot]/Redfish/img/server-reboot.png)
+![Server Reboot](/Redfish/img/server-reboot.png)
 
 After the reboot, the UEFI Shell is launched, it fetches the startup.nsh file from the network and executes it: 
 
-![startup.nsh]/Redfish/img/startup-nsh.png)
+![startup.nsh](/Redfish/img/startup-nsh.png)
 
 Using a browser, you should be able to view the content of this startup.nsh file and understand why it generates errors; this file is used in another lab and does not find what it is looking for...
 
 Exit from the shell and boot Linux:
 
-![Exit UEFI]/Redfish/img/uefi-exit.png)
+![Exit UEFI](/Redfish/img/uefi-exit.png)
 
 ## Scripting with wget or curl
 
@@ -448,7 +448,7 @@ Reuse PuTTY again to log on your server. As an example, we'll use the following 
 
 The above command uses a basic authentication (--auth-no-challenge) and does not require any certificate from the iLO (--no-check-certificate) and uses the usual X you need to change.
 
-![iLO Reset]/Redfish/img/ilo-reboot.png)
+![iLO Reset](/Redfish/img/ilo-reboot.png)
 
 A second example shows how you can send a power off signal to multiple systems, in parallel using pdsh(1) and wget. 
 
@@ -460,11 +460,11 @@ Note that in the following %h is a “placeholder” that will be replaced autom
 
 Of course, you are disconnected from PuTTY. From the iLO4 GUI, power on the server. 
 
-![Power on Server]/Redfish/img/ilo-power.png)
+![Power on Server](/Redfish/img/ilo-power.png)
 
 Once the server is rebooted, close the iLO Integrated Remote Console (IRC) to stop the UID from blinking:
 
-![Server on]/Redfish/img/server-on.png)
+![Server on](/Redfish/img/server-on.png)
 
 Open again open a PuTTY session toward the Linux server.
 
@@ -474,11 +474,11 @@ The following example uses `curl` to change the hostname of the iLO.
 
 Although the modification is made instantly, the above command returns a message asking for a reset of the iLO to be effective. 
 
-![Reset required]/Redfish/img/reset-required.png)
+![Reset required](/Redfish/img/reset-required.png)
 
 Sign-out  from the iLO GUI (Top-Right) and refresh the page. You should see the new iLO name:
 
-![New iLO name]/Redfish/img/ilo-name.png)
+![New iLO name](/Redfish/img/ilo-name.png)
 
 
 ## Python SDK
@@ -787,15 +787,15 @@ This is really useful to debug rest calls. Another usage is also to know the cal
   1. Prepare http fox open it.
   2. Prepare http requester.
   3. Click on the start button of httpfox to listen to browser calls.
-![httpfox-listen](/Redfish/img/httpfox-listen.png)
+![httpfox-listen]((/Redfish/img/httpfox-listen.png)
   4. Sent a query via httprequester.
-![httpfox-post](/Redfish/img/httpfox-post.png)
+![httpfox-post]((/Redfish/img/httpfox-post.png)
   5. Stop httpfox.
 
 You can now inpect the query within httpfox.
 
 In the example below, you can see that an authentication query was posted and the token provided by the redfish API to authenticate next calls.
-![httpfox-inspect](/Redfish/img/httpfox-inspect.png)
+![httpfox-inspect]((/Redfish/img/httpfox-inspect.png)
 
 
 
