@@ -414,25 +414,30 @@ To validate these modifications, we need to reset the system. Log into the ilO (
 
 ![Launch iLO](/Redfish/ilo-launch.png)
 
-From the central pane, click on .NET to launch the Integrated Remote Console (if not already started): 
-
-
 You may need, again, to allow Firefox to load unsecure content:
 
+![Firefox Insecure](/Redfish/firefox-insecure.png)
 
 Note: On the latest Chrome, the same action has to be performed, but on the right side of the URL!
 
 From the Console, Reset the server and don’t touch anything. Just watch:
 
+![iLO Reset](/Redfish/ilo-reset.png)
 
 Upon restart, the server detects the modifications performed via the iLO RESTful API and notifies the user it will reboot. Don’t touch anything. Just watch. Remember, we modified the Next Boot order to UefiShell, so the system will stop there: 
 
+![Server Reboot](/Redfish/server-reboot.png)
 
 After the reboot, the UEFI Shell is launched, it fetches the startup.nsh file from the network and executes it: 
 
+![startup.nsh](/Redfish/startup-nsh.png)
 
-Using a browser, you should be able to view the content of this startup.nsh file and understand why it generates errors; this file is used in another lab and does not find what it is looking for…
+Using a browser, you should be able to view the content of this startup.nsh file and understand why it generates errors; this file is used in another lab and does not find what it is looking for...
+
 Exit from the shell and boot Linux:
+
+![Exit UEFI](/Redfish/uefi-exit.png)
+
 
 ## Scripting with wget or curl
 
