@@ -438,24 +438,20 @@ Exit from the shell and boot Linux:
 
 ![Exit UEFI](/Redfish/uefi-exit.png)
 
-
 ## Scripting with wget or curl
 
-Wget(1) and curl(1) are command-line, non-interactive network downloaders available on Linux and Windows/Cygwin. They can be used to send https frames and perform actions via the iLO RESTful API. Sometimes, it is quicker, easier and more convenient to use them compared to a web-browser extension or the hprest tool. 
-As an example, the following command sends a Reset signal to your iLO. Watch your iLO session after launching the command. 
-Re-open a PuTTY session toward your server. You should be able to cut&paste the following command in your PuTTY and replace the X by your group number:
-Host# wget --header='OData-Version:4.0' \
-      --header='Content-Type:application/json'       \
-      --no-check-certificate \
-      --auth-no-challenge \
-      --http-user=demopaq --http-password=password  \
-      --post-data='{"Action":"Reset"}' \
-      https://10.3.222.10X/redfish/v1/Managers/1/
-The above command uses a basic authentication (--auth-no-challenge) and does not require any certificate from the iLO (--no-check-certificate).
+Wget and curl are non-interactive CLI network downloaders available on Linux and Windows. They can be used to send https requests and perform actions via the iLO RESTful API. Sometimes, it is quicker, easier and more convenient to use them compared to a web-browser extension or the hprest tool. 
 
+Reuse PuTTY again to log on your server. As an example, we'll use the following command to send a Reset signal to your iLO. Watch your iLO session after launching the command. 
+
+`Host#` **` wget --header='OData-Version:4.0' --header='Content-Type:application/json' --no-check-certificate --auth-no-challenge --http-user=demopaq --http-password=password --post-data='{"Action":"Reset"}' https://10.3.222.10X/redfish/v1/Managers/1/**
+
+The above command uses a basic authentication (--auth-no-challenge) and does not require any certificate from the iLO (--no-check-certificate) and uses the usual X you need to change.
 
 A second example shows how you can send a power Off signal to multiple systems, in parallel using pdsh(1) and wget. 
+
 When the iLO is back again, login as demopaq / password.
+
 From your PuTTY session, issue the following command where [X] represents a list of a single number: yours. To really specify a list of multiple targets, you could use: [1-9] or [1,2-4,9]. BUT DON’T DO THAT today. Otherwise you will kill your neighbor’s server!
  %h is a “placeholder” that will be replaced automatically by pdsh with each numbers in the list:
 Host# pdsh -R exec -w 10.3.222.10[X] wget --header='OData-Version:4.0'\
@@ -560,10 +556,6 @@ You should get a successful output like the following:
 From the web GUI of the iLO, verify that the UID is ON: 
 
 Feel free to test other examples.
-
-## Conclusion
-
-The iLO RESTful API provides a rich set of means to display and modify HPE ProLiant servers. Just choose the one suiting best your needs: browser extension, hprest, wget/curl or python. For Windows users, PowerShell is an alternative as well.
 
 ## Using python-redfish library.
 
@@ -781,3 +773,8 @@ Uncommenting the following line should reboot the system:
 ```
 # mySystem.reset_system()
 ```
+
+## Conclusion
+
+The iLO RESTful API provides a rich set of means to display and modify HPE ProLiant servers. Just choose the one suiting best your needs: browser extension, hprest, wget/curl or python. For Windows users, PowerShell is an alternative as well.
+
