@@ -483,36 +483,53 @@ Sign-out  from the iLO GUI (Top-Right) and refresh the page. You should see the 
 
 ## Python SDK
 
+The python language and its multiple web and security related modules provides a perfect eco-system for creating RESTful for iLO programs. 
 
-The python language and its multiple web and security related modules provides a perfect eco-system for creating RESTful for iLO programs. The following script is for didactic purposes only, and HPE does not supports it. Use it with care.
-Moreover, it requires python 2.7 or later. Before launching this script, and for security reasons, you need to edit it with your favorite editor and perform at least three tasks. Sending low-level configuration commands can be dangerous to running systems and to avoid any problems, the user must understand what he does...
-This python script contains several exercises/examples. We will explain how to run the first one and, if you have time, you will be able to run others. 
+The following python script is for didactic purposes only, and HPE does not support it. Use it with care. It requires python 2.7 or later. Sending low-level configuration commands can be dangerous to running systems and to avoid any problem, the user must understand what he does... NOTE: This version is not fully Redfish 1.0 compliant. A future version will be.
+
+This python script contains several examples. We will explain how to run the first one and, if you have time, you will be able to run others. 
+
 A version of this script is present in your environment, but, later you can download the latest version of this file from: https://github.com/HewlettPackard/python-proliant-sdk
-NOTE: This version is not fully Redfish 1.0 compliant. A future version will be.
+
 Once your Gen9 server is up and running, ssh/PuTTY to it as root (password) and cd /usr/kits. Using nano or the vi editor, edit the script:
-Host# cd /usr/kits
-Host# vi HpRestfulApiExamplesExperimental.py –c 1889
+
+`Host#` **`cd /usr/kits`**
+
+Before launching the script, and for security reasons, you need to edit it with your favorite editor and perform at least three tasks. 
+
+`Host#` **`vi HpRestfulApiExamplesExperimental.py –c 1889`**
+
 Supply your iLO info around line 1889:
-host = ’10.3.222.10X’
-iLO_loginname = ‘demopaq’ 
-iLO_password = ‘password’ 
+  1. `host = ’10.3.222.10X’`
+  1. `iLO_loginname = ‘demopaq’`
+  1. `iLO_password = ‘password’`
+
 Comment out the sys.exit command around line 1902:
+```
 # sys.exit (-1)
-Move the if False: directive below exercice1 and remove leading spaces of exercise 1
+```
+Move the `if False:` directive below exercice1 and remove leading spaces of exercise1:
+```
 ex1_change_bios_setting(host, 'AdminName', 'Mr. Rest',... )
 if False:
     ex2_reset_server(host, iLO_loginname, iLO_password)
     ex3_enable_secure_boot(host, False, iLO_loginname, iLO_password)
-...........
+[...]
+```
 Save the file and exit.
 Execute the script. It will modify the AdminName UEFI Bios parameter:
-Host# python HpRestfulApiExamplesExperimental.py
 
-Using the REST client Browser, verify that your modification is not yet in the BIOS, but still in the in the pending area of the BIOS:
-In BIOS, you should still read “AdminName”: “Foo Bar”:
+`Host#` **`python HpRestfulApiExamplesExperimental.py`**
+
+![Python script execution](/Redfish/img/python-run.png)
+
+Using the REST client Browser, verify that your modification is not yet in the BIOS, but still in the pending area of the BIOS. In BIOS, you should still read “AdminName”: “Foo Bar”:
+
+![Python script result1](/Redfish/img/python-result.png)
 
 In the pending area, you should see your modification:
 
+![Python script result2](/Redfish/img/python-result2.png)
 
 NOTE: The pending area of the BIOS will updated with your modification at next reboot.
 Feel free to try other exercises and investigate how they have been implemented in this python script.
@@ -773,12 +790,6 @@ Uncommenting the following line should reboot the system:
 # mySystem.reset_system()
 ```
 
-## Conclusion
-
-The iLO RESTful API provides a rich set of means to display and modify HPE ProLiant servers. Just choose the one suiting best your needs: browser extension, hprest, wget/curl or python. For Windows users, PowerShell is an alternative as well.
-
-
-
 ## Debuging rest calls with httpfox
 
 httpfox is a firefox extension that could be used to catch the http/https requests done by the browser.
@@ -797,5 +808,10 @@ You can now inpect the query within httpfox.
 In the example below, you can see that an authentication query was posted and the token provided by the redfish API to authenticate next calls.
 ![httpfox-inspect]((/Redfish/img/httpfox-inspect.png)
 
+
+
+## Conclusion
+
+The iLO RESTful API provides a rich set of means to display and modify HPE ProLiant servers. Just choose the one suiting best your needs: browser extension, hprest, wget/curl or python. For Windows users, PowerShell is an alternative as well.
 
 
