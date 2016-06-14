@@ -727,7 +727,7 @@ Enable debugging information:
 [root@lab10-2 ~]# redfish-client system getinfo iloX --insecure --debug=3
 
 ```
-  3. Using the redfish-client
+  3. Using the python-redfish library directly
 
 Use the client to register a redfish manager as default entry.
 ```
@@ -756,6 +756,8 @@ The library documentation is available at: http://pythonhosted.org/python-redfis
 
 The classes are defined here: http://pythonhosted.org/python-redfish/python-redfish_lib.html
 
+You can then comment/uncomment and modify the code to experiment. e.g. below
+
 Retrieve manager bios version:
 ```
 print(remote_mgmt.Systems.systems_dict["1"].get_bios_version())
@@ -777,4 +779,26 @@ Uncommenting the following line should reboot the system:
 ## Conclusion
 
 The iLO RESTful API provides a rich set of means to display and modify HPE ProLiant servers. Just choose the one suiting best your needs: browser extension, hprest, wget/curl or python. For Windows users, PowerShell is an alternative as well.
+
+
+
+## Debuging rest calls with httpfox
+
+httpfox is a firefox extension that could be used to catch the http/https requests done by the browser.
+This is really useful to debug rest calls. Another usage is also to know the calls done by an existing application (reverse engineering).As an example, this FF extension helps the author to know and better understand the calls sent by oneview application to the oneview API to build dynamic profile automation.
+
+  1. Prepare http fox open it.
+  2. Prepare http requester.
+  3. Click on the start button of httpfox to listen to browser calls.
+![httpfox-listen](images/httpfox-listen.png)
+  4. Sent a query via httprequester.
+![httpfox-post](images/httpfox-post.png)
+  5. Stop httpfox.
+
+You can now inpect the query within httpfox.
+
+In the example below, you can see that an authentication query was posted and the token provided by the redfish API to authenticate next calls.
+![httpfox-inspect](images/httpfox-inspect.png)
+
+
 
