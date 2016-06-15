@@ -236,7 +236,7 @@ hello-world    latest         91c95931e552   10 weeks ago     910 B
 
 So we see that we now have an image which has been downloaded from the docker public registry, and that a container has been instantiated from that image and is not running anymore. The `rm` command allows to delete the container (but of course not the image which remains available)
 ## The second container
-In order to have a more interesting environment, we'll now look for existing container images in the public docker registry, and choose to use a fedora image on our Ubuntu environment:
+In order to have a more interesting environment, we'll now look for existing container images in the public docker registry, and choose to use a fedora image on our host environment:
 
 `#` **`docker search fedora`**
 ```
@@ -323,6 +323,11 @@ Complete!
 ```
 Linux ad9b474525d0 3.16.0-41-generic #57~14.04.1-Ubuntu SMP Thu Jun 18 18:01:13 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
 ```
+If you're on a RHEL distribution it will rather be:
+```
+Linux ad9b474525d0 3.10.0-327.el7.x86_64 #1 SMP Thu Oct 29 17:29:29 EDT 2015 x86_64 x86_64 x86_64 GNU/Linux
+```
+
 
 So you checked that your container behaves like a Fedora 22 distribution. Only the kernel is shared between the docker host and the docker container. Open another console to view how this container has been created ans is seen:
 
@@ -560,7 +565,7 @@ Removing intermediate container b9fb6c35de95
 Successfully built 76cec1da7808
 ```
 
-You can remark that all the first steps are very quick. This is because docker caches steps, and do not redo them as long as there is no change in the Dockerfile. You can modify the Docker file by putting the `MAINTAINER` command first and relaunch the build. You'll see that in that case docker invalidates its cache and restarts.
+You can remark that all the first steps are very quick. This is because docker caches steps, and do not redo them as long as there is no change in the Dockerfile. You can modify the Docker file by putting the `MAINTAINER` command as the second line and relaunch the build. You'll see that in that case docker invalidates its cache and restarts.
 Now start a container from that image to check the web server is indeed started
 
 `#` **`docker run -ti 76cec1da7808`**
@@ -594,7 +599,7 @@ CONTAINER ID        IMAGE               COMMAND                CREATED          
 04d9c18da22a        c1c58f087482        "/bin/sh -c '/usr/sb   4 seconds ago       Up 3 seconds        0.0.0.0:80->80/tcp   thirsty_yalow
 ```
 
-Now that we have exposed the port, we're able to launch our container in daemon mode (-d) and by redirecting the local port 80 to the container port 80 on which our web server is listening. Try now reaching again your webserver on localhost. You should see a CentOS based page on your Ubuntu distribution.
+Now that we have exposed the port, we're able to launch our container in daemon mode (-d) and by redirecting the local port 80 to the container port 80 on which our web server is listening. Try now reaching again your webserver on localhost. You should see a CentOS based page on your host distribution.
 
 It's now time to add some content to our web server !
 Modify again the Docker file to add owncloud to our image:
