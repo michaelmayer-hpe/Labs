@@ -576,7 +576,7 @@ What happened ? Why don't you get a prompt ? Use `docker ps` to see the status o
 
 Try to use a browser (you may want to install lynx) to connect to your web server. Can you do it ? Which IP address do you point to ? You may use `docker exec` to see that IP address.
 
-By default, ports of the containers are not exposed outside of the container. So you can't use your localhost to access your isolated webserver. Check by reaching 127.0.0.1 from your browser. You need to teach that to your container:
+By default, ports of the containers are not exposed outside of the container. So you can't use your local host to access your isolated webserver. Check by reaching 127.0.0.1 from your browser. You need to teach that to your container:
 
 `#` **`cat >> Dockerfile << EOF`**
 ```
@@ -584,7 +584,7 @@ EXPOSE 80
 EOF
 ```
 `#` **`perl -pi -e 's|D httpd|D /usr/sbin/apachectl -DFOREGROUND -k start|' Dockerfile`**
-(This magic command replaces the launch of the httpd command by the apachectl one with the right options)
+(This magic command replaces the launch of the httpd command by the apachectl one with the right options. In case you use RHEL 7, you need to install perl with yum)
 
 `#` **`docker build .`**
 ```
@@ -599,7 +599,7 @@ CONTAINER ID        IMAGE               COMMAND                CREATED          
 04d9c18da22a        c1c58f087482        "/bin/sh -c '/usr/sb   4 seconds ago       Up 3 seconds        0.0.0.0:80->80/tcp   thirsty_yalow
 ```
 
-Now that we have exposed the port, we're able to launch our container in daemon mode (-d) and by redirecting the local port 80 to the container port 80 on which our web server is listening. Try now reaching again your webserver on localhost. You should see a CentOS based page on your host distribution.
+Now that we have exposed the port, we're able to launch our container in daemon mode (-d) and by redirecting the local port 80 to the container port 80 on which our web server is listening. Try now reaching again your webserver on the local host (use your browser and point it to http://10.3.222.X). You should see a CentOS based page on your host distribution.
 
 It's now time to add some content to our web server !
 Modify again the Docker file to add owncloud to our image:
@@ -612,7 +612,7 @@ RUN cd /var/www/html/ && tar xvfj owncloud-7.0.6.tar.bz2 && rm -f owncloud-7.0.6
 EOF
 ```
 We can directly point to a URL, docker will download the content and extract it in place.
-Try now to connect to your owncloud instance at http://localhost/owncloud. What happens ? What should you do next to solve the issue ? Hint, you probably need to add the owncloud dependencies to be able to launch it. Open your Dockerfile and add the following line after the last ADD
+Try now to connect to your owncloud instance at http://10.3.222.X/owncloud. What happens ? What should you do next to solve the issue ? Hint, you probably need to add the owncloud dependencies to be able to launch it. Open your Dockerfile and add the following line after the last ADD
 
 **`RUN yum install -y php php-dom php-mbstring php-pdo php-gd`**
 
