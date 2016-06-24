@@ -645,7 +645,7 @@ Try now to connect to your owncloud instance at http://10.3.222.X/owncloud.
 ![Owncloud failed](/Docker/img/owncloud_without_dep.png)
 
 1. What happens ?
-2. What should you do next to solve the issue ?
+2. What should you do next to solve the issue ? **Discuss with your trainer if you're stuck !**
 
 Hint, you probably need to add the owncloud dependencies to be able to launch it. Open your Dockerfile and add the following line after the last ADD
 
@@ -752,4 +752,94 @@ cca4a1776ef12b256616e69a29753202efe0b1af5dd64fecfb638d2a797b234e
 Note : 2 solutions are possible.
 
 # Using Docker compose
-TBD
+
+Docker compose is a tool part of the Docker ecosystem.
+It is used to run multi containers application which is the case most of the time.
+This is mainly due to the Docker philosophy to use one container per service.
+
+Another benefit is to define the container running parameter within an yml configuration file.
+
+## Installing Docker compose
+
+Use the following commands:
+```
+curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+
+chmod +x /usr/local/bin/docker-compose
+```
+
+Check the binary works by displaying the revision.
+```
+docker-compose --version
+docker-compose version 1.7.1, build 0a9ab35
+```
+
+## Our first docker-compose.yml file
+Now we have a working docker-compose, we need to create an application environment and our first **docker-compose.yml** configuration file.
+
+Create the build environment by moving all our stuffs into an application named folder:
+```
+mkdir owncloud
+mv Dockerfile owncloud
+mv owncloud-7.0.6.tar.bz2 owncloud
+mv config.php owncloud
+cd owncloud
+```
+
+Now we can create our configuration file. We will use the new v2.0 format instead of the legacy one. The v2.0 was created to extend functionalities and can be activated by specifying the release at the top of the file.
+
+Note : Of course old docker-compose binaries don't manage v2.0.
+
+```
+cat >docker-compose.yml << EOF
+version: '2'
+services:
+  web:
+    build: .
+    volumes:
+      - /data:/data
+    ports:
+      - "80:80"
+EOF
+```
+
+The above file define our application.
+
+We can see, we have a web service that is built from our Dockerfile, port 80 is exposed and /data is mapped.
+
+We can start our application now, using:
+```
+docker-compose up -d
+Creating network "owncloud_default" with the default driver
+Creating owncloud_web_1
+
+docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                NAMES
+2573be6f1401        owncloud_web        "/bin/sh -c '/usr/sbi"   35 seconds ago      Up 34 seconds       0.0.0.0:80->80/tcp   owncloud_web_1
+```
+
+Our application is started and should work the same way as previously. However the way to start the application is munch simpler as we don't need to know ports and storage mapping.
+
+You can also note that the container name is defined like `application_service_number` (owncloud_web_1)
+
+Stop the application:
+
+```
+docker-compose down
+Stopping owncloud_web_1 ... done
+Removing owncloud_web_1 ... done
+Removing network owncloud_default
+```
+
+Note : the container is automatically removed.
+
+
+Ok that's cool, but it is not really a big change.
+
+## Going farther with docker-compose.yml
+
+If we look at our owncloud application, we are using an internal sqlite database. This was defined during the setup phase.
+
+As mentioned by the setup (below), this is convenient for small installation, but for larger ones it is better to use mysql/mariadb or postgres.
+
+![Owncloud sqlite setup](/Docker/img/owncloud_setup.png)
