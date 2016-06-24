@@ -19,6 +19,27 @@ When dealing with the installation and configuration of Docker, the first approa
 
 Estimated time for the lab is placed in front of each part.
 
+## Note regarding several commands
+
+If you are familiar with linux, you can skip this section. If not please read to understand some commands.
+
+In the next parts of the lab, there will be commands like the following example.
+
+`#` **`cat > fileToCreate << EOF`**
+```none
+Text line 1
+Text line 2
+EOF
+```
+
+This is used to create the file `fileToCreate` and put the following text lines until the EOF keyword.
+
+You can show the content of the created file using: `cat fileToCreate`
+
+In order to append text to the file, the first `>` can be replaced with `>>`.
+
+You can edit the files using **vim** or **nano** text editors.
+
 # Environment setup
 Estimated time: 15 minutes
 ## Docker installation
@@ -356,7 +377,8 @@ Re-create a new container based on the same image, connect to it and look at the
 
 Answer the questions:
   1. Can you download a web page with wget in your container ? Why ? Which steps are needed now ? Why ?
-  2. Can you connect back to your first container ? (Hint: use docker start to re-enable your dead container and docker attach to re-enter in it)
+  2. Can you connect back to your first container ? (Hint: use **docker start** to re-enable your dead container and **docker attach** to re-enter in it)
+  3. Feel free to call the trainer if something is unclear or if you want to ensure you understand all points.
 
 # Configuring owncloud in a container
 
@@ -492,6 +514,8 @@ So we can verify that a new CentOS 6 image has been downloaded and based on it a
 ```
 httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.5 for ServerName
 ```
+Note : The above message is just a warning, as an evidence, you can see the processes running with the next command.
+
 `[root@babbfd33b239 /]#` **`ps auxww |grep htt`**
 ```
 root        14  0.0  0.0 175336  6360 ?        Ss   14:36   0:00 httpd
@@ -572,9 +596,15 @@ Now start a container from that image to check the web server is indeed started
 ```
 httpd: Could not reliably determine the server's fully qualified domain name, using 172.17.0.6 for ServerName
 ```
-What happened ? Why don't you get a prompt ? Use `docker ps` to see the status of your container and `docker logs` to see what happened. Adapt the dockerfile to solve that issue. Discuss with your trainer if you're stuck !
+1. What happened ? Why don't you get a prompt ?
+2. Use `docker ps` to see the status of your container and `docker logs` to see what happened.
+3. Try to adapt the dockerfile to solve that issue. **Discuss with your trainer if you're stuck !**
 
-Try to use a browser (you may want to install lynx) to connect to your web server. Can you do it ? Which IP address do you point to ? You may use `docker exec` to see that IP address.
+`#` **`perl -pi -e 's|D httpd|D /usr/sbin/apachectl -DFOREGROUND -k start|' Dockerfile`**
+(This magic command replaces the launch of the httpd command by the apachectl one with the right options. In case you use RHEL 7, you need to install perl with yum)
+
+1. Try to use a browser (you may want to install lynx) to connect to your web server. Can you do it ?
+2. Which IP address do you point to ? You may use `docker exec` to see that IP address.
 
 By default, ports of the containers are not exposed outside of the container. So you can't use your local host to access your isolated webserver. Check by reaching 127.0.0.1 from your browser. You need to teach that to your container:
 
@@ -583,8 +613,6 @@ By default, ports of the containers are not exposed outside of the container. So
 EXPOSE 80
 EOF
 ```
-`#` **`perl -pi -e 's|D httpd|D /usr/sbin/apachectl -DFOREGROUND -k start|' Dockerfile`**
-(This magic command replaces the launch of the httpd command by the apachectl one with the right options. In case you use RHEL 7, you need to install perl with yum)
 
 `#` **`docker build .`**
 ```
@@ -612,7 +640,14 @@ RUN cd /var/www/html/ && tar xvfj owncloud-7.0.6.tar.bz2 && rm -f owncloud-7.0.6
 EOF
 ```
 We can directly point to a URL, docker will download the content and extract it in place.
-Try now to connect to your owncloud instance at http://10.3.222.X/owncloud. What happens ? What should you do next to solve the issue ? Hint, you probably need to add the owncloud dependencies to be able to launch it. Open your Dockerfile and add the following line after the last ADD
+Try now to connect to your owncloud instance at http://10.3.222.X/owncloud.
+
+![Owncloud failed](/Docker/img/owncloud_without_dep.png)
+
+1. What happens ?
+2. What should you do next to solve the issue ?
+
+Hint, you probably need to add the owncloud dependencies to be able to launch it. Open your Dockerfile and add the following line after the last ADD
 
 **`RUN yum install -y php php-dom php-mbstring php-pdo php-gd`**
 
@@ -673,7 +708,7 @@ CONTAINER ID        IMAGE               COMMAND                CREATED          
 
 Now relaunch your browser to reconfigure again owncloud, but this time configure the data folder as in the following screen shot:
 
-![Owncloud Setup](/Docker/owncloud.png)
+![Owncloud Setup](/Docker/img/owncloud.png)
 
 If you encounter issues you need to adapt your Dockerfile so that the apache user is allowed to write on to the /data directory. Your current Dockerfile should look like this at that point:
 
@@ -712,8 +747,9 @@ CONTAINER ID        IMAGE               COMMAND                CREATED          
 cca4a1776ef12b256616e69a29753202efe0b1af5dd64fecfb638d2a797b234e
 ```
 
-At that point you should find again your data on your owncloud instance right ? But what additional pain point do you have ?
-Knowing that the owncloud configuration data are located under `/var/www/html/owncloud/config/config.php` adapt the Dockerfile to solve that last issue.
+1. At that point you should find again your data on your owncloud instance right ? But what additional pain point do you have ?
+2. Knowing that the owncloud configuration data are located under `/var/www/html/owncloud/config/config.php`  try to adapt the Dockerfile to solve that last issue. **Discuss with your trainer if you're stuck !**
+Note : 2 solutions are possible.
 
 # Using Docker compose
 TBD
