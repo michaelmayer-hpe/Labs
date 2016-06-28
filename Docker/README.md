@@ -757,7 +757,7 @@ Docker compose is a tool part of the Docker ecosystem.
 It is used to run multi containers application which is the case most of the time.
 This is mainly due to the Docker philosophy to use one container per service.
 
-Another benefit is to define the container running parameter within an yml configuration file.
+Another benefit is to define the container running parameters within an yml configuration file.
 
 ## Installing Docker compose
 
@@ -843,3 +843,71 @@ If we look at our owncloud application, we are using an internal sqlite database
 As mentioned by the setup (below), this is convenient for small installation, but for larger ones it is better to use mysql/mariadb or postgres.
 
 ![Owncloud sqlite setup](/Docker/img/owncloud_setup.png)
+
+In order to install owncloud on another database:
+1. Wipe `config.php` to have the setup page proposed by the application.
+2. Add `php-mysql` module to the Dockerfile.
+3. Start the application but use `docker-compose up -d --build` to force the rebuild of the Dockerfile.
+
+![Owncloud sqlite setup](/Docker/img/owncloud_setup_db.png)
+
+Instead of building our own mariadb container built from scratch like we did for owncloud, we will use the official docker one.
+
+Of course it requires some information about the compose-file format, documentation can be found here: https://docs.docker.com/compose/compose-file and the image itself here: https://hub.docker.com/_/mariadb
+
+1. Try to modify `docker-compose.yml` to add a db service based on the mariadb official images.
+2. We need to feel the database parameters fields (user, password etc...). Hint: Look at the mariadb container environment variables. **Discuss with your trainer if you're stuck !**
+3. What is the hostname of our container ? Hint: Look at the link directive.
+
+If you manage to configure the mariadb container and use it with owncloud, then your docker-compose.yml should look like this:
+```
+version: '2'
+services:
+  web:
+    build: .
+    volumes:
+      - /data:/data
+    ports:
+      - "80:80"
+    links:
+      - db:mariadb
+  db:
+    image: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=owncloud
+      - MYSQL_USER=owncloud
+      - MYSQL_PASSWORD=owncloudpwd
+```
+
+We are now using a mysql container, but the database is inside the container. So this is the same story as before, we need to keep our data permanant.
+
+1. Try to know how to store the db files on the host.
+2. Modify docker-compose.yml to do that. Hint: separate owncloud and db data under /data to avoid rights conflicts.
+
+If you manage to configure the mariadb container with persistant data your docker-compose.yml should look like this:
+```
+version: '2'
+services:
+  web:
+    build: .
+    volumes:
+      - /data/owncloud:/data/owncloud
+    ports:
+      - "80:80"
+    links:
+      - db:mariadb
+  db:
+    image: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=owncloud
+      - MYSQL_USER=owncloud
+      - MYSQL_PASSWORD=owncloudpwd
+    volumes:
+      - /data/db:/var/lib/mysql
+```
+
+This is the end of this lab, hope you enjoyed it.
+
+Github issues and mainly pull requests to improve this lab are welcomed.
