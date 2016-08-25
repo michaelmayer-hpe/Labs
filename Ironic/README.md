@@ -21,6 +21,21 @@ Estimated time for the lab is placed in front of each part.
 
 # Environment setup
 Estimated time: 30 minutes
+
+## Bug reports impacting this setup
+
+BR:
+https://bugs.launchpad.net/bifrost/+bug/1583539
+https://bugs.launchpad.net/ironic/+bug/1412561
+https://bugs.launchpad.net/bifrost/+bug/1587994
+https://bugs.launchpad.net/ironic/+bug/1589627
+https://bugs.launchpad.net/bifrost/+bug/1587940
+https://bugs.launchpad.net/diskimage-builder/+bug/1589450
+https://bugs.launchpad.net/diskimage-builder/+bug/1590176
+
+RFE:
+https://bugs.launchpad.net/ironic/+bug/1526477
+
 ## Ironic installation
 Ironic is available externaly from 
 As the installation is pretty complex per se, we will use Bifrost to ease it. Bifrost provides ansible playbooks to install and manage Ironic.
@@ -31,11 +46,13 @@ As we'll work on an CentOS 7 VM environment for the Lab,
 
 `#` **`git clone https://git.openstack.org/openstack/bifrost.git`**
 
+
 ### Preparation of the CentOS 7 Linux environment
 
 yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 yum install git -y
-# If your version doesn't include Fix for https://bugs.launchpad.net/bifrost/+bug/1583539
+
+If your version doesn't include Fix for https://bugs.launchpad.net/bifrost/+bug/1583539
 yum install libffi-devel openssl-devel
 
 ### Preparation of the ssh config
