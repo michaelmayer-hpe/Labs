@@ -23,7 +23,7 @@ Estimated time for the lab is placed in front of each part.
 
 If you are familiar with linux, you can skip this section. If not please read to understand some commands.
 
-In the next parts of the lab, there will be commands like the following example.
+In the next parts of the lab, there will be commands like the following example:
 
 `#` **`cat > fileToCreate << EOF`**
 ```none
@@ -44,11 +44,11 @@ You can edit the files using **vim** or **nano** text editors.
 Estimated time: 15 minutes
 ## Docker installation
 Docker is available externaly from http://docs.docker.com/linux/step_one/ or using your distribution packages, or from github at https://github.com/docker/docker
-Version 1.11 is  the current stable release.
+Version 1.12 is the current stable release. This lab requires at least version 1.7.
 
-Ask to your instructor which Linux distribution will be used for the Lab (Ubuntu or RHEL). The refer to the corresponding instructions below.
+Ask to your instructor which Linux distribution will be used for the Lab (Ubuntu or RHEL). Then refer to the corresponding instructions below.
 
-Other distributions should be as easy to deal with by providing the same packages out of the box (Case of most non-commercial distributions such as Debian, Fedora, Mageia, OpenSuSE, …)
+Other distributions should be as easy to deal with once the same packages have been installed using the package manager as they should be available directly (Case of most non-commercial distributions such as Debian, Fedora, Mageia, OpenSuSE, ...)
 
 ### Ubuntu installation
 If you work on an Ubuntu environment for the Lab, you may want to use apt to do the installation of Docker with all its dependencies. As Ubuntu provides an old version of docker, we will use a ppa providing a more up to date version:
@@ -196,6 +196,7 @@ WARNING: bridge-nf-call-ip6tables is disabled
 [Display online help]
 
 Now that the software has been installed, we'll use it to create and manage containers.
+
 # Using docker
 Estimated time: 15 minutes.
 ## The first container
@@ -627,7 +628,7 @@ CONTAINER ID        IMAGE               COMMAND                CREATED          
 04d9c18da22a        c1c58f087482        "/bin/sh -c '/usr/sb   4 seconds ago       Up 3 seconds        0.0.0.0:80->80/tcp   thirsty_yalow
 ```
 
-Now that we have exposed the port, we're able to launch our container in daemon mode (-d) and by redirecting the local port 80 to the container port 80 on which our web server is listening. Try now reaching again your webserver on the local host (use your browser and point it to http://10.3.222.X). You should see a CentOS based page on your host distribution.
+Now that we have exposed the port, we're able to launch our container in daemon mode (-d) and by redirecting the local port 80 to the container port 80 on which our web server is listening. Try now reaching again your webserver on the local host (use your browser and point it to http://10.3.222.X if we host the lab or http://localhost if you run it locally). You should see a CentOS based page on your host distribution.
 
 It's now time to add some content to our web server !
 Modify again the Docker file to add owncloud to our image:
@@ -640,7 +641,7 @@ RUN cd /var/www/html/ && tar xvfj owncloud-7.0.6.tar.bz2 && rm -f owncloud-7.0.6
 EOF
 ```
 We can directly point to a URL, docker will download the content and extract it in place.
-Try now to connect to your owncloud instance at http://10.3.222.X/owncloud.
+Try now to connect to your owncloud instance at http://10.3.222.X/owncloud if we host the lab or http://localhost/owncloud if you run it locally.
 
 ![Owncloud failed](/Docker/img/owncloud_without_dep.png)
 
@@ -749,41 +750,46 @@ cca4a1776ef12b256616e69a29753202efe0b1af5dd64fecfb638d2a797b234e
 
 1. At that point you should find again your data on your owncloud instance right ? But what additional pain point do you have ?
 2. Knowing that the owncloud configuration data are located under `/var/www/html/owncloud/config/config.php`  try to adapt the Dockerfile to solve that last issue. **Discuss with your trainer if you're stuck !**
-Note : 2 solutions are possible.
+Note : there is more than one way to solve this.
 
 # Using Docker compose
 
 Docker compose is a tool part of the Docker ecosystem.
-It is used to run multi containers application which is the case most of the time.
+It is used to run solutions split in multiple containers which is the case most of the time.
 This is mainly due to the Docker philosophy to use one container per service.
 
-Another benefit is to define the container running parameters within an yml configuration file.
+Another benefit is to define the container running parameters within a YAML configuration file.
 
 ## Installing Docker compose
 
 Use the following commands:
 ```
-curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+`#` **`curl -L https://github.com/docker/compose/releases/download/1.7.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose`**
 
-chmod +x /usr/local/bin/docker-compose
+`#` **`chmod +x /usr/local/bin/docker-compose`**
 ```
 
-Check the binary works by displaying the revision.
+Check the binary works by displaying the revision:
 ```
-docker-compose --version
-docker-compose version 1.7.1, build 0a9ab35
+`#` **`docker-compose --version`**
+
+`#` **`docker-compose version 1.7.1, build 0a9ab35`**
 ```
 
 ## Our first docker-compose.yml file
 Now we have a working docker-compose, we need to create an application environment and our first **docker-compose.yml** configuration file.
 
-Create the build environment by moving all our stuffs into an application named folder:
+Create the build environment by moving all our previous stuffs into a folder:
 ```
-mkdir owncloud
-mv Dockerfile owncloud
-mv owncloud-7.0.6.tar.bz2 owncloud
-mv config.php owncloud
-cd owncloud
+`#` **`mkdir owncloud`**
+
+`#` **`mv Dockerfile owncloud`**
+
+`#` **`mv owncloud-7.0.6.tar.bz2 owncloud`**
+
+`#` **`mv config.php owncloud`**
+
+`#` **`cd owncloud`**
 ```
 
 Now we can create our configuration file. We will use the new v2.0 format instead of the legacy one. The v2.0 was created to extend functionalities and can be activated by specifying the release at the top of the file.
@@ -791,7 +797,8 @@ Now we can create our configuration file. We will use the new v2.0 format instea
 Note : Of course old docker-compose binaries don't manage v2.0.
 
 ```
-cat >docker-compose.yml << EOF
+`#` **`cat > docker-compose.yml << EOF`**
+```
 version: '2'
 services:
   web:
@@ -803,61 +810,58 @@ services:
 EOF
 ```
 
-The above file define our application.
+The above file asks to docker compose to define a web service that will be built from our Dockerfile, to expose port 80 and to map /data on the host to /data in the container.
 
-We can see, we have a web service that is built from our Dockerfile, port 80 is exposed and /data is mapped.
-
-We can start our application now, using:
+We can now start our application using:
 ```
-docker-compose up -d
+`#` **`docker-compose up -d`**
 Creating network "owncloud_default" with the default driver
 Creating owncloud_web_1
 
-docker ps
+`#` **`docker ps`**
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                NAMES
 2573be6f1401        owncloud_web        "/bin/sh -c '/usr/sbi"   35 seconds ago      Up 34 seconds       0.0.0.0:80->80/tcp   owncloud_web_1
 ```
 
-Our application is started and should work the same way as previously. However the way to start the application is munch simpler as we don't need to know ports and storage mapping.
+Our application is thus started and should work the same way as previously. However it is munch simpler as we don't need to precise ports and storage mapping, and this information can be managed in configuration through the YAML file.
 
 You can also note that the container name is defined like `application_service_number` (owncloud_web_1)
 
-Stop the application:
+Now stop the application:
 
 ```
-docker-compose down
+`#` **`docker-compose down`**
 Stopping owncloud_web_1 ... done
 Removing owncloud_web_1 ... done
 Removing network owncloud_default
 ```
 
-Note : the container is automatically removed.
-
+Check what happens to the container.
 
 Ok that's cool, but it is not really a big change.
 
-## Going farther with docker-compose.yml
+## Going further with docker-compose.yml
 
 If we look at our owncloud application, we are using an internal sqlite database. This was defined during the setup phase.
 
-As mentioned by the setup (below), this is convenient for small installation, but for larger ones it is better to use mysql/mariadb or postgres.
+As mentioned during the setup (below), this is convenient for a limited installation, but for larger ones it is better to use mysql/mariadb or postgres.
 
 ![Owncloud sqlite setup](/Docker/img/owncloud_setup.png)
 
 In order to install owncloud on another database:
-1. Wipe `config.php` to have the setup page proposed by the application.
-2. Add `php-mysql` module to the Dockerfile.
-3. Start the application but use `docker-compose up -d --build` to force the rebuild of the Dockerfile.
+   1. Wipe `config.php` to have the setup page proposed again by the application.
+   2. Add the `php-mysql` package to your Dockerfile in the relevant part.
+   3. Start the application but use `docker-compose up -d --build` to force the rebuild of the Dockerfile.
 
 ![Owncloud sqlite setup](/Docker/img/owncloud_setup_db.png)
 
-Instead of building our own mariadb container built from scratch like we did for owncloud, we will use the official docker one.
+Instead of building our own mariadb container from scratch like we did for owncloud, we will use the official docker one.
 
 Of course it requires some information about the compose-file format, documentation can be found here: https://docs.docker.com/compose/compose-file and the image itself here: https://hub.docker.com/_/mariadb
 
-1. Try to modify `docker-compose.yml` to add a db service based on the mariadb official images.
-2. We need to feel the database parameters fields (user, password etc...). Hint: Look at the mariadb container environment variables. **Discuss with your trainer if you're stuck !**
-3. What is the hostname of our container ? Hint: Look at the link directive.
+  1. Try to modify `docker-compose.yml` to add a db service based on the mariadb official images.
+  2. We need to provide the database parameters fields (user, password etc...). Hint: Look at the mariadb container environment variables. **Discuss with your trainer if you're stuck !**
+  3. What is the hostname of our container ? Hint: Look at the link directive.
 
 If you manage to configure the mariadb container and use it with owncloud, then your docker-compose.yml should look like this:
 ```
@@ -880,10 +884,11 @@ services:
       - MYSQL_PASSWORD=owncloudpwd
 ```
 
-We are now using a mysql container, but the database is inside the container. So this is the same story as before, we need to keep our data permanant.
+We are now using a mysql container, but the database content is inside the container. So this is the same story as before, we need to keep our data persistent.
 
-1. Try to know how to store the db files on the host.
-2. Modify docker-compose.yml to do that. Hint: separate owncloud and db data under /data to avoid rights conflicts.
+  1. Find out where are managed the db files.
+  1. Use a docker volume to use them from the host.
+  2. Modify docker-compose.yml to do that. Hint: separate owncloud and db data under /data to avoid user rights conflicts.
 
 If you manage to configure the mariadb container with persistant data your docker-compose.yml should look like this:
 ```
@@ -908,6 +913,6 @@ services:
       - /data/db:/var/lib/mysql
 ```
 
-This is the end of this lab, hope you enjoyed it.
+This is the end of this lab for now, we hope you enjoyed it.
 
-Github issues and mainly pull requests to improve this lab are welcomed.
+Github issues and pull requests to improve this lab are welcome.
