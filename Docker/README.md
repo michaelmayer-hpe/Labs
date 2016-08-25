@@ -763,40 +763,33 @@ Another benefit is to define the container running parameters within a YAML conf
 ## Installing Docker compose
 
 Use the following commands:
-```
-`#` **`curl -L https://github.com/docker/compose/releases/download/1.7.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose`**
+
+`#` **`curl -L https://github.com/docker/compose/releases/download/1.7.1/docker-compose-$(uname -s)-$(uname -m) > /usr/local/bin/docker-compose`**
 
 `#` **`chmod +x /usr/local/bin/docker-compose`**
-```
 
-Check the binary works by displaying the revision:
-```
+Check that the binary works by displaying the revision:
+
 `#` **`docker-compose --version`**
-
-`#` **`docker-compose version 1.7.1, build 0a9ab35`**
+```
+docker-compose version 1.7.1, build 0a9ab35`**
 ```
 
 ## Our first docker-compose.yml file
 Now we have a working docker-compose, we need to create an application environment and our first **docker-compose.yml** configuration file.
 
 Create the build environment by moving all our previous stuffs into a folder:
-```
+
 `#` **`mkdir owncloud`**
 
-`#` **`mv Dockerfile owncloud`**
-
-`#` **`mv owncloud-7.0.6.tar.bz2 owncloud`**
-
-`#` **`mv config.php owncloud`**
+`#` **`mv Dockerfile owncloud-7.0.6.tar.bz2 config.php owncloud`**
 
 `#` **`cd owncloud`**
-```
 
 Now we can create our configuration file. We will use the new v2.0 format instead of the legacy one. The v2.0 was created to extend functionalities and can be activated by specifying the release at the top of the file.
 
 Note : Of course old docker-compose binaries don't manage v2.0.
 
-```
 `#` **`cat > docker-compose.yml << EOF`**
 ```
 version: '2'
@@ -813,24 +806,27 @@ EOF
 The above file asks to docker compose to define a web service that will be built from our Dockerfile, to expose port 80 and to map /data on the host to /data in the container.
 
 We can now start our application using:
-```
+
 `#` **`docker-compose up -d`**
+```
 Creating network "owncloud_default" with the default driver
 Creating owncloud_web_1
+```
 
 `#` **`docker ps`**
+```
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                NAMES
 2573be6f1401        owncloud_web        "/bin/sh -c '/usr/sbi"   35 seconds ago      Up 34 seconds       0.0.0.0:80->80/tcp   owncloud_web_1
 ```
 
-Our application is thus started and should work the same way as previously. However it is munch simpler as we don't need to precise ports and storage mapping, and this information can be managed in configuration through the YAML file.
+Our application is thus started and should work the same way as previously. However it is much simpler as we don't need to precise ports and storage mapping, and this information can be managed in configuration through the YAML file.
 
-You can also note that the container name is defined like `application_service_number` (owncloud_web_1)
+You can also note that the container name is defined as `application_service_number` (owncloud_web_1)
 
 Now stop the application:
 
-```
 `#` **`docker-compose down`**
+```
 Stopping owncloud_web_1 ... done
 Removing owncloud_web_1 ... done
 Removing network owncloud_default
@@ -857,24 +853,14 @@ In order to install owncloud on another database:
 
 Instead of building our own mariadb container from scratch like we did for owncloud, we will use the official docker one.
 
-Of course it requires some information about the compose-file format, documentation can be found here: https://docs.docker.com/compose/compose-file and the image itself here: https://hub.docker.com/_/mariadb
+Of course it requires some information about the compose-file format. Documentation for this can be found here: https://docs.docker.com/compose/compose-file and the image itself there: https://hub.docker.com/_/mariadb
 
   1. Try to modify `docker-compose.yml` to add a db service based on the mariadb official images.
   2. We need to provide the database parameters fields (user, password etc...). Hint: Look at the mariadb container environment variables. **Discuss with your trainer if you're stuck !**
   3. What is the hostname of our container ? Hint: Look at the link directive.
 
-If you manage to configure the mariadb container and use it with owncloud, then your docker-compose.yml should look like this:
+If you didn't manage to configure the mariadb container and use it with owncloud, then the additional content for your docker-compose.yml could be useful:
 ```
-version: '2'
-services:
-  web:
-    build: .
-    volumes:
-      - /data:/data
-    ports:
-      - "80:80"
-    links:
-      - db:mariadb
   db:
     image: mariadb
     environment:
@@ -884,7 +870,7 @@ services:
       - MYSQL_PASSWORD=owncloudpwd
 ```
 
-We are now using a mysql container, but the database content is inside the container. So this is the same story as before, we need to keep our data persistent.
+We are now using a mariadb container, but the database content is inside the container. So this is the same story as before, we need to keep our data persistent.
 
   1. Find out where are managed the db files.
   1. Use a docker volume to use them from the host.
