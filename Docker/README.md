@@ -21,6 +21,21 @@ Estimated time for the lab is placed in front of each part.
 
 # Environment setup
 Estimated time: 15 minutes
+
+## Proxy consideration
+
+This lab is usually configured on our environment that has a direct access to the internet, however if you want to run this lab on your side and behind a corporate proxy, you need to configure your linux distribution and docker to access the internet through this proxy.
+
+The following instruction are available for a RHEL/Centos 7 distribution, because instructions on the docker part are systemd based.
+
+
+ 1. Get the proxy ip and port.
+ 2. Make sure your host can resolve the proxy address using `nslookup <proxy>`, if not use the proxy ip.
+ 3. Configure your linux package manager to go through the proxy by exporting the http_proxy environment variable:
+`export http_proxy=http://<proxy name or ip>:<proxy port>`.
+ 4. Configure docker daemon to use the proxy as explained by this document: https://docs.docker.com/engine/admin/systemd/#http-proxy
+ 5. **Set the proxy in each of your Dockerfiles** using `ENV http_proxy <HTTP_PROXY>` at the 2nd line of the Dockerfile.
+
 ## Docker installation
 Docker is available externaly from http://docs.docker.com/linux/step_one/ or using your distribution packages, or from github at https://github.com/docker/docker
 Version 1.11 is  the current stable release.
