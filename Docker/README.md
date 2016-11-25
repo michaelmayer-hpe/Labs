@@ -681,9 +681,9 @@ The principle is that the owner of the httpd process should have the rights on t
 Now you should be able to customize your owncloud instance and start using it.
 By now you have probably remarked that the ADD order is done each time, without any benefit from the cache management of Docker. Also you have to each time deal with IDs for containers and images, which is not that convenient. Let's fix that. Download the owncloud tar file in your directory and modify the ADD line:
 
-`#` **`wget https://download.owncloud.org/community/owncloud-7.0.6.tar.bz2`**
+`#` **`wget https://download.owncloud.org/community/owncloud-7.0.15.tar.bz2`**
 
-`#` **`perl -pi -e 's|ADD https://download.owncloud.org/community/owncloud-7.0.6.tar.bz2|COPY owncloud-7.0.6.tar.bz2|' Dockerfile`**
+`#` **`perl -pi -e 's|ADD https://download.owncloud.org/community/owncloud-7.0.15.tar.bz2|COPY owncloud-7.0.15.tar.bz2|' Dockerfile`**
 
 `#` **`docker build .`**
 
@@ -735,8 +735,8 @@ FROM centos:6
 RUN yum install -y httpd
 MAINTAINER myself@mydomain.org
 RUN yum install -y tar bzip2
-COPY owncloud-7.0.6.tar.bz2 /var/www/html/
-RUN cd /var/www/html/ && tar xvfj owncloud-7.0.6.tar.bz2 && rm -f owncloud-7.0.6.tar.bz2
+COPY owncloud-7.0.15.tar.bz2 /var/www/html/
+RUN cd /var/www/html/ && tar xvfj owncloud-7.0.15.tar.bz2 && rm -f owncloud-7.0.15.tar.bz2
 RUN yum install -y php php-dom php-mbstring php-pdo php-gd
 VOLUME /data
 RUN chown -R apache:apache /var/www/html/owncloud /data
@@ -797,7 +797,7 @@ Create the build environment by moving all our previous stuffs into a folder:
 
 `#` **`mkdir owncloud`**
 
-`#` **`mv Dockerfile owncloud-7.0.6.tar.bz2 config.php owncloud`**
+`#` **`mv Dockerfile owncloud-7.0.15.tar.bz2 config.php owncloud`**
 
 `#` **`cd owncloud`**
 
