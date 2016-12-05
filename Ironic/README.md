@@ -25,11 +25,11 @@ Estimated time: 30 minutes
 ## Bug reports impacting this setup
 
 BR:
-https://bugs.launchpad.net/bifrost/+bug/1583539
+https://bugs.launchpad.net/bifrost/+bug/1583539 (found in 1.3.1 - solved in 2.0.0)
 https://bugs.launchpad.net/ironic/+bug/1412561
-https://bugs.launchpad.net/bifrost/+bug/1587994
+https://bugs.launchpad.net/bifrost/+bug/1587994 (still valid in 2.0.0)
 https://bugs.launchpad.net/ironic/+bug/1589627
-https://bugs.launchpad.net/bifrost/+bug/1587940
+https://bugs.launchpad.net/bifrost/+bug/1587940 (found in 1.3.1 - solved in 2.0.0)
 https://bugs.launchpad.net/diskimage-builder/+bug/1589450
 https://bugs.launchpad.net/diskimage-builder/+bug/1590176
 
