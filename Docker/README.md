@@ -107,7 +107,7 @@ Done.
 ```
 ### RHEL installation
 
-If you work on a RHEL 7 environment for the Lab, you may want to use yum to do the installation of Docker with all its dependencies. Add the repo provided by the Docker project (which is requiring 7.2 at least):
+If you work on a RHEL 7 environment for the Lab, you may want to use yum to do the installation of Docker with all its dependencies. Add the repo provided by the Docker project (which is requiring 7.2 at least, but not by CentOS if you use that variant):
 
 `#` **`cat > /etc/yum.repos.d/docker.repo << EOF`**
 ```none
@@ -779,7 +779,7 @@ Another benefit is to define the container running parameters within a YAML conf
 
 Use the following commands:
 
-`#` **`curl -L https://github.com/docker/compose/releases/download/1.7.1/docker-compose-$(uname -s)-$(uname -m) > /usr/local/bin/docker-compose`**
+`#` **`curl -L https://github.com/docker/compose/releases/download/1.9.0/docker-compose-$(uname -s)-$(uname -m) > /usr/local/bin/docker-compose`**
 
 `#` **`chmod +x /usr/local/bin/docker-compose`**
 
@@ -787,7 +787,7 @@ Check that the binary works by displaying the revision:
 
 `#` **`docker-compose --version`**
 ```
-docker-compose version 1.7.1, build 0a9ab35`**
+docker-compose version 1.9.0, build 2585387`**
 ```
 
 ## Our first docker-compose.yml file
@@ -913,6 +913,165 @@ services:
     volumes:
       - /data/db:/var/lib/mysql
 ```
+
+`#` **`docker-compose ps`**
+```
+     Name                   Command               State         Ports        
+----------------------------------------------------------------------------
+owncloud_db_1    docker-entrypoint.sh mysqld      Up      3306/tcp           
+owncloud_web_1   /bin/sh -c /usr/sbin/apach ...   Up      0.0.0.0:80->80/tcp
+```
+You would like to try to allow scalability for your application by scaling the
+web service
+
+`#` **`docker-compose scale web=2`**
+
+Detect whether this is working or not and why. If not, we'll find another way
+to solve this.
+
+# Using Docker swarm
+
+Docker swarm is, since version 1.12, part of docker engine.
+It is used to provide high availability for Docker containers.
+
+A really complete and excellent workshop is available for swarm at https://jpetazzo.github.io/orchestration-workshop
+We extracted lots of ideas from it to lead you towards a first understanding
+of Swarm.
+
+## Installing Docker swarm
+
+## Installing on RHEL 7
+
+If you have a previous version, then install docker engine 1.12 as the rest of this lab requires that version. On CentOS/RHEL 7 just add the repo file mentioned earlier in this Lab to get it.
+
+## Installing on Ubuntu
+
+TBD
+
+## Using Docker swarm to make our configuration available and scalable
+
+So now that we can orchestrate the creation of our 2 containers hosting our
+application, we would like to make it scalable and error proof. Let's try to
+look at which nodes are available on our cluster:
+
+`#` **`docker node ls`**
+```
+Error response from daemon: This node is not a swarm manager. Use "docker swarm init" or "docker swarm join" to connect this node to swarm and try again.
+```
+Ok, so you need first to initiate a swarm cluster ! Let's do it on our node as
+instructed:
+
+`#` **`docker swarm init`**
+```
+Swarm initialized: current node (eih06d4qw1gweuictvqiw9i3o) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join \
+    --token SWMTKN-1-4itxzpvu1tfv0faeqfnq4a0h9hk8za21dsm72cf6irl7t0do2o-cmg5ocjpfjrkyygynce95m7q1 \
+    10.0.0.4:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+```
+
+So use the previous advise to add your other nodes to the Swarm cluster.
+
+`#` **`docker node ls`**
+```
+ID                           HOSTNAME  STATUS  AVAILABILITY  MANAGER STATUS
+0rj0cugm2a517riakacxbiomn    gr1-vm5   Ready   Active        
+1dvyeyr2dk52u2x0hlbb9tf4u    gr1-vm2   Ready   Active        
+6ofrij9ru4y77zoslyzq7iafz    gr1-vm3   Ready   Active        
+9xk7j3hi1q8abhsp355esi6uo    gr1-vm4   Ready   Active        
+eih06d4qw1gweuictvqiw9i3o *  gr1-vm1   Ready   Active        Leader
+```
+
+Check what you can see on each node. Also look at the result of `docker info`.
+
+Swarm has the notion of worker (hosting containers), manager (able to be also
+a worker and being a backup leader) and Leader (manager being in charge of the
+swarm cluster).
+
+In order to render our cluster highly available, we need to have an odd number
+of managers. Here we can promote 2 of our workers as managers. For that, we
+need to get another token, the manager one, instead of the worker one we used
+previously.
+
+`#` **`docker swarm join-token -q manager`**
+```
+SWMTKN-1-4itxzpvu1tfv0faeqfnq4a0h9hk8za21dsm72cf6irl7t0do2o-djax9t2oja7pfyxj7kvciq90v
+```
+
+So now you have the right token, use it as previously on 2 of your nodes to
+promote them as managers. At the end you should get the following result:
+
+`#` **`docker node ls`**
+```
+ID                           HOSTNAME  STATUS  AVAILABILITY  MANAGER STATUS
+1dvyeyr2dk52u2x0hlbb9tf4u    gr1-vm2   Ready   Active        
+2eb1nyq3s49bs9xbaeen4atzg    gr1-vm4   Ready   Active        Reachable
+4dmjwlu9dup8doetyeho196p9    gr1-vm5   Ready   Active        Reachable
+6ofrij9ru4y77zoslyzq7iafz    gr1-vm3   Ready   Active        
+eih06d4qw1gweuictvqiw9i3o *  gr1-vm1   Ready   Active        Leader
+```
+
+There are many ways to do it, including using docker node promote.
+
+So now that we have a cluster running, it would be a good idea to launch
+containers on it. But in a Swarm cluster this means creating services. So
+let's create a simple service to test our cluster:
+
+`#` **`docker service create alpine ping 8.8.8.8`**
+```
+cn5jsn0fodae976idvooehmli
+```
+
+`#` **`docker service ls`**
+```
+ID            NAME             REPLICAS  IMAGE   COMMAND
+cn5jsn0fodae  boring_mccarthy  1/1       alpine  ping 8.8.8.8
+```
+
+`#` **`docker service ps cn5`**
+```
+ID                         NAME                   IMAGE   NODE     DESIRED STATE  CURRENT STATE              ERROR
+8k7xra716pn57ixfzqbpfwk1c  boring_mccarthy.1      alpine  gr1-vm2  Running        Running 7 minutes ago
+```
+
+Use the docker commands to check how the container is behaving in your
+environment. Restart the docker daemon on the leader node and look at the
+cluster behaviour.
+
+You can scale that service:
+
+`#` **`docker service update 8k7 --replicas 10`**
+```
+8k7
+```
+
+Check what happens. You can use docker ps on the current node, and on another
+node.
+
+Now let's put on our cluster our application. Start with the owncloud_web
+image as a based for your service.
+
+`#` **`docker service create owncloud_web`**
+```
+92f1q6wzr8jb5nctzu06d2cd1
+```
+You may have some problems with this. Try to understand what happens and solve
+your issues. You will need to use a private registry here to help with that.
+Consider the following command as a hint:
+
+`#` **`docker service create --name registry --publish 5000:5000 registry:2`**
+
+In order to share the image between the nodes, you need to push it to this new
+registry, by using the appropriate tag (localhost:5000/owncloud_web)
+
+Do the same with the mariadb service that you create afterwards.
+
+Once this is solved, you can try scaling the web frontend.
+
 
 This is the end of this lab for now, we hope you enjoyed it.
 
