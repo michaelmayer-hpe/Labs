@@ -3,6 +3,9 @@
 # Create the Lab env in Azure (! I know !)
 # Log in on http://portal.azure.com
 
+# Maybe you should replace the azur stuff below with docker-machine
+# so you could introduce a new docker tool to student and enhanced the lab.
+
 cat > az.sh << EOF
 az login
 az resource group create -l eastus -n LabDck
