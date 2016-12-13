@@ -8,7 +8,7 @@ services:
         volumes:
           - ./certs:/home/pki/srv
         environment:
-          - PUBFQDN=Changeme
+          - PUBFQDN=
     registry:
         image:
           registry:2
