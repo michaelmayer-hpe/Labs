@@ -18,7 +18,8 @@ umask 002 && openssl x509 -req -in srv/repo.csr \
    	-CA ca/ca.crt \
    	-CAkey ca/ca.key \
    	-CAcreateserial \
-   	-CAserial ca/ca.srl
+   	-CAserial ca/ca.srl \
+	-extensions v3_req -extfile /etc/pki/tls/openssl.cnf
 cp /home/pki/ca/ca.crt /var/www/html
 chown pki:pki /var/www/html/ca.crt && chmod 644 /var/www/html/ca.crt
 /usr/sbin/apachectl -DFOREGROUND -k start
