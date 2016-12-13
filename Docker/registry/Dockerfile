@@ -4,8 +4,6 @@ RUN dnf install -y httpd mod_ssl
 RUN useradd pki
 RUN chmod 755 /home/pki
 RUN rm /etc/httpd/conf.d/welcome.conf
-#RUN chown -R pki:pki /home/pki/
-#RUN sed -i -e 's/dbhost=.*/dbhost=mariadb/' /home/i/i.conf
 EXPOSE 80
 USER pki
 WORKDIR /home/pki
