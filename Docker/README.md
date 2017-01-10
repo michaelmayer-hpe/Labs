@@ -929,6 +929,42 @@ web service
 Detect whether this is working or not and why. If not, we'll find another way
 to solve this.
 
+
+# Using docker-machine to create docker hosts
+
+docker-machine is a docker tool that can be used to deploy docker hosts on various cloud platforms (Aws, Azure, Digital Oceal, Openstack, etc...).
+We will use this tool to deploy 6 nodes that will be used later in the swarm part. Docker machine simply deploys a server on your favorite provider and then install the latest release of docker engine.
+
+The following comman will deploy one node to our openstack environment but do not run it yet.
+
+`docker-machine create --driver openstack --openstack-auth-url http://10.11.50.26:5000/v2.0 --openstack-flavor-name m1.small --openstack-image-name ubuntu1604 --openstack-username dockerlab --openstack-password linux1 --openstack-tenant-name dockerlab --openstack-net-name private --openstack-floatingip-pool external-network --openstack-sec-groups default --openstack-ssh-user ubuntu dockerw1`
+
+In order to save time we will deploy 6 hosts in parallel with the following command.
+```
+for i in dockerm1 dockerm2 dockerm3 dockerw1 dockerw2 dockerw3;
+do docker-machine create --driver openstack --openstack-auth-url http://10.11.50.26:5000/v2.0 --openstack-flavor-name m1.small --openstack-image-name ubuntu1604 --openstack-username dockerlab --openstack-password linux1 --openstack-tenant-name dockerlab --openstack-net-name private --openstack-floatingip-pool external-network --openstack-sec-groups default --openstack-ssh-user ubuntu $i &
+done
+```
+
+This will take around 6mn. You can list the machine installed with the command:
+`docker machine ls`
+
+To connect to a server you can use:
+`docker machine ssh <machine_name>`
+
+Docker CLI always uses the API. So you can configure the CLI to use a remote host instead of your local unix socket. So your client will act as usual but instead of managing your local engine, it will manage a remote one.
+Example, you want to interact with the dockerm1 machine. Just type the following command:
+
+```
+docker-machine env dockerm1
+```
+The above command will provide the env variable and the command to export them in the environment.
+```
+eval $(docker-machine env dockerm1)
+```
+Now you can work on docker as usual, however all commands will work on the remote host.
+
+
 # Using Docker swarm
 
 Docker swarm is, since version 1.12, part of docker engine.
@@ -940,13 +976,19 @@ of Swarm.
 
 ## Installing Docker swarm
 
+<!--
 ## Installing on RHEL 7
 
 If you have a previous version, then install docker engine 1.12 as the rest of this lab requires that version. On CentOS/RHEL 7 just add the repo file mentioned earlier in this Lab to get it.
 
 ## Installing on Ubuntu
+-->
 
-TBD
+## Installing the engine
+
+Installation need engine 1.12, this could be done manually as explained at the very beginning of this lab.
+
+However, if you followed docker-machine part, you can now use these machines to configure a swarm cluster.
 
 ## Using Docker swarm to make our configuration available and scalable
 
@@ -1061,9 +1103,37 @@ image as a based for your service.
 ```
 You may have some problems with this. Try to understand what happens and solve
 your issues. You will need to use a private registry here to help with that.
+<!--
 Consider the following command as a hint:
 
 `#` **`docker service create --name registry --publish 5000:5000 registry:2`**
+
+-->
+
+We have deployed a registry for you available from a public url/ip.
+If not provided, please ask your trainer to get this @.
+
+You need to add the CA public certificate to trust the registry.
+Download the CA from the registry web site.
+
+and do the folowing commands :
+
+### CentOS/RHEL
+
+```
+export DOMAIN_NAME=<my-registry-fqdn>
+openssl s_client -connect $DOMAIN_NAME:443 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /etc/pki/ca-trust/source/anchors/$DOMAIN_NAME.crt
+update-ca-trust
+/bin/systemctl restart docker.service
+```
+### Ubuntu
+
+```
+export DOMAIN_NAME=<my-registry-fqdn>
+openssl s_client -connect $DOMAIN_NAME:443 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /usr/local/share/ca-certificates/$DOMAIN_NAME.crt
+update-ca-certificates
+service docker restart
+```
 
 In order to share the image between the nodes, you need to push it to this new
 registry, by using the appropriate tag (localhost:5000/owncloud_web)
@@ -1076,3 +1146,16 @@ Once this is solved, you can try scaling the web frontend.
 This is the end of this lab for now, we hope you enjoyed it.
 
 Github issues and pull requests to improve this lab are welcome.
+
+
+# Deploy a cloud native appication.
+
+TBC providing more details in next PRs.
+
+1.Clone the github repo
+2.Run the application locally using the compose file
+3.Upload all the apps image to the registry
+4.Run the script deploy the application.
+5.Update the config.js file to allow access to the public ip.
+6.Eventually update swift config to recach swift.
+
