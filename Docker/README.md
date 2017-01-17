@@ -651,7 +651,7 @@ Modify again the Docker file to add owncloud to our image:
 `#` **`cat >> Dockerfile << EOF`**
 ```
 RUN yum install -y tar bzip2
-ADD https://download.owncloud.org/community/owncloud-7.0.15.tar.bz2 /var/www/html/
+ADD http://labossi.hpintelco.net/owncloud-7.0.15.tar.bz2 /var/www/html/
 RUN cd /var/www/html/ && tar xvfj owncloud-7.0.15.tar.bz2 && rm -f owncloud-7.0.15.tar.bz2
 EOF
 ```
@@ -681,9 +681,9 @@ The principle is that the owner of the httpd process should have the rights on t
 Now you should be able to customize your owncloud instance and start using it.
 By now you have probably remarked that the ADD order is done each time, without any benefit from the cache management of Docker. Also you have to each time deal with IDs for containers and images, which is not that convenient. Let's fix that. Download the owncloud tar file in your directory and modify the ADD line:
 
-`#` **`wget https://download.owncloud.org/community/owncloud-7.0.15.tar.bz2`**
+`#` **`wget http://labossi.hpintelco.net/owncloud-7.0.15.tar.bz2`**
 
-`#` **`perl -pi -e 's|ADD https://download.owncloud.org/community/owncloud-7.0.15.tar.bz2|COPY owncloud-7.0.15.tar.bz2|' Dockerfile`**
+`#` **`perl -pi -e 's|ADD http://labossi.hpintelco.net/owncloud-7.0.15.tar.bz2|COPY owncloud-7.0.15.tar.bz2|' Dockerfile`**
 
 `#` **`docker build .`**
 
@@ -921,6 +921,7 @@ services:
 owncloud_db_1    docker-entrypoint.sh mysqld      Up      3306/tcp           
 owncloud_web_1   /bin/sh -c /usr/sbin/apach ...   Up      0.0.0.0:80->80/tcp
 ```
+
 You would like to try to allow scalability for your application by scaling the
 web service
 
@@ -1095,7 +1096,7 @@ Check what happens. You can use docker ps on the current node, and on another
 node.
 
 Now let's put on our cluster our application. Start with the owncloud_web
-image as a based for your service.
+image as a base for your service.
 
 `#` **`docker service create owncloud_web`**
 ```
