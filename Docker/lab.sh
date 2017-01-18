@@ -11,7 +11,9 @@ az login
 az resource group create -l eastus -n LabDck
 # We have 20 groups
 #for i in 0 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
-for i in 0; do
+# We have a limit of 20 VMs :-(
+# We have 4 groups
+for i in 0 1 2 3; do
     # we have 5 VMs per group
     for j in 1 2 3 4 5; do
     #for j in 1; do
