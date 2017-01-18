@@ -10,6 +10,6 @@ $CONFIG = array (
   'datadirectory' => '/data',
   'overwrite.cli.url' => 'http://localhost/owncloud',
   'dbtype' => 'sqlite3',
-  'version' => '7.0.6.2',
+  'version' => '7.0.15',
   'installed' => true,
 );
