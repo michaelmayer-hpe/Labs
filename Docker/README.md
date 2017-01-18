@@ -63,7 +63,7 @@ Version 1.12 is the current stable release. This lab requires at least version 1
 
 Ask to your instructor which Linux distribution will be used for the Lab (Ubuntu or RHEL). Then refer to the corresponding instructions below.
 
-Other distributions should be as easy to deal with once the same packages have been installed using the package manager as they should be available directly (Case of most non-commercial distributions such as Debian, Fedora, Mageia, OpenSuSE, ...)
+Other distributions should be as easy to deal with once the same packages have been installed using the package manager as they should be available directly (Case of most non-commercial distributions such as Debian, Fedora, Mageia, OpenSuSE, ...). Follow the instructions from https://docs.docker.com/engine/installation/
 
 ### Ubuntu installation
 If you work on an Ubuntu environment for the Lab, you may want to use apt to do the installation of Docker with all its dependencies. As Ubuntu provides an old version of docker, we will use a ppa providing a more up to date version:
@@ -933,37 +933,38 @@ to solve this.
 
 # Using docker-machine to create docker hosts
 
-docker-machine is a docker tool that can be used to deploy docker hosts on various cloud platforms (Aws, Azure, Digital Oceal, Openstack, etc...).
-We will use this tool to deploy 6 nodes that will be used later in the swarm part. Docker machine simply deploys a server on your favorite provider and then install the latest release of docker engine.
+Depending on the context of the Lab, you may already have enough machines available (5) to run the Swarm part, or you may need to create them. In that case, continue with this part, if not, skip to the next one.
 
-The following comman will deploy one node to our openstack environment but do not run it yet.
+docker-machine is a docker tool that can be used to deploy docker hosts on various cloud platforms (AWS, Azure, Digital Ocean, Openstack, etc...).
+We will use this tool to deploy 5 nodes that will be used later in the swarm part. Docker machine simply deploys a server on your favorite provider and then install the latest release of docker engine.
 
-`docker-machine create --driver openstack --openstack-auth-url http://10.11.50.26:5000/v2.0 --openstack-flavor-name m1.small --openstack-image-name ubuntu1604 --openstack-username dockerlab --openstack-password linux1 --openstack-tenant-name dockerlab --openstack-net-name private --openstack-floatingip-pool external-network --openstack-sec-groups default --openstack-ssh-user ubuntu dockerw1`
+The following command will deploy one node to our openstack environment but will not run it yet.
 
-In order to save time we will deploy 6 hosts in parallel with the following command.
+`#` **`docker-machine create --driver openstack --openstack-auth-url http://10.11.50.26:5000/v2.0 --openstack-flavor-name m1.small --openstack-image-name ubuntu1604 --openstack-username dockerlab --openstack-password linux1 --openstack-tenant-name dockerlab --openstack-net-name private --openstack-floatingip-pool external-network --openstack-sec-groups default --openstack-ssh-user ubuntu dockerw1`**
+
+In order to save time we will deploy 5 hosts in parallel with the following command.
 ```
-for i in dockerm1 dockerm2 dockerm3 dockerw1 dockerw2 dockerw3;
-do docker-machine create --driver openstack --openstack-auth-url http://10.11.50.26:5000/v2.0 --openstack-flavor-name m1.small --openstack-image-name ubuntu1604 --openstack-username dockerlab --openstack-password linux1 --openstack-tenant-name dockerlab --openstack-net-name private --openstack-floatingip-pool external-network --openstack-sec-groups default --openstack-ssh-user ubuntu $i &
+for i in dockerm1 dockerm2 dockerm3 dockerw1 dockerw2; do 
+    docker-machine create --driver openstack --openstack-auth-url http://10.11.50.26:5000/v2.0 --openstack-flavor-name m1.small --openstack-image-name ubuntu1604 --openstack-username dockerlab --openstack-password linux1 --openstack-tenant-name dockerlab --openstack-net-name private --openstack-floatingip-pool external-network --openstack-sec-groups default --openstack-ssh-user ubuntu $i &
 done
 ```
 
-This will take around 6mn. You can list the machine installed with the command:
+This will take around 5mn. You can list the machines installed with the command:
 `docker machine ls`
 
 To connect to a server you can use:
 `docker machine ssh <machine_name>`
 
-Docker CLI always uses the API. So you can configure the CLI to use a remote host instead of your local unix socket. So your client will act as usual but instead of managing your local engine, it will manage a remote one.
-Example, you want to interact with the dockerm1 machine. Just type the following command:
+Docker CLI always uses the API. So you can configure the CLI to use a remote host instead of your local Unix socket. That way your client will act as usual but instead of managing your local engine, it will manage a remote one.
+Example, suppose you want to interact with the dockerm1 machine. Just type the following command:
 
-```
-docker-machine env dockerm1
-```
-The above command will provide the env variable and the command to export them in the environment.
-```
-eval $(docker-machine env dockerm1)
-```
-Now you can work on docker as usual, however all commands will work on the remote host.
+`#` **`docker-machine env dockerm1`**
+
+The above command will provide the env variable and the command to export them in the environment. So using
+
+`#` **`eval $(docker-machine env dockerm1)`**
+
+you can now work with docker as usual, however all commands passed will operate on the remote host.
 
 
 # Using Docker swarm
@@ -972,24 +973,24 @@ Docker swarm is, since version 1.12, part of docker engine.
 It is used to provide high availability for Docker containers.
 
 A really complete and excellent workshop is available for swarm at https://jpetazzo.github.io/orchestration-workshop
-We extracted lots of ideas from it to lead you towards a first understanding
-of Swarm.
+We extracted lots of ideas from it to lead you towards a first understanding of Swarm.
 
 ## Installing Docker swarm
 
-<!--
+If you have a version prior to 1.12, then you'll need to install docker engine 1.12+ as the rest of this lab requires that version.
+
 ## Installing on RHEL 7
 
-If you have a previous version, then install docker engine 1.12 as the rest of this lab requires that version. On CentOS/RHEL 7 just add the repo file mentioned earlier in this Lab to get it.
+On CentOS/RHEL 7 just add the repo file mentioned earlier in this Lab to get it.
 
+<!--
 ## Installing on Ubuntu
+## Installing the engine manually
 -->
 
-## Installing the engine
+## Installing the engine in the Cloud
 
-Installation need engine 1.12, this could be done manually as explained at the very beginning of this lab.
-
-However, if you followed docker-machine part, you can now use these machines to configure a swarm cluster.
+If you followed docker-machine part, you can now use these machines to configure a swarm cluster as you have the latest version available in them.
 
 ## Using Docker swarm to make our configuration available and scalable
 
@@ -1006,30 +1007,33 @@ instructed:
 
 `#` **`docker swarm init`**
 ```
-Swarm initialized: current node (eih06d4qw1gweuictvqiw9i3o) is now a manager.
+Swarm initialized: current node (82mm398yajdl4lor2gzc4eeeo) is now a manager.
 
 To add a worker to this swarm, run the following command:
 
     docker swarm join \
-    --token SWMTKN-1-4itxzpvu1tfv0faeqfnq4a0h9hk8za21dsm72cf6irl7t0do2o-cmg5ocjpfjrkyygynce95m7q1 \
-    10.0.0.4:2377
+    --token SWMTKN-1-444fdgnkvchgol08ck8rexwhxg8hbvwncyqs61mvcu0b3978qs-4r5p96yudo5r1x6c4psxd1uyt \
+    10.11.51.136:2377
 
 To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
 ```
 
-So use the previous advise to add your other nodes to the Swarm cluster.
+So use the previous advise to add your other nodes to the Swarm cluster as worker.
 
 `#` **`docker node ls`**
 ```
 ID                           HOSTNAME  STATUS  AVAILABILITY  MANAGER STATUS
-0rj0cugm2a517riakacxbiomn    gr1-vm5   Ready   Active        
-1dvyeyr2dk52u2x0hlbb9tf4u    gr1-vm2   Ready   Active        
-6ofrij9ru4y77zoslyzq7iafz    gr1-vm3   Ready   Active        
-9xk7j3hi1q8abhsp355esi6uo    gr1-vm4   Ready   Active        
-eih06d4qw1gweuictvqiw9i3o *  gr1-vm1   Ready   Active        Leader
+2cosbse8y5o1sl2zr4o2tc06q    c11.labossi.hpintelco.org  Ready   Active        
+31n32lc4wjv9oskc6ejyvxz9j *  c6.labossi.hpintelco.org   Ready   Active        Leader
+51kz6qmid4blq7pjbrq5527o5    c7.labossi.hpintelco.org   Ready   Active
+726rg84phfkohofjpn8p2ztfg    c8.labossi.hpintelco.org   Ready   Active
+d8dfb2e8qd3h703pw43o5r88f    c10.labossi.hpintelco.org  Ready   Active
 ```
 
 Check what you can see on each node. Also look at the result of `docker info`.
+
+If you have problems with error messages like "Error response from daemon: Timeout was reached before node was joined." then you may have an issue with your firewall which is not configured to have the right ports open for swarm to work.
+In that case, have a look at https://www.digitalocean.com/community/tutorials/how-to-configure-the-linux-firewall-for-docker-swarm-on-centos-7
 
 Swarm has the notion of worker (hosting containers), manager (able to be also
 a worker and being a backup leader) and Leader (manager being in charge of the
@@ -1042,23 +1046,28 @@ previously.
 
 `#` **`docker swarm join-token -q manager`**
 ```
-SWMTKN-1-4itxzpvu1tfv0faeqfnq4a0h9hk8za21dsm72cf6irl7t0do2o-djax9t2oja7pfyxj7kvciq90v
+SWMTKN-1-444fdgnkvchgol08ck8rexwhxg8hbvwncyqs61mvcu0b3978qs-cw10maud95375a2t35p7m5kox
 ```
 
 So now you have the right token, use it as previously on 2 of your nodes to
-promote them as managers. At the end you should get the following result:
+promote them as managers. 
+
+Example:
+`#` **`docker node promote c7.labossi.hpintelco.org`**
+
+At the end you should get the following result:
 
 `#` **`docker node ls`**
 ```
 ID                           HOSTNAME  STATUS  AVAILABILITY  MANAGER STATUS
-1dvyeyr2dk52u2x0hlbb9tf4u    gr1-vm2   Ready   Active        
-2eb1nyq3s49bs9xbaeen4atzg    gr1-vm4   Ready   Active        Reachable
-4dmjwlu9dup8doetyeho196p9    gr1-vm5   Ready   Active        Reachable
-6ofrij9ru4y77zoslyzq7iafz    gr1-vm3   Ready   Active        
-eih06d4qw1gweuictvqiw9i3o *  gr1-vm1   Ready   Active        Leader
+2cosbse8y5o1sl2zr4o2tc06q    c11.labossi.hpintelco.org  Ready   Active        
+31n32lc4wjv9oskc6ejyvxz9j *  c6.labossi.hpintelco.org   Ready   Active        Leader
+51kz6qmid4blq7pjbrq5527o5    c7.labossi.hpintelco.org   Ready   Active        Reachable
+726rg84phfkohofjpn8p2ztfg    c8.labossi.hpintelco.org   Ready   Active        Reachable
+d8dfb2e8qd3h703pw43o5r88f    c10.labossi.hpintelco.org  Ready   Active
 ```
 
-There are many ways to do it, including using docker node promote.
+There are many ways to do it, including using docker node update.
 
 So now that we have a cluster running, it would be a good idea to launch
 containers on it. But in a Swarm cluster this means creating services. So
@@ -1066,19 +1075,20 @@ let's create a simple service to test our cluster:
 
 `#` **`docker service create alpine ping 8.8.8.8`**
 ```
-cn5jsn0fodae976idvooehmli
+ag12vg6ts417gj4r2y2w57j5q
 ```
 
 `#` **`docker service ls`**
 ```
-ID            NAME             REPLICAS  IMAGE   COMMAND
-cn5jsn0fodae  boring_mccarthy  1/1       alpine  ping 8.8.8.8
+ID            NAME         REPLICAS  IMAGE   COMMAND
+ag12vg6ts417  tiny_curran  1/1       alpine  ping 8.8.8.8
+
 ```
 
-`#` **`docker service ps cn5`**
+`#` **`docker service ps ag1`**
 ```
 ID                         NAME                   IMAGE   NODE     DESIRED STATE  CURRENT STATE              ERROR
-8k7xra716pn57ixfzqbpfwk1c  boring_mccarthy.1      alpine  gr1-vm2  Running        Running 7 minutes ago
+9aq9iq25ayhp1nk11ems7tsly  tiny_curran.1  alpine  c6.labossi.hpintelco.org  Running        Running 35 seconds ago  
 ```
 
 Use the docker commands to check how the container is behaving in your
@@ -1087,9 +1097,9 @@ cluster behaviour.
 
 You can scale that service:
 
-`#` **`docker service update 8k7 --replicas 10`**
+`#` **`docker service update ag1 --replicas 10`**
 ```
-8k7
+ag1
 ```
 
 Check what happens. You can use docker ps on the current node, and on another
@@ -1103,8 +1113,10 @@ image as a base for your service.
 92f1q6wzr8jb5nctzu06d2cd1
 ```
 You may have some problems with this. Try to understand what happens and solve
-your issues. You will need to use a private registry here to help with that.
-<!--
+your issues. How many replicas are working ? Where are the images to use ? Which node can use them ?
+
+So you will need to use a private registry here to help with that.
+
 Consider the following command as a hint:
 
 `#` **`docker service create --name registry --publish 5000:5000 registry:2`**
@@ -1143,6 +1155,7 @@ Do the same with the mariadb service that you create afterwards.
 
 Once this is solved, you can try scaling the web frontend.
 
+Now we'll see the adequation of Docker Swarm and Cloud Native application
 
 This is the end of this lab for now, we hope you enjoyed it.
 
