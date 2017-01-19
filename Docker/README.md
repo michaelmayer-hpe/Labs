@@ -936,7 +936,7 @@ to solve this.
 Depending on the context of the Lab, you may already have enough machines available (5) to run the Swarm part, or you may need to create them. In that case, continue with this part, if not, skip to the next one.
 
 docker-machine is a docker tool that can be used to deploy docker hosts on various cloud platforms (AWS, Azure, Digital Ocean, Openstack, etc...).
-We will use this tool to deploy 5 nodes that will be used later in the swarm part. Docker machine simply deploys a server on your favorite provider and then install the latest release of docker engine.
+We will use this tool to deploy 5 nodes that will be used later in the Swarm part. Docker machine simply deploys a server on your favorite provider and then install the latest release of docker engine.
 
 The following command will deploy one node to our openstack environment but will not run it yet.
 
@@ -967,15 +967,15 @@ The above command will provide the env variable and the command to export them i
 you can now work with docker as usual, however all commands passed will operate on the remote host.
 
 
-# Using Docker swarm
+# Using Docker Swarm
 
-Docker swarm is, since version 1.12, part of docker engine.
+Docker Swarm is, since version 1.12, part of docker engine.
 It is used to provide high availability for Docker containers.
 
-A really complete and excellent workshop is available for swarm at https://jpetazzo.github.io/orchestration-workshop
+A really complete and excellent workshop is available for Swarm at https://jpetazzo.github.io/orchestration-workshop
 We extracted lots of ideas from it to lead you towards a first understanding of Swarm.
 
-## Installing Docker swarm
+## Installing Docker Swarm
 
 If you have a version prior to 1.12, then you'll need to install docker engine 1.12+ as the rest of this lab requires that version.
 
@@ -990,9 +990,9 @@ On CentOS/RHEL 7 just add the repo file mentioned earlier in this Lab to get it.
 
 ## Installing the engine in the Cloud
 
-If you followed docker-machine part, you can now use these machines to configure a swarm cluster as you have the latest version available in them.
+If you followed docker-machine part, you can now use these machines to configure a Swarm cluster as you have the latest version available in them.
 
-## Using Docker swarm to make our configuration available and scalable
+## Using Docker Swarm to make our configuration available and scalable
 
 So now that we can orchestrate the creation of our 2 containers hosting our
 application, we would like to make it scalable and error proof. Let's try to
@@ -1032,12 +1032,12 @@ d8dfb2e8qd3h703pw43o5r88f    c10.labossi.hpintelco.org  Ready   Active
 
 Check what you can see on each node. Also look at the result of `docker info`.
 
-If you have problems with error messages like "Error response from daemon: Timeout was reached before node was joined." then you may have an issue with your firewall which is not configured to have the right ports open for swarm to work.
+If you have problems with error messages like "Error response from daemon: Timeout was reached before node was joined." then you may have an issue with your firewall which is not configured to have the right ports open for Swarm to work.
 In that case, have a look at https://www.digitalocean.com/community/tutorials/how-to-configure-the-linux-firewall-for-docker-swarm-on-centos-7
 
 Swarm has the notion of worker (hosting containers), manager (able to be also
 a worker and being a backup leader) and Leader (manager being in charge of the
-swarm cluster).
+Swarm cluster).
 
 In order to render our cluster highly available, we need to have an odd number
 of managers. Here we can promote 2 of our workers as managers. For that, we
@@ -1114,17 +1114,12 @@ image as a base for your service.
 ```
 You may have some problems with this. Try to understand what happens and solve
 your issues. How many replicas are working ? Where are the images to use ? Which node can use them ?
+Hint: use the command `docker service ps` to help diagnose.
 
-So you will need to use a private registry here to help with that.
+So you will need to use a private registry here to help solving that.
 
-Consider the following command as a hint:
-
-`#` **`docker service create --name registry --publish 5000:5000 registry:2`**
-
--->
-
-We have deployed a registry for you available from a public url/ip.
-If not provided, please ask your trainer to get this @.
+<!--
+We have deployed a Docker registry for you, available from a URL that will be provided by the instructor.
 
 You need to add the CA public certificate to trust the registry.
 Download the CA from the registry web site.
@@ -1135,32 +1130,48 @@ and do the folowing commands :
 
 ```
 export DOMAIN_NAME=<my-registry-fqdn>
-openssl s_client -connect $DOMAIN_NAME:443 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /etc/pki/ca-trust/source/anchors/$DOMAIN_NAME.crt
+openssl s_client -connect ${DOMAIN_NAME}:443 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /etc/pki/ca-trust/source/anchors/$DOMAIN_NAME.crt
 update-ca-trust
-/bin/systemctl restart docker.service
+systemctl restart docker
 ```
 ### Ubuntu
 
 ```
 export DOMAIN_NAME=<my-registry-fqdn>
-openssl s_client -connect $DOMAIN_NAME:443 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /usr/local/share/ca-certificates/$DOMAIN_NAME.crt
+openssl s_client -connect ${DOMAIN_NAME}:443 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /usr/local/share/ca-certificates/$DOMAIN_NAME.crt
 update-ca-certificates
 service docker restart
 ```
+-->
+
+Let start a Docker Registry on one of our nodes (I used c6.labossi.hpintelco.org):
+
+`#` **`docker run -d --name registry --publish 5000:5000 registry:2`**
+
+Check that the registry runs as expected:
+`#` **`curl -L http://localhost:5000/v2`**
+{}
+
+As this registry doesn't run with SSL, we need to inform our Docker dameon that it will need to communicate with it in a insecure manner.
+
+On RHEL, edit the file `/usr/lib/systemd/system/docker.service` and change the line starting the docker daemon as follows:
+
+**`ExecStart=/usr/bin/dockerd --insecure-registry=c6.labossi.hpintelco.org`**
+
+Then inform systemd of the modifications:
+`#` **`systemctl daemon-reload`**
+`#` **`systemctl restart docker`**
 
 In order to share the image between the nodes, you need to push it to this new
-registry, by using the appropriate tag (localhost:5000/owncloud_web)
+registry, by using the appropriate tag. For example, you may use a command similar to
+
+`#` **`docker tag owncloud_web:latest ${DOMAIN_NAME}:5000/owncloud_web`**
 
 Do the same with the mariadb service that you create afterwards.
 
 Once this is solved, you can try scaling the web frontend.
 
 Now we'll see the adequation of Docker Swarm and Cloud Native application
-
-This is the end of this lab for now, we hope you enjoyed it.
-
-Github issues and pull requests to improve this lab are welcome.
-
 
 # Deploy a cloud native appication.
 
@@ -1172,4 +1183,10 @@ TBC providing more details in next PRs.
 4.Run the script deploy the application.
 5.Update the config.js file to allow access to the public ip.
 6.Eventually update swift config to recach swift.
+
+
+This is the end of this lab for now, we hope you enjoyed it.
+
+Github issues and pull requests to improve this lab are welcome.
+
 
