@@ -1118,11 +1118,13 @@ Hint: use the command `docker service ps` to help diagnose.
 
 So you will need to use a private registry here to help solving that.
 
-<!--
 We have deployed a Docker registry for you, available from a URL that will be provided by the instructor.
+(If you use the internal HPE Lab, then try lab7-2.labossi.hpintelco.org:5000)
 
-You need to add the CA public certificate to trust the registry.
-Download the CA from the registry web site.
+You need to add the CA public certificate made on the registry to trust it.
+Download the CA from the registry web site:
+
+`#` **`curl -L http://lab7-2.labossi.hpintelco.org/ca.crt > /etc/pki/ca-trust/source/anchors/ca-registry.crt
 
 and do the folowing commands :
 
@@ -1130,7 +1132,7 @@ and do the folowing commands :
 
 ```
 export DOMAIN_NAME=<my-registry-fqdn>
-openssl s_client -connect ${DOMAIN_NAME}:443 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /etc/pki/ca-trust/source/anchors/$DOMAIN_NAME.crt
+openssl s_client -connect ${DOMAIN_NAME}:5000 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /etc/pki/ca-trust/source/anchors/$DOMAIN_NAME.crt
 update-ca-trust
 systemctl restart docker
 ```
@@ -1138,12 +1140,12 @@ systemctl restart docker
 
 ```
 export DOMAIN_NAME=<my-registry-fqdn>
-openssl s_client -connect ${DOMAIN_NAME}:443 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /usr/local/share/ca-certificates/$DOMAIN_NAME.crt
+openssl s_client -connect ${DOMAIN_NAME}:5000 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /usr/local/share/ca-certificates/$DOMAIN_NAME.crt
 update-ca-certificates
 service docker restart
 ```
--->
 
+<!--
 Let start a Docker Registry on one of our nodes (I used c6.labossi.hpintelco.org):
 
 `#` **`docker run -d --name registry --publish 5000:5000 registry:2`**
@@ -1161,13 +1163,19 @@ On RHEL, edit the file `/usr/lib/systemd/system/docker.service` and change the l
 Then inform systemd of the modifications:
 `#` **`systemctl daemon-reload`**
 `#` **`systemctl restart docker`**
+-->
 
 In order to share the image between the nodes, you need to push it to this new
 registry, by using the appropriate tag. For example, you may use a command similar to
 
 `#` **`docker tag owncloud_web:latest ${DOMAIN_NAME}:5000/owncloud_web`**
 
-Do the same with the mariadb service that you create afterwards.
+And then you can push that image into our registry so it's available to other engines to use.
+
+`#` **`docker push ${DOMAIN_NAME}:5000/owncloud_web`**
+
+Do the same with the mariadb service that you create afterwards following the same approach.
+
 
 Once this is solved, you can try scaling the web frontend.
 
