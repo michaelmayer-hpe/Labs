@@ -5,7 +5,6 @@ RUN useradd pki
 RUN chmod 755 /home/pki
 RUN rm /etc/httpd/conf.d/welcome.conf
 EXPOSE 80
-EXPOSE 443
 USER pki
 WORKDIR /home/pki
 RUN mkdir ca srv

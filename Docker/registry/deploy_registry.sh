@@ -17,7 +17,6 @@ done
 
 # If a FW is up with firewalld issue:
 # firewall-cmd --add-port=80/tcp --permanent
-# firewall-cmd --add-port=443/tcp --permanent
 # firewall-cmd --add-port=5000/tcp --permanent
 
 echo "Enter the public fqdn of your registry (IP will not work)"
