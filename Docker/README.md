@@ -1105,10 +1105,10 @@ ag1
 Check what happens. You can use docker ps on the current node, and on another
 node.
 
-Now let's put on our cluster our application. Start with the owncloud_web
-image as a base for your service.
+Now let's put on our cluster our application. Note that before version 1.13, docker-compose doesn't support the notion of service, so can't be used in swarm mode. Would b very handy, but you'll have to wait till early february/march 2017 to have that !
+Start with the owncloud_web image as a base for your service.
 
-`#` **`docker service create owncloud_web`**
+`#` **`docker service create --name owncloudsvc -p 80:80 owncloud_web`**
 ```
 92f1q6wzr8jb5nctzu06d2cd1
 ```
@@ -1124,7 +1124,7 @@ We have deployed a Docker registry for you, available from a URL that will be pr
 You need to add the CA public certificate made on the registry to trust it.
 Download the CA from the registry web site:
 
-`#` **`curl -L http://lab7-2.labossi.hpintelco.org/ca.crt > /etc/pki/ca-trust/source/anchors/ca-registry.crt
+`#` **`curl -L http://lab7-2.labossi.hpintelco.org/ca.crt > /etc/pki/ca-trust/source/anchors/ca-registry.crt`**
 
 and do the folowing commands :
 
@@ -1146,23 +1146,10 @@ service docker restart
 ```
 
 <!--
-Let start a Docker Registry on one of our nodes (I used c6.labossi.hpintelco.org):
-
-`#` **`docker run -d --name registry --publish 5000:5000 registry:2`**
-
 Check that the registry runs as expected:
 `#` **`curl -L http://localhost:5000/v2`**
 {}
 
-As this registry doesn't run with SSL, we need to inform our Docker dameon that it will need to communicate with it in a insecure manner.
-
-On RHEL, edit the file `/usr/lib/systemd/system/docker.service` and change the line starting the docker daemon as follows:
-
-**`ExecStart=/usr/bin/dockerd --insecure-registry=c6.labossi.hpintelco.org`**
-
-Then inform systemd of the modifications:
-`#` **`systemctl daemon-reload`**
-`#` **`systemctl restart docker`**
 -->
 
 In order to share the image between the nodes, you need to push it to this new
@@ -1175,9 +1162,24 @@ And then you can push that image into our registry so it's available to other en
 `#` **`docker push ${DOMAIN_NAME}:5000/owncloud_web`**
 
 Do the same with the mariadb service that you create afterwards following the same approach.
+Look at the status of both services. Why do you have issues with the mariadb service ? How can you solve that.
 
+So yes we have issues with data management (not a surprise after our first part no ?) and also with environment variables to configure the mariadb service.
 
-Once this is solved, you can try scaling the web frontend.
+In order to solve the environment variables aspect, you can create your own Dockerfile encapsulating mariadb call:
+
+`#` **`cat Dockerfile.db`**
+```
+FROM mariadb
+ENV MYSQL_ROOT_PASSWORD=password
+ENV MYSQL_DATABASE=owncloud
+ENV MYSQL_USER=owncloud
+ENV MYSQL_PASSWORD=owncloudpwd
+```
+
+Now for the storage it's more difficult as the volumes you want to mount should be, as the images previously, available on all engines so each container created on it can use these data.
+
+Once all this is solved, you can try scaling the web frontend.
 
 Now we'll see the adequation of Docker Swarm and Cloud Native application
 
