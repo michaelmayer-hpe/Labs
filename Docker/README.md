@@ -1130,7 +1130,7 @@ Hint: use the command `docker service ps` to help diagnose.
 So you will need to use a private registry here to help solving that.
 
 We have deployed a Docker registry for you, available from a URL that will be provided by the instructor.
-(If you use the internal HPE Lab, then try lab7-2.labossi.hpintelco.org:5000)
+(If you use the internal HPE Lab, then try lab7-2.labossi.hpintelco.org:5000 - If you want to create your own, use our scripts at https://github.com/bcornec/Labs/tree/master/Docker/registry)
 
 You need to add the CA public certificate made on the registry to trust it.
 Download the CA from the registry web site:
