@@ -738,8 +738,8 @@ RUN yum install -y tar bzip2
 COPY owncloud-7.0.15.tar.bz2 /var/www/html/
 RUN cd /var/www/html/ && tar xvfj owncloud-7.0.15.tar.bz2 && rm -f owncloud-7.0.15.tar.bz2
 RUN yum install -y php php-dom php-mbstring php-pdo php-gd
-VOLUME /data
 RUN chown -R apache:apache /var/www/html/owncloud /data
+VOLUME /data
 CMD /usr/sbin/apachectl -DFOREGROUND -k start
 EXPOSE 80
 ```
@@ -1035,6 +1035,17 @@ Check what you can see on each node. Also look at the result of `docker info`.
 If you have problems with error messages like "Error response from daemon: Timeout was reached before node was joined." then you may have an issue with your firewall which is not configured to have the right ports open for Swarm to work.
 In that case, have a look at https://www.digitalocean.com/community/tutorials/how-to-configure-the-linux-firewall-for-docker-swarm-on-centos-7
 
+I recommend that you pass the following commands on all nodes to avoid firewalling issue in the rest of the Lab:
+`#` **`firewall-cmd --add-port=2376/tcp --permanent`**
+`#` **`firewall-cmd --add-port=2377/tcp --permanent`**
+`#` **`firewall-cmd --add-port=7946/tcp --permanent`**
+`#` **`firewall-cmd --add-port=7946/udp --permanent`**
+`#` **`firewall-cmd --add-port=4789/udp --permanent`**
+
+But you will probablyhave many issues with firewalld later on anyway, so it's worth disabling it now to avoid solving unrelated issues and integration aspect with Docker iptables management (been there done that for hours !). And believe me, I don't like that :-(
+
+`#` **`systemctl stop firewalld`**
+
 Swarm has the notion of worker (hosting containers), manager (able to be also
 a worker and being a backup leader) and Leader (manager being in charge of the
 Swarm cluster).
@@ -1105,7 +1116,7 @@ ag1
 Check what happens. You can use docker ps on the current node, and on another
 node.
 
-Now let's put on our cluster our application. Note that before version 1.13, docker-compose doesn't support the notion of service, so can't be used in swarm mode. Would b very handy, but you'll have to wait till early february/march 2017 to have that !
+Now let's put on our cluster our application. Note that before version 1.13, docker-compose doesn't support the notion of service, so can't be used in swarm mode. Would be very handy, but you'll have to wait till early february/march 2017 to have that !
 Start with the owncloud_web image as a base for your service.
 
 `#` **`docker service create --name owncloudsvc -p 80:80 owncloud_web`**
@@ -1162,13 +1173,19 @@ And then you can push that image into our registry so it's available to other en
 `#` **`docker push ${DOMAIN_NAME}:5000/owncloud_web`**
 
 Do the same with the mariadb service that you create afterwards following the same approach.
-Look at the status of both services. Why do you have issues with the mariadb service ? How can you solve that.
+Look at the status of both services. Why do you have issues with the mariadb service (at least ;-) ? How can you solve that.
 
 So yes we have issues with data management (not a surprise after our first part no ?) and also with environment variables to configure the mariadb service.
 
-In order to solve the environment variables aspect, you can create your own Dockerfile encapsulating mariadb call:
+In order to solve the environment variables aspect, you can use the --env option on the CLI.
+<!--
 
-`#` **`cat Dockerfile.db`**
+`#` **`mkdir -p ../mydb`**
+`#` **`cd ../mydb`**
+
+Edit the Dockerfile so it looks like:
+
+`#` **`cat Dockerfile`**
 ```
 FROM mariadb
 ENV MYSQL_ROOT_PASSWORD=password
@@ -1176,8 +1193,50 @@ ENV MYSQL_DATABASE=owncloud
 ENV MYSQL_USER=owncloud
 ENV MYSQL_PASSWORD=owncloudpwd
 ```
+-->
 
-Now for the storage it's more difficult as the volumes you want to mount should be, as the images previously, available on all engines so each container created on it can use these data.
+Now for the storage it's more difficult as the volumes you want to mount should be, as the images previously, available on all engines so each container created on it can use these data. One way to solve this for the mariadb image is to use an NFS exported directory from your first node.
+Let's configure NFS on the first machine (10.11.51.136 in my case):
+`#` **`yum install -y nfs-utils`** # CentOS7
+or 
+`#` **`apt-get install -y nfs-common`** # Ubuntu
+
+Edit the exports file so it looks like:
+`#` **`cat /etc/exports`**
+```
+/data/db        *.labossi.hpintelco.org(rw,no_root_squash,async,insecure,no_subtree_check)
+/data/owncloud  *.labossi.hpintelco.org(rw,no_root_squash,async,insecure,no_subtree_check)
+```
+`#` **`exportfs -a`**
+`#` **`systemctl start nfs`**
+
+Check on another node that your NFS setup is correct.
+
+Now you can create a Docker volume that will be used by the containers launched with a service:
+`#` **`docker volume create --driver local --opt type=nfs --opt o=addr=10.11.51.136,rw --opt device=:/data/db --name dbvol`**
+`#` **`docker volume ls`**
+
+BTW, you can see that Docker already transparently created many more volumes for you.
+
+Now you can start mariadb as a service using the volume just created:
+<!--
+`#` **`docker tag mydb lab7-2.labossi.hpintelco.org:5000/mydb`**
+`#` **`docker push lab7-2.labossi.hpintelco.org:5000/mydb`**
+`#` **`docker service create --name=mydbsvc --mount=type=volume,volume-driver=local,src=dbvol,dst=/var/lib/mysql lab7-2.labossi.hpintelco.org:5000/mydb`**
+-->
+`#` **`docker service create --name=mydbsvc --mount=type=volume,volume-driver=local,src=dbvol,dst=/var/lib/mysql --env MYSQL_ROOT_PASSWORD=password --env MYSQL_DATABASE=owncloud --env MYSQL_USER=owncloud --env MYSQL_PASSWORD=owncloudpwd mariadb`**
+
+Is that working as expected ? It's still pretty difficult in Swarm mode to get logs for a failing service. Docker is aware of that and working on it for 1.13. Cf: https://github.com/docker/docker/issues/26083
+Tips are use docker service ps <svc_id> to find on which host run the service and then docker exec/logs on that host e.g. Also think to the /var/log/messages log file on your host.
+
+Can you have access to the database with the mysql command from your host ? Check that the volume is mounted correctly in the container.
+
+Create a temporary table in the owncloud database to check and then relaunch the service to verify the persistency of the DB.
+MariaDB hint:
+`MariaDB [(none)]>` **`use owncloud;`**
+`MariaDB [(owncloud)]>` **`create table toto (id int);`**
+`MariaDB [(owncloud)]>` **`show tables;`**
+`MariaDB [(owncloud)]>` **`quit;`**
 
 Once all this is solved, you can try scaling the web frontend.
 
