@@ -1036,13 +1036,18 @@ If you have problems with error messages like "Error response from daemon: Timeo
 In that case, have a look at https://www.digitalocean.com/community/tutorials/how-to-configure-the-linux-firewall-for-docker-swarm-on-centos-7
 
 I recommend that you pass the following commands on all nodes to avoid firewalling issue in the rest of the Lab:
+
 `#` **`firewall-cmd --add-port=2376/tcp --permanent`**
+
 `#` **`firewall-cmd --add-port=2377/tcp --permanent`**
+
 `#` **`firewall-cmd --add-port=7946/tcp --permanent`**
+
 `#` **`firewall-cmd --add-port=7946/udp --permanent`**
+
 `#` **`firewall-cmd --add-port=4789/udp --permanent`**
 
-But you will probablyhave many issues with firewalld later on anyway, so it's worth disabling it now to avoid solving unrelated issues and integration aspect with Docker iptables management (been there done that for hours !). And believe me, I don't like that :-(
+But you will probably have many issues with firewalld later on anyway, so it's worth disabling it now to avoid solving unrelated issues and integration aspects with Docker iptables management (been there done that for hours !). And believe me, I don't like that :-( (so in our Lab you have peripheral firewall !)
 
 `#` **`systemctl stop firewalld`**
 
@@ -1113,8 +1118,14 @@ You can scale that service:
 ag1
 ```
 
-Check what happens. You can use docker ps on the current node, and on another
-node.
+Check what happens. You can use docker ps on the current node, and on another node.
+
+In order to help visualize the state of the Swarm cluster you can use the visualizer companion of Swarm. On the master node run the following:
+
+`#` **`docker run -it -d -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock manomarks/visualizer`**
+
+And then connect your browser to it on port 8080. You should see something similar to the below image:
+![Swarm Visualizer](/Docker/img/visualizer.png)
 
 Now let's put on our cluster our application. Note that before version 1.13, docker-compose doesn't support the notion of service, so can't be used in swarm mode. Would be very handy, but you'll have to wait till early february/march 2017 to have that !
 Start with the owncloud_web image as a base for your service.
@@ -1162,6 +1173,8 @@ Check that the registry runs as expected:
 {}
 
 -->
+
+Of course, each node needs to be configured identically.
 
 In order to share the image between the nodes, you need to push it to this new
 registry, by using the appropriate tag. For example, you may use a command similar to
@@ -1217,6 +1230,7 @@ Now you can create a Docker volume that will be used by the containers launched 
 `#` **`docker volume ls`**
 
 BTW, you can see that Docker already transparently created many more volumes for you.
+Note thtat you have to do it on all the engines of ryour Swarm cluster for this method to work.
 
 Now you can start mariadb as a service using the volume just created:
 <!--
@@ -1224,21 +1238,31 @@ Now you can start mariadb as a service using the volume just created:
 `#` **`docker push lab7-2.labossi.hpintelco.org:5000/mydb`**
 `#` **`docker service create --name=mydbsvc --mount=type=volume,volume-driver=local,src=dbvol,dst=/var/lib/mysql lab7-2.labossi.hpintelco.org:5000/mydb`**
 -->
-`#` **`docker service create --name=mydbsvc --mount=type=volume,volume-driver=local,src=dbvol,dst=/var/lib/mysql --env MYSQL_ROOT_PASSWORD=password --env MYSQL_DATABASE=owncloud --env MYSQL_USER=owncloud --env MYSQL_PASSWORD=owncloudpwd mariadb`**
+`#` **`docker service create --name=mydbsvc --mount=type=volume,volume-driver=local,src=dbvol,dst=/var/lib/mysql --env MYSQL_ROOT_PASSWORD=password --env MYSQL_DATABASE=owncloud --env MYSQL_USER=owncloud --env MYSQL_PASSWORD=owncloudpwd -p 3306:3306 mariadb`**
 
 Is that working as expected ? It's still pretty difficult in Swarm mode to get logs for a failing service. Docker is aware of that and working on it for 1.13. Cf: https://github.com/docker/docker/issues/26083
 Tips are use docker service ps <svc_id> to find on which host run the service and then docker exec/logs on that host e.g. Also think to the /var/log/messages log file on your host.
 
-Can you have access to the database with the mysql command from your host ? Check that the volume is mounted correctly in the container.
+Can you have access to the database with the mysql command from your host (install the command if you need it) ? Check that the volume is mounted correctly in the container. Check that you can reach the mysql daemon from any host in the cluster.
 
 Create a temporary table in the owncloud database to check and then relaunch the service to verify the persistency of the DB.
 MariaDB hint:
+`#` **`mysql -uowncloud -powncloudpwd`**
 `MariaDB [(none)]>` **`use owncloud;`**
 `MariaDB [(owncloud)]>` **`create table toto (id int);`**
 `MariaDB [(owncloud)]>` **`show tables;`**
 `MariaDB [(owncloud)]>` **`quit;`**
 
-Once all this is solved, you can try scaling the web frontend.
+Once all this is solved, you can try dealing with the web frontend. Adopt a similar approach (NFS volume and service).
+
+<!--
+Hint: 
+`#` **`for i in c6 c7 c8 c10 c11; do ssh $i docker volume create --driver local --opt type=nfs --opt o=addr=10.11.51.136,rw --opt device=:/data/owncloud --name ownvol ; done`**
+`#` **`for i in c6 c7 c8 c10 c11; do ssh $i docker volume create --driver local --opt type=nfs --opt o=addr=10.11.51.136,rw --opt device=:/data/config --name cfgvol ; done`**
+`#` **`docker service create --name=myownsvc --mount=type=volume,volume-driver=local,src=ownvol,dst=/data/owncloud --mount=type=volume,volume-driver=local,src=cfgvol,dst=/data/config -p 80:80 lab7-2.labossi.hpintelco.org:5000/owncloud_web`**
+-->
+
+Scaling out such a stateful application is not really interesting. Of course, we could host many owncloud users by multiplying the solution just adopted for many users and spread the laod across the Swarm cluster.
 
 Now we'll see the adequation of Docker Swarm and Cloud Native application
 
