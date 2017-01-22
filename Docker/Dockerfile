@@ -8,7 +8,9 @@ MAINTAINER myself@mydomain.org
 COPY owncloud-7.0.15.tar.bz2 /var/www/html/
 RUN cd /var/www/html/ && tar xfj owncloud-7.0.15.tar.bz2 && rm -f owncloud-7.0.15.tar.bz2
 COPY config.php /var/www/html/owncloud/config/
+RUN mkdir -p /data
 RUN chown -R apache:apache /var/www/html/owncloud /data
+# Put VOLUME at the end so the previous chown works
 VOLUME /data
 
 CMD /usr/sbin/apachectl -DFOREGROUND -k start
