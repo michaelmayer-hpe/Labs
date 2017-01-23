@@ -1130,7 +1130,7 @@ And then connect your browser to it on port 8080. You should see something simil
 Now let's put on our cluster our application. Note that before version 1.13, docker-compose doesn't support the notion of service, so can't be used in swarm mode. Would be very handy, but you'll have to wait till early february/march 2017 to have that !
 Start with the owncloud_web image as a base for your service.
 
-`#` **`docker service create --name owncloudsvc -p 80:80 owncloud_web`**
+`#` **`docker service create --name owncloudsvc -p 8000:80 owncloud_web`**
 ```
 92f1q6wzr8jb5nctzu06d2cd1
 ```
@@ -1219,6 +1219,7 @@ Edit the exports file so it looks like:
 ```
 /data/db        *.labossi.hpintelco.org(rw,no_root_squash,async,insecure,no_subtree_check)
 /data/owncloud  *.labossi.hpintelco.org(rw,no_root_squash,async,insecure,no_subtree_check)
+/data/config    *.labossi.hpintelco.org(rw,no_root_squash,async,insecure,no_subtree_check)
 ```
 `#` **`exportfs -a`**
 `#` **`systemctl start nfs`**
@@ -1230,7 +1231,7 @@ Now you can create a Docker volume that will be used by the containers launched 
 `#` **`docker volume ls`**
 
 BTW, you can see that Docker already transparently created many more volumes for you.
-Note thtat you have to do it on all the engines of ryour Swarm cluster for this method to work.
+Note thtat you have to do it on all the engines of your Swarm cluster for this method to work.
 
 Now you can start mariadb as a service using the volume just created:
 <!--
@@ -1253,30 +1254,145 @@ MariaDB hint:
 `MariaDB [(owncloud)]>` **`show tables;`**
 `MariaDB [(owncloud)]>` **`quit;`**
 
-Once all this is solved, you can try dealing with the web frontend. Adopt a similar approach (NFS volume and service).
+Once all this is solved, you can try dealing with the web frontend. Adopt a similar approach (NFS volume and service). Check that the communication between owncloud and the DB works fine.
 
-<!--
-Hint: 
+You may be affected as I as by remaining bugs such as https://github.com/docker/docker/issues/20486 or https://github.com/docker/docker/issues/25981, especially mixing tests with docker-compose and swarm. For me, the only way to turn around them was to reboot the full cluster completely.
+
+Examples: 
 `#` **`for i in c6 c7 c8 c10 c11; do ssh $i docker volume create --driver local --opt type=nfs --opt o=addr=10.11.51.136,rw --opt device=:/data/owncloud --name ownvol ; done`**
 `#` **`for i in c6 c7 c8 c10 c11; do ssh $i docker volume create --driver local --opt type=nfs --opt o=addr=10.11.51.136,rw --opt device=:/data/config --name cfgvol ; done`**
-`#` **`docker service create --name=myownsvc --mount=type=volume,volume-driver=local,src=ownvol,dst=/data/owncloud --mount=type=volume,volume-driver=local,src=cfgvol,dst=/data/config -p 80:80 lab7-2.labossi.hpintelco.org:5000/owncloud_web`**
+`#` **`docker service create --name=myownsvc --mount=type=volume,volume-driver=local,src=ownvol,dst=/data/owncloud --mount=type=volume,volume-driver=local,src=cfgvol,dst=/data/config -p 8000:80 lab7-2.labossi.hpintelco.org:5000/owncloud_web`**
+<!--
+Remains an issue:
+An exception occurred while executing 'SELECT "configvalue", "appid" FROM "oc_appconfig" WHERE "configkey" = ?' with params ["enabled"]: SQLSTATE[HY000]: General error: 1 no such table: oc_appconfig
+while doing 
+mysql> SELECT configvalue,appid FROM oc_appconfig WHERE configkey="enabled";
++-------------+-------------------+
+| configvalue | appid             |
++-------------+-------------------+
+| yes         | activity          |
+| yes         | calendar          |
+| yes         | contacts          |
+| yes         | documents         |
+| yes         | files             |
+| yes         | files_pdfviewer   |
+| yes         | files_sharing     |
+| yes         | files_texteditor  |
+| yes         | files_trashbin    |
+| yes         | files_versions    |
+| yes         | files_videoviewer |
+| yes         | firstrunwizard    |
+| yes         | gallery           |
+| yes         | search_lucene     |
+| yes         | templateeditor    |
+| yes         | updater           |
++-------------+-------------------+
+16 rows in set (0.00 sec)
+
+mysql> quit
+
+inside the container works :-(
+and compose works as well.
 -->
 
-Scaling out such a stateful application is not really interesting. Of course, we could host many owncloud users by multiplying the solution just adopted for many users and spread the laod across the Swarm cluster.
+Observe what happens when you restart the docker service on a node hosting one of the 2 services.
 
-Now we'll see the adequation of Docker Swarm and Cloud Native application
+We can scale out such a stateful application (while less interesting than a cloud native one) with many owncloud instances to support many users and spread the load across the Swarm cluster.
 
-# Deploy a cloud native appication.
+PLEASE, stop your services to avoid ports conflicts with the next part.
 
-TBC providing more details in next PRs.
+`#` **`docker service rm mydbsvc`**
+`#` **`docker service rm myownsvc`**
 
-1.Clone the github repo
-2.Run the application locally using the compose file
-3.Upload all the apps image to the registry
-4.Run the script deploy the application.
+Now we'll see the adequation of Docker Swarm and Cloud Native applications.
+
+# Deploy a cloud native application.
+
+Let's explain first the application and its goal.
+
+## Objectives
+
+The overall goal of this part is to realize a promotional lottery for an e-commerce site.
+All the software pieces are provided to you, and you'll "just" have to deal with a partial containerzation of it.
+
+As the setup takes some time, we'll start with the instructions and thenyou'll have time to read the explanations.
+
+First have access to the application we developped for this.
+
+`#` **`yum install -y git`**
+`#` **`git clone https://github.com/bcornec/openstack_lab.git`**
+`#` **`git checkout cloudnative`**
+`#` **`cd cloud_native_app`**
+
+As you can see in the openstack_lab directory created, the same application can be used for a Docker or an OpenStack usage (or combining them).
+The application is still a WIP, so don't worry with all the additional files and dirs for now. Upstream is at https://github.com/uggla/openstack_lab.git
+
+We need first to run the application locally using the compose file, in order to create all the Docker images and to upload them into the registry.
+
+`#` **`docker-compose up -d`**
+
+Drink a coffee, it's well deserved at that point, and that composition takes a bit of time. Or stay looking at it to observe closely the magic of Docker automation ;-)
+Please start reading the following explanations in or to understadn what we're building for you here.
+
+A customer of a big e-commerce site receives a promotional email with a link to earn a price if they are lucky. 
+The application detects whether the player already played or not, and whether he won already or not. 
+Each status is kept with the date when it was performed. The application provides a button allowing the customer to play, in case he didn't already, and the result of the computation which happens behind the scene is given back to the customer: it is the nature of the article he has won, and the corresponding image is displayed in the interface. Mails are sent to admins when a winner is found.
+
+That application is made of one Web page with 5 parts/micro-services: I, S, B, W and P:
+  - I(dentification) service: receives http request from customer (link with customer ID) and look for it into the DB.
+  - S(tatus) service: detect whether customer already played or not, status stored in the DB. It is using a messages bus to buffer requests.
+  - B(utton) service: button widget allowing the customer to play. Only when not already done.
+  - W(orker) service that computes whether the customer won or not (slow service on purpose with a REST API interface), called by B. If won, post an image representing what has been won into an object store with customer ID. Then post by e-mail via an external provider a message to admins (using a messages bus). Button is gray if the customer has already played. W and the DB are on a separate private network.
+  - P(icture) service: Look into the object store with customer ID to display the image of the customer's price, empty if no image.
+
+Each part of the web page is implemented as a micro-service. So the application supports nicely the death of any one of the 5 micro-services. The page is still displayed anyway, printing N/A when a micro-service is unavailable. In case of insufficient resources (as with the slow W micreo-service), we will look at how to scale that application.
+
+Once the docker-compose is done, you'll have to tag all images and push them into the registry. As docker-compose doesn't support services in this version yet, we've made a script to ease the creation of the tags, pushing the images into the registry and creating the services for you.
+
+Please have a look at the `docker_services.sh` script and adapt what needs to be changed for your environment at the start.
+
+Before launching the script, stop all the containers lanuched with the docker-compose step.
+
+Once done, you can run the script to deploy the application using Docker services
+
+`#` **`./docker_services.sh`**
+```
+ID            NAME         REPLICAS  IMAGE                                                 COMMAND
+1empjc9o6wwu  w            1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_w    
+1z53fru1vjr6  i            1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_i    
+3gasrkzgpp0w  b            1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_b    
+3sc3qexaixkl  redis        1/1       redis                                                 
+4c5i32juwnyh  myownsvc     1/1       lab7-2.labossi.hpintelco.org:5000/owncloud_web        
+5yl1168mm6h4  w2           1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_w2   
+6leldkqf1zth  ping         global    alpine                                                ping 8.8.8.8
+79jwqr43zyt2  web          1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_web  
+7hygz6g0lbyq  db           1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_db   
+9i4ogenk03ax  rabbit       1/1       rabbitmq:3-management                                 
+ag12vg6ts417  tiny_curran  10/10     alpine                                                ping 8.8.8.8
+ajcrqc6nykn8  s            1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_s    
+cn81a9a5j8yi  w1           1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_w1   
+e6c6ypgcxdy2  p            1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_p
+```
+
+In order to use the application you'll now have to connect to http://c6.labossi.hpintelco.org/
+
+You should see a messsage in your browser saying:
+```
+Please provide a user id !
+```
+
+So now to use the application, you have to provide the id of the user who is playing to see his price.
+Browse http://c6.labossi.hpintelco.org/index.html?id=1
+
+Check the availability of the application by restarting a docker daemon on a host running one of the containers the application is using.
+Check the micro-service behaviour by stopping the i micro-service, and then the p micro-service. Reload the Web page each time to see what happens.
+
+Try to make more connections. What is the problem encountered.
+Which micro-service is causing the issue.
+Scale that micro-service to solve the problem.
+
 5.Update the config.js file to allow access to the public ip.
-6.Eventually update swift config to recach swift.
-
+6.Eventually update swift config to reach swift.
 
 This is the end of this lab for now, we hope you enjoyed it.
 
