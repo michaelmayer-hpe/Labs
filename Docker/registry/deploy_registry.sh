@@ -16,7 +16,7 @@ do
 done
 
 # Cleanup
-rm certs/*
+rm certs/* >/dev/null 2>&1
 
 # If a FW is up with firewalld issue:
 # firewall-cmd --add-port=80/tcp --permanent
@@ -27,5 +27,6 @@ read FQDN
 sed -i -r -e "s/PUBFQDN=.*/PUBFQDN=$FQDN/" docker-compose.yml
 ./docker-compose build
 ./docker-compose up -d web
+sleep 5
 ./docker-compose up -d registry
 sed -i -r -e "s/PUBFQDN=$FQDN/PUBFQDN=/" docker-compose.yml
