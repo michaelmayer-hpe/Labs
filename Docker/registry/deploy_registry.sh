@@ -26,6 +26,6 @@ echo "Enter the public fqdn of your registry (IP will not work)"
 read FQDN
 sed -i -r -e "s/PUBFQDN=.*/PUBFQDN=$FQDN/" docker-compose.yml
 ./docker-compose build
-./docker-compose ip -d web
-./docker-compose ip -d registry
+./docker-compose up -d web
+./docker-compose up -d registry
 sed -i -r -e "s/PUBFQDN=$FQDN/PUBFQDN=/" docker-compose.yml
