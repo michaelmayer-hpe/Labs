@@ -15,6 +15,9 @@ do
 	which $tool || exit 1
 done
 
+# Cleanup
+rm certs/*
+
 # If a FW is up with firewalld issue:
 # firewall-cmd --add-port=80/tcp --permanent
 # firewall-cmd --add-port=5500/tcp --permanent
@@ -22,5 +25,7 @@ done
 echo "Enter the public fqdn of your registry (IP will not work)"
 read FQDN
 sed -i -r -e "s/PUBFQDN=.*/PUBFQDN=$FQDN/" docker-compose.yml
-./docker-compose up -d --build
+./docker-compose build
+./docker-compose ip -d web
+./docker-compose ip -d registry
 sed -i -r -e "s/PUBFQDN=$FQDN/PUBFQDN=/" docker-compose.yml

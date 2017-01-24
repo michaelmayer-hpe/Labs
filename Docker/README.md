@@ -1141,7 +1141,7 @@ Hint: use the command `docker service ps` to help diagnose.
 So you will need to use a private registry here to help solving that.
 
 We have deployed a Docker registry for you, available from a URL that will be provided by the instructor.
-(If you use the internal HPE Lab, then try lab7-2.labossi.hpintelco.org:5000 - If you want to create your own, use our scripts at https://github.com/bcornec/Labs/tree/master/Docker/registry)
+(If you use the internal HPE Lab, then try lab7-2.labossi.hpintelco.org:5500 - If you want to create your own, use our scripts at https://github.com/bcornec/Labs/tree/master/Docker/registry)
 
 You need to add the CA public certificate made on the registry to trust it.
 Download the CA from the registry web site:
@@ -1154,7 +1154,7 @@ and do the folowing commands :
 
 ```
 export DOMAIN_NAME=<my-registry-fqdn>
-openssl s_client -connect ${DOMAIN_NAME}:5000 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /etc/pki/ca-trust/source/anchors/$DOMAIN_NAME.crt
+openssl s_client -connect ${DOMAIN_NAME}:5500 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /etc/pki/ca-trust/source/anchors/$DOMAIN_NAME.crt
 update-ca-trust
 systemctl restart docker
 ```
@@ -1162,14 +1162,14 @@ systemctl restart docker
 
 ```
 export DOMAIN_NAME=<my-registry-fqdn>
-openssl s_client -connect ${DOMAIN_NAME}:5000 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /usr/local/share/ca-certificates/$DOMAIN_NAME.crt
+openssl s_client -connect ${DOMAIN_NAME}:5500 -showcerts </dev/null 2>/dev/null | openssl x509 -outform PEM | tee /usr/local/share/ca-certificates/$DOMAIN_NAME.crt
 update-ca-certificates
 service docker restart
 ```
 
 <!--
 Check that the registry runs as expected:
-`#` **`curl -L http://localhost:5000/v2`**
+`#` **`curl -L http://localhost:5500/v2`**
 {}
 
 -->
@@ -1179,11 +1179,11 @@ Of course, each node needs to be configured identically.
 In order to share the image between the nodes, you need to push it to this new
 registry, by using the appropriate tag. For example, you may use a command similar to
 
-`#` **`docker tag owncloud_web:latest ${DOMAIN_NAME}:5000/owncloud_web`**
+`#` **`docker tag owncloud_web:latest ${DOMAIN_NAME}:5500/owncloud_web`**
 
 And then you can push that image into our registry so it's available to other engines to use.
 
-`#` **`docker push ${DOMAIN_NAME}:5000/owncloud_web`**
+`#` **`docker push ${DOMAIN_NAME}:5500/owncloud_web`**
 
 Do the same with the mariadb service that you create afterwards following the same approach.
 Look at the status of both services. Why do you have issues with the mariadb service (at least ;-) ? How can you solve that.
@@ -1235,9 +1235,9 @@ Note thtat you have to do it on all the engines of your Swarm cluster for this m
 
 Now you can start mariadb as a service using the volume just created:
 <!--
-`#` **`docker tag mydb lab7-2.labossi.hpintelco.org:5000/mydb`**
-`#` **`docker push lab7-2.labossi.hpintelco.org:5000/mydb`**
-`#` **`docker service create --name=mydbsvc --mount=type=volume,volume-driver=local,src=dbvol,dst=/var/lib/mysql lab7-2.labossi.hpintelco.org:5000/mydb`**
+`#` **`docker tag mydb lab7-2.labossi.hpintelco.org:5500/mydb`**
+`#` **`docker push lab7-2.labossi.hpintelco.org:5500/mydb`**
+`#` **`docker service create --name=mydbsvc --mount=type=volume,volume-driver=local,src=dbvol,dst=/var/lib/mysql lab7-2.labossi.hpintelco.org:5500/mydb`**
 -->
 `#` **`docker service create --name=mydbsvc --mount=type=volume,volume-driver=local,src=dbvol,dst=/var/lib/mysql --env MYSQL_ROOT_PASSWORD=password --env MYSQL_DATABASE=owncloud --env MYSQL_USER=owncloud --env MYSQL_PASSWORD=owncloudpwd -p 3306:3306 mariadb`**
 
@@ -1261,7 +1261,7 @@ You may be affected as I as by remaining bugs such as https://github.com/docker/
 Examples: 
 `#` **`for i in c6 c7 c8 c10 c11; do ssh $i docker volume create --driver local --opt type=nfs --opt o=addr=10.11.51.136,rw --opt device=:/data/owncloud --name ownvol ; done`**
 `#` **`for i in c6 c7 c8 c10 c11; do ssh $i docker volume create --driver local --opt type=nfs --opt o=addr=10.11.51.136,rw --opt device=:/data/config --name cfgvol ; done`**
-`#` **`docker service create --name=myownsvc --mount=type=volume,volume-driver=local,src=ownvol,dst=/data/owncloud --mount=type=volume,volume-driver=local,src=cfgvol,dst=/data/config -p 8000:80 lab7-2.labossi.hpintelco.org:5000/owncloud_web`**
+`#` **`docker service create --name=myownsvc --mount=type=volume,volume-driver=local,src=ownvol,dst=/data/owncloud --mount=type=volume,volume-driver=local,src=cfgvol,dst=/data/config -p 8000:80 lab7-2.labossi.hpintelco.org:5500/owncloud_web`**
 <!--
 Remains an issue:
 An exception occurred while executing 'SELECT "configvalue", "appid" FROM "oc_appconfig" WHERE "configkey" = ?' with params ["enabled"]: SQLSTATE[HY000]: General error: 1 no such table: oc_appconfig
@@ -1358,20 +1358,20 @@ Once done, you can run the script to deploy the application using Docker service
 `#` **`./docker_services.sh`**
 ```
 ID            NAME         REPLICAS  IMAGE                                                 COMMAND
-1empjc9o6wwu  w            1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_w    
-1z53fru1vjr6  i            1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_i    
-3gasrkzgpp0w  b            1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_b    
+1empjc9o6wwu  w            1/1       lab7-2.labossi.hpintelco.org:5500/cloudnativeapp_w    
+1z53fru1vjr6  i            1/1       lab7-2.labossi.hpintelco.org:5500/cloudnativeapp_i    
+3gasrkzgpp0w  b            1/1       lab7-2.labossi.hpintelco.org:5500/cloudnativeapp_b    
 3sc3qexaixkl  redis        1/1       redis                                                 
-4c5i32juwnyh  myownsvc     1/1       lab7-2.labossi.hpintelco.org:5000/owncloud_web        
-5yl1168mm6h4  w2           1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_w2   
+4c5i32juwnyh  myownsvc     1/1       lab7-2.labossi.hpintelco.org:5500/owncloud_web        
+5yl1168mm6h4  w2           1/1       lab7-2.labossi.hpintelco.org:5500/cloudnativeapp_w2   
 6leldkqf1zth  ping         global    alpine                                                ping 8.8.8.8
-79jwqr43zyt2  web          1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_web  
-7hygz6g0lbyq  db           1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_db   
+79jwqr43zyt2  web          1/1       lab7-2.labossi.hpintelco.org:5500/cloudnativeapp_web  
+7hygz6g0lbyq  db           1/1       lab7-2.labossi.hpintelco.org:5500/cloudnativeapp_db   
 9i4ogenk03ax  rabbit       1/1       rabbitmq:3-management                                 
 ag12vg6ts417  tiny_curran  10/10     alpine                                                ping 8.8.8.8
-ajcrqc6nykn8  s            1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_s    
-cn81a9a5j8yi  w1           1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_w1   
-e6c6ypgcxdy2  p            1/1       lab7-2.labossi.hpintelco.org:5000/cloudnativeapp_p
+ajcrqc6nykn8  s            1/1       lab7-2.labossi.hpintelco.org:5500/cloudnativeapp_s    
+cn81a9a5j8yi  w1           1/1       lab7-2.labossi.hpintelco.org:5500/cloudnativeapp_w1   
+e6c6ypgcxdy2  p            1/1       lab7-2.labossi.hpintelco.org:5500/cloudnativeapp_p
 ```
 
 In order to use the application you'll now have to connect to http://c6.labossi.hpintelco.org/
