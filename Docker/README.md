@@ -1222,11 +1222,15 @@ ENV MYSQL_PASSWORD=owncloudpwd
 
 Now for the storage it's more difficult as the volumes you want to mount should be, as the images previously, available on all engines so each container created on it can use these data. One way to solve this for the mariadb image is to use an NFS exported directory from your first node.
 Let's configure NFS on the first machine (10.11.51.136 in my case):
+
 `#` **`yum install -y nfs-utils`** # CentOS7
+
 or 
+
 `#` **`apt-get install -y nfs-common`** # Ubuntu
 
 Edit the exports file so it looks like:
+
 `#` **`cat /etc/exports`**
 ```
 /data/db        *.labossi.hpintelco.org(rw,no_root_squash,async,insecure,no_subtree_check)
@@ -1239,6 +1243,7 @@ Edit the exports file so it looks like:
 Check on another node that your NFS setup is correct.
 
 Now you can create a Docker volume that will be used by the containers launched with a service:
+
 `#` **`docker volume create --driver local --opt type=nfs --opt o=addr=10.11.51.136,rw --opt device=:/data/db --name dbvol`**
 `#` **`docker volume ls`**
 
@@ -1246,6 +1251,7 @@ BTW, you can see that Docker already transparently created many more volumes for
 Note thtat you have to do it on all the engines of your Swarm cluster for this method to work.
 
 Now you can start mariadb as a service using the volume just created:
+
 <!--
 `#` **`docker tag mydb lab7-2.labossi.hpintelco.org:5500/mydb`**
 `#` **`docker push lab7-2.labossi.hpintelco.org:5500/mydb`**
@@ -1260,6 +1266,7 @@ Can you have access to the database with the mysql command from your host (insta
 
 Create a temporary table in the owncloud database to check and then relaunch the service to verify the persistency of the DB.
 MariaDB hint:
+
 `#` **`mysql -uowncloud -powncloudpwd`**
 `MariaDB [(none)]>` **`use owncloud;`**
 `MariaDB [(owncloud)]>` **`create table toto (id int);`**
@@ -1271,6 +1278,7 @@ Once all this is solved, you can try dealing with the web frontend. Adopt a simi
 You may be affected as I as by remaining bugs such as https://github.com/docker/docker/issues/20486 or https://github.com/docker/docker/issues/25981, especially mixing tests with docker-compose and swarm. For me, the only way to turn around them was to reboot the full cluster completely.
 
 Examples: 
+
 `#` **`for i in c6 c7 c8 c10 c11; do ssh $i docker volume create --driver local --opt type=nfs --opt o=addr=10.11.51.136,rw --opt device=:/data/owncloud --name ownvol ; done`**
 `#` **`for i in c6 c7 c8 c10 c11; do ssh $i docker volume create --driver local --opt type=nfs --opt o=addr=10.11.51.136,rw --opt device=:/data/config --name cfgvol ; done`**
 `#` **`docker service create --name=myownsvc --mount=type=volume,volume-driver=local,src=ownvol,dst=/data/owncloud --mount=type=volume,volume-driver=local,src=cfgvol,dst=/data/config -p 8000:80 lab7-2.labossi.hpintelco.org:5500/owncloud_web`**
