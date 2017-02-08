@@ -1273,9 +1273,13 @@ Create a temporary table in the owncloud database to check and then relaunch the
 MariaDB hint:
 
 `#` **`mysql -uowncloud -powncloudpwd`**
+
 `MariaDB [(none)]>` **`use owncloud;`**
+
 `MariaDB [(owncloud)]>` **`create table toto (id int);`**
+
 `MariaDB [(owncloud)]>` **`show tables;`**
+
 `MariaDB [(owncloud)]>` **`quit;`**
 
 Once all this is solved, you can try dealing with the web frontend. Adopt a similar approach (NFS volume and service). Check that the communication between owncloud and the DB works fine.
