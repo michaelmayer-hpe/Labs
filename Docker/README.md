@@ -1238,6 +1238,7 @@ Edit the exports file so it looks like:
 /data/config    *.labossi.hpintelco.org(rw,no_root_squash,async,insecure,no_subtree_check)
 ```
 `#` **`exportfs -a`**
+
 `#` **`systemctl start nfs`**
 
 Check on another node that your NFS setup is correct.
@@ -1245,6 +1246,7 @@ Check on another node that your NFS setup is correct.
 Now you can create a Docker volume that will be used by the containers launched with a service:
 
 `#` **`docker volume create --driver local --opt type=nfs --opt o=addr=10.11.51.136,rw --opt device=:/data/db --name dbvol`**
+
 `#` **`docker volume ls`**
 
 BTW, you can see that Docker already transparently created many more volumes for you.
@@ -1254,8 +1256,11 @@ Now you can start mariadb as a service using the volume just created:
 
 <!--
 `#` **`docker tag mydb lab7-2.labossi.hpintelco.org:5500/mydb`**
+
 `#` **`docker push lab7-2.labossi.hpintelco.org:5500/mydb`**
+
 `#` **`docker service create --name=mydbsvc --mount=type=volume,volume-driver=local,src=dbvol,dst=/var/lib/mysql lab7-2.labossi.hpintelco.org:5500/mydb`**
+
 -->
 `#` **`docker service create --name=mydbsvc --mount=type=volume,volume-driver=local,src=dbvol,dst=/var/lib/mysql --env MYSQL_ROOT_PASSWORD=password --env MYSQL_DATABASE=owncloud --env MYSQL_USER=owncloud --env MYSQL_PASSWORD=owncloudpwd -p 3306:3306 mariadb`**
 
@@ -1280,8 +1285,11 @@ You may be affected as I as by remaining bugs such as https://github.com/docker/
 Examples: 
 
 `#` **`for i in c6 c7 c8 c10 c11; do ssh $i docker volume create --driver local --opt type=nfs --opt o=addr=10.11.51.136,rw --opt device=:/data/owncloud --name ownvol ; done`**
+
 `#` **`for i in c6 c7 c8 c10 c11; do ssh $i docker volume create --driver local --opt type=nfs --opt o=addr=10.11.51.136,rw --opt device=:/data/config --name cfgvol ; done`**
+
 `#` **`docker service create --name=myownsvc --mount=type=volume,volume-driver=local,src=ownvol,dst=/data/owncloud --mount=type=volume,volume-driver=local,src=cfgvol,dst=/data/config -p 8000:80 lab7-2.labossi.hpintelco.org:5500/owncloud_web`**
+
 <!--
 Remains an issue:
 An exception occurred while executing 'SELECT "configvalue", "appid" FROM "oc_appconfig" WHERE "configkey" = ?' with params ["enabled"]: SQLSTATE[HY000]: General error: 1 no such table: oc_appconfig
@@ -1322,6 +1330,7 @@ We can scale out such a stateful application (while less interesting than a clou
 PLEASE, stop your services to avoid ports conflicts with the next part.
 
 `#` **`docker service rm mydbsvc`**
+
 `#` **`docker service rm myownsvc`**
 
 Now we'll see the adequation of Docker Swarm and Cloud Native applications.
@@ -1340,8 +1349,11 @@ As the setup takes some time, we'll start with the instructions and thenyou'll h
 First have access to the application we developped for this.
 
 `#` **`yum install -y git`**
+
 `#` **`git clone https://github.com/bcornec/openstack_lab.git`**
+
 `#` **`git checkout cloudnative`**
+
 `#` **`cd cloud_native_app`**
 
 As you can see in the openstack_lab directory created, the same application can be used for a Docker or an OpenStack usage (or combining them).
