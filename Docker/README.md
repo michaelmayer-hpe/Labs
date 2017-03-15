@@ -47,7 +47,7 @@ This Lab is intended to be trial and error so that during the session students s
 Expected duration : 120 minutes
 
 ## Reference documents
-When dealing with the installation and configuration of Docker, the first step  is to check the reference Web site http://Docker.io/:
+When dealing with the installation and configuration of Docker, the first step  is to check the reference Web site http://docker.io/:
 
 At the start of each section there is an estimate of how long it will take to complete.
 
@@ -68,7 +68,7 @@ This command will create the text file `fileToCreate` and populate it with the l
 
 You can display the content of the created file with the command `cat fileToCreate`.
 
-In order to append text to the file, the first `>` can be replaced with `>>`.  **N.B.** If you only have one greater than character '>' the command will overwrite the file rather than appending to the file.
+In order to append text to the file, the first `>` can be replaced with `>>`.  
 
 If you prefer, you can edit the files using **vim** or **nano** text editors.
 
@@ -91,7 +91,7 @@ export http_proxy=http://<proxy name or ip>:<proxy port>
 export https_proxy=http://<proxy name or ip>:<proxy port>
 ```
 
- 4. Configure Docker daemon to use the proxy as explained by this document: https://docs.Docker.com/engine/admin/systemd/#http-proxy (in short add Environment="HTTP_PROXY=http://proxy.example.com:80/" to your [services] section)
+ 4. Configure Docker daemon to use the proxy as explained by this document: https://docs.docker.com/engine/admin/systemd/#http-proxy (in short add Environment="HTTP_PROXY=http://proxy.example.com:80/" to your [services] section)
  5. **Set the proxy in each of your Dockerfiles** by adding following text as the 2nd and 3rd line of the Dockerfile.
 
 ```
@@ -106,14 +106,14 @@ Version 1.12 is the current stable release. This lab requires at least version 1
 
 Ask to your instructor which Linux distribution will be used for the Lab (Ubuntu or RHEL). Then refer to the corresponding instructions below.
 
-Other distributions should be as easy to deal with once the same packages have been installed using the package manager as they should be available directly (Case of most non-commercial distributions such as Debian, Fedora, Mageia, OpenSuSE, ...). Follow the instructions from https://docs.Docker.com/engine/installation/
+Other distributions should be as easy to deal with once the same packages have been installed using the package manager as they should be available directly (Case of most non-commercial distributions such as Debian, Fedora, Mageia, OpenSuSE, ...). Follow the instructions from https://docs.docker.com/engine/installation/
 
 ### Ubuntu installation
 If you work on an Ubuntu environment for the Lab, you may want to use apt to do the installation of Docker with all its dependencies. As Ubuntu provides an old version of Docker, we will use a PPA providing a more up to date version:
 
 `#` **`apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 36A1D7869245C8950F966E92D8576A8BA88D21E9`**
 
-`#` **`echo deb https://get.docker.io/ubuntu Docker main > /etc/apt/sources.list.d/Docker.list`**
+`#` **`echo deb https://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/Docker.list`**
 
 `#` **`apt-get update`**
 
@@ -135,7 +135,7 @@ Need to get 7,640 kB of archives.
 After this operation, 46.9 MB of additional disk space will be used.
 Do you want to continue? [Y/n] y
 Get:1 http://fr.archive.ubuntu.com/ubuntu/ trusty/universe aufs-tools amd64 1:3.2+20130722-1.1 [92.3 kB]
-Get:2 https://get.docker.io/ubuntu/ docker/main lxc-Docker-1.7.0 amd64 1.7.0 [4,962 kB]
+Get:2 https://get.docker.io/ubuntu/ docker/main lxc-docker-1.7.0 amd64 1.7.0 [4,962 kB]
 [...]
 Fetched 7,640 kB in 8s (884 kB/s)
 Selecting previously unselected package aufs-tools.
@@ -179,11 +179,11 @@ Resolving Dependencies
  Package                        Arch                Version                   Repository               Size
 ============================================================================================================
 Installing:
- docker-engine                  x86_64              1.11.2-1.el7.centos       Dockerrepo               13 M
+ docker-engine                  x86_64              1.11.2-1.el7.centos       dockerrepo               13 M
 Installing for dependencies:
  audit-libs-python              x86_64              2.4.1-5.el7               base                     69 k
  checkpolicy                    x86_64              2.1.12-6.el7              base                    247 k
- docker-engine-selinux          noarch              1.11.2-1.el7.centos       Dockerrepo               28 k
+ docker-engine-selinux          noarch              1.11.2-1.el7.centos       dockerrepo               28 k
  libcgroup                      x86_64              0.41-8.el7                base                     64 k
  libsemanage-python             x86_64              2.1.10-18.el7             base                     94 k
  libtool-ltdl                   x86_64              2.4.2-20.el7              base                     49 k
@@ -661,10 +661,10 @@ httpd: Could not reliably determine the server's fully qualified domain name, us
 3. Try to adapt the Dockerfile to solve that issue. **Discuss with your trainer if you're stuck !**
 
 `#` **`perl -pi -e 's|D httpd|D /usr/sbin/apachectl -DFOREGROUND -k start|' Dockerfile`**
-(This magic command replaces the launch of the httpd command by the apachectl one with the right options. If you are using RHEL 7 as the host OS, you will have to install perl via yum.)
+(This magic command replaces the launch of the httpd command by the apachectl one with the right options. If you are using RHEL 7 as the host OS, you will have to install perl via yum).
 
 1. Try to use a browser (you may want to install lynx) to connect to your web server. Can you do it ?
-2. Which IP address do you point to ? You can use `docker exec` to connect to the container and get the IP address for the container.
+2. Which IP address do you point to ? You can use `docker exec` to get the IP address for the container.
 
 By default, the container ports are not exposed outside of the container. So you can't use your host OS to access your isolated webserver. If you are running the container locally navigate to http://localhost in the host browser. If the container is running on lab instruture navigate to http://10.3.222.x (as directed by the instructor).
 
@@ -689,7 +689,7 @@ CONTAINER ID        IMAGE               COMMAND                CREATED          
 04d9c18da22a        c1c58f087482        "/bin/sh -c '/usr/sb   4 seconds ago       Up 3 seconds        0.0.0.0:80->80/tcp   thirsty_yalow
 ```
 
-Now that we have exposed the port, we're able to launch our container in daemon mode (-d) and redirect the local port 80 to the container port 80. Our web server is listening on port 80 of the container. Repeat the earlier attempt to connect to the web server in the container. You should see a CentOS based page on your host distribution.
+Now that we have exposed the port, we're able to launch our container in daemon mode (-d) and redirect the local port 80 to the container port 80. Our web server is listening is listening on port 80 in the container. Repeat the earlier attempt to connect to the web server in the container. You should see a CentOS based page on your host distribution.
 
 It's now time to add some content to our web server !
 Modify again the Docker file to add owncloud to our image:
@@ -743,7 +743,7 @@ REPOSITORY      TAG        IMAGE ID       CREATED             VIRTUAL SIZE
 owncloud        latest     de9663de44b2   7 minutes ago       568.5 MB
 ```
 
-At the moment, any content you create within the container will be lost when you it stop the container. Wouldn't be greate if your changes persisted from one run to another? Yes, you can ;-) For that, you need to attach a local directory of your host to your container, and point the setup of your owncloud to that directory instead of the one under `/var/www/html/owncloud`.
+It would be great if you could persist the content from one run to another.  Yes, you can ;-) For that, you need to attach a local directory of your host to your container, and point the setup of your owncloud to that directory instead of the one under `/var/www/html/owncloud`.
 Create a `/data` directory on your host, mount it in your container under `/data`, and then point your setup ot it:
 
 `#` **`mkdir -p /data`**
@@ -768,7 +768,7 @@ CONTAINER ID        IMAGE               COMMAND                CREATED          
 
 `#` **`docker run -d -p 80:80 -v /data:/data owncloud:latest`**
 
-Now restart your browser to reconfigure again owncloud, but this time configure the data folder as in the following screen shot:
+Now reload the owncloud congifuration page in your browser, but this time configure the data folder as in the following screen shot:
 
 ![Owncloud Setup](/Docker/img/owncloud.png)
 
@@ -829,7 +829,7 @@ Another benefit is to define the container running parameters within a YAML conf
 
 Use the following commands:
 
-`#` **`curl -L https://github.com/docker/compose/releases/download/1.9.0/docker-compose-$(uname -s)-$(uname -m) > /usr/local/bin/Docker-compose`**
+`#` **`curl -L https://github.com/docker/compose/releases/download/1.9.0/docker-compose-$(uname -s)-$(uname -m) > /usr/local/bin/docker-compose`**
 
 `#` **`chmod +x /usr/local/bin/docker-compose`**
 
@@ -847,7 +847,7 @@ Create the build environment by moving all our previous stuffs into a folder:
 
 `#` **`mkdir owncloud`**
 
-`#` **`mv Dockerfile owncloud-7.0.15.tar.bz2 owncloud`**
+`#` **`mv Dockerfile owncloud-7.0.15.tar.bz2 config.php owncloud`**
 
 `#` **`cd owncloud`**
 
@@ -884,7 +884,7 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 2573be6f1401        owncloud_web        "/bin/sh -c '/usr/sbi"   35 seconds ago      Up 34 seconds       0.0.0.0:80->80/tcp   owncloud_web_1
 ```
 
-Our application starts and should work the same way as previously. However it is much simpler as we don't need to define ports and storage mapping, this information can be configured in the YAML file.
+Our application starts and should work the same way as previously. However it is much simpler because we don't need to define ports and storage mapping, also the YAML file can be held in  and this information can be managed in Configuration Management System.
 
 You can also note that the container name is defined as `application_service_number` (owncloud_web_1)
 
@@ -910,23 +910,22 @@ As mentioned during the setup (below), this is convenient for a limited installa
 ![Owncloud sqlite setup](/Docker/img/owncloud_setup.png)
 
 In order to install owncloud on another database:
-   <!-- Not sure if the first item in the list is applicatible. I do not remember the file being present !-->
-   <!-- 1. Wipe `config.php` to have the setup page proposed again by the application. !-->
-   <!-- Changed the numbering of the remaining entries !-->
-   1. Add the `php-mysql` package to your Dockerfile in the relevant part.
-   2. Start the application but use `Docker-compose up -d --build` to force the rebuild of the Dockerfile.
+
+   1. Wipe `config.php` to have the setup page proposed again by the application.
+   2. Add the `php-mysql` package to your Dockerfile in the relevant part.
+   3. Start the application but use `docker-compose up -d --build` to force the rebuild of the Dockerfile.
 
 ![Owncloud sqlite setup](/Docker/img/owncloud_setup_db.png)
 
 Instead of building our own mariadb container from scratch like we did for owncloud, we will use the official Docker one.
 
-Of course it requires some information about the compose-file format. Documentation for this can be found here: https://docs.Docker.com/compose/compose-file and the image itself there: https://hub.Docker.com/_/mariadb
+Of course it requires some information about the compose-file format. Documentation for this can be found here: https://docs.docker.com/compose/compose-file and the image itself there: https://hub.docker.com/_/mariadb
 
   1. Try to modify `docker-compose.yml` to add a db service based on the mariadb official images.
   2. We need to provide the database parameters fields (user, password etc...). Hint: Look at the mariadb container environment variables. **Discuss with your trainer if you're stuck !**
   3. What is the hostname of our container ? Hint: Look at the link directive.
 
-If you didn't manage to configure the mariadb container and use it with owncloud, then the additional content for your Docker-compose.yml could be useful:
+If you didn't manage to configure the mariadb container and use it with owncloud, then the additional content for your docker-compose.yml could be useful:
 ```
   db:
     image: mariadb
@@ -943,7 +942,7 @@ We are now using a mariadb container, but the database content is inside the con
   1. Use a Docker volume to use them from the host.
   2. Modify docker-compose.yml to do that. Hint: separate owncloud and db data under /data to avoid user rights conflicts.
 
-If you manage to configure the mariadb container with persistant data your Docker-compose.yml should look like this:
+If you manage to configure the mariadb container with persistant data your docker-compose.yml should look like this:
 ```
 version: '2'
 services:
@@ -992,17 +991,17 @@ We will use this tool to deploy 5 nodes that will be used later in the Swarm par
 
 The following command will deploy one node to our openstack environment but will not run it yet.
 
-`#` **`docker-machine create --driver openstack --openstack-auth-url http://10.11.50.26:5000/v2.0 --openstack-flavor-name m1.small --openstack-image-name ubuntu1604 --openstack-username Dockerlab --openstack-password Linux1 --openstack-tenant-name Dockerlab --openstack-net-name private --openstack-floatingip-pool external-network --openstack-sec-groups default --openstack-ssh-user ubuntu Dockerw1`**
+`#` **`docker-machine create --driver openstack --openstack-auth-url http://10.11.50.26:5000/v2.0 --openstack-flavor-name m1.small --openstack-image-name ubuntu1604 --openstack-username dockerlab --openstack-password Linux1 --openstack-tenant-name dockerlab --openstack-net-name private --openstack-floatingip-pool external-network --openstack-sec-groups default --openstack-ssh-user ubuntu dockerw1`**
 
 In order to save time we will deploy 5 hosts in parallel with the following command.
 ```
 for i in dockerm1 dockerm2 dockerm3 dockerw1 dockerw2; do
-    docker-machine create --driver openstack --openstack-auth-url http://10.11.50.26:5000/v2.0 --openstack-flavor-name m1.small --openstack-image-name ubuntu1604 --openstack-username Dockerlab --openstack-password Linux1 --openstack-tenant-name Dockerlab --openstack-net-name private --openstack-floatingip-pool external-network --openstack-sec-groups default --openstack-ssh-user ubuntu $i &
+    docker-machine create --driver openstack --openstack-auth-url http://10.11.50.26:5000/v2.0 --openstack-flavor-name m1.small --openstack-image-name ubuntu1604 --openstack-username dockerlab --openstack-password linux1 --openstack-tenant-name dockerlab --openstack-net-name private --openstack-floatingip-pool external-network --openstack-sec-groups default --openstack-ssh-user ubuntu $i &
 done
 ```
 
 This will take around 5mn. You can list the machines installed with the command:
-`docker-machine ls`
+`docker machine ls`
 
 To connect to a server you can use:
 `docker-machine ssh <machine_name>`
@@ -1173,12 +1172,12 @@ Check what happens. You can use docker ps on the current node, and on another no
 
 In order to help visualize the state of the Swarm cluster you can use the visualizer companion of Swarm. On the master node run the following:
 
-`#` **`docker run -it -d -p 8080:8080 -v /var/run/docker.sock:/var/run/Docker.sock manomarks/visualizer`**
+`#` **`docker run -it -d -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock manomarks/visualizer`**
 
 And then connect your browser to it on port 8080. You should see something similar to the below image:
 ![Swarm Visualizer](/Docker/img/visualizer.png)
 
-Now let's put on our cluster our application. Note that before version 1.13, Docker-compose doesn't support the notion of service, so can't be used in swarm mode. Would be very handy, but you'll have to wait till early february/march 2017 to have that !
+Now let's put on our cluster our application. Note that before version 1.13, docker-compose doesn't support the notion of service, so can't be used in swarm mode. Would be very handy, but you'll have to wait till early february/march 2017 to have that !
 Start with the owncloud_web image as a base for your service.
 
 `#` **`docker service create --name owncloudsvc -p 8000:80 owncloud_web`**
@@ -1304,7 +1303,7 @@ Now you can start mariadb as a service using the volume just created:
 `#` **`docker service create --name=mydbsvc --mount=type=volume,volume-driver=local,src=dbvol,dst=/var/lib/mysql --env MYSQL_ROOT_PASSWORD=password --env MYSQL_DATABASE=owncloud --env MYSQL_USER=owncloud --env MYSQL_PASSWORD=owncloudpwd -p 3306:3306 mariadb`**
 
 Is that working as expected ? It's still pretty difficult in Swarm mode to get logs for a failing service. Docker is aware of that and working on it for 1.13. Cf: https://github.com/docker/docker/issues/26083
-Tips are use docker service ps <svc_id> to find on which host run the service and then Docker exec/logs on that host e.g. Also think to the /var/log/messages log file on your host.
+Tips are use docker service ps <svc_id> to find on which host run the service and then docker exec/logs on that host e.g. Also think to the /var/log/messages log file on your host.
 
 Can you have access to the database with the mysql command from your host (install the command if you need it) ? Check that the volume is mounted correctly in the container. Check that you can reach the mysql daemon from any host in the cluster.
 
@@ -1323,7 +1322,7 @@ MariaDB hint:
 
 Once all this is solved, you can try dealing with the web frontend. Adopt a similar approach (NFS volume and service). Check that the communication between owncloud and the DB works fine.
 
-You may be affected as I as by remaining bugs such as https://github.com/docker/docker/issues/20486 or https://github.com/docker/docker/issues/25981, especially mixing tests with Docker-compose and swarm. For me, the only way to turn around them was to reboot the full cluster completely.
+You may be affected as I as by remaining bugs such as https://github.com/docker/docker/issues/20486 or https://github.com/docker/docker/issues/25981, especially mixing tests with docker-compose and swarm. For me, the only way to turn around them was to reboot the full cluster completely.
 
 Examples:
 
@@ -1460,7 +1459,7 @@ So now to use the application, you have to provide the id of the user who is pla
 Browse http://c6.labossi.hpintelco.org/index.html?id=1
 
 Check the availability of the application by restarting a docker daemon on a host running one of the containers the application is using.
-Check the micro-service behavior by stopping the 'I' micro-service, and then the 'P' micro-service. Reload the Web page each time to see what happens.
+Check the micro-service behavior by stopping the 'i' micro-service, and then the 'p' micro-service. Reload the Web page each time to see what happens.
 
 Try to make more connections. What is the problem encountered.
 Which micro-service is causing the issue.
