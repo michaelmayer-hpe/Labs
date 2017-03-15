@@ -3,8 +3,8 @@
 The goal of this lab is to install and use Docker to become familiar with Linux based containers and handle some of the common use cases around it. By the end of this lab you will have created a Web application comprised of a number of micro-services.
 
 ## Lab Writers and Trainers
-  - bruno.cornec@hpe.com
-  - rene.ribaud@hpe.com
+  - Bruno.Cornec@hpe.com
+  - Rene.Ribaud@hpe.com
 
 <!-- TOC -->
 
